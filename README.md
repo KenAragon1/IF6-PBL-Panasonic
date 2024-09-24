@@ -4,7 +4,7 @@
 
 ## About the Project
 
-This project is a team effort created for [Company Name], focusing on developing a system to manage and visualize the flow of materials in an electronics production line. The system tracks material stock across different sections and provides efficiency insights to help optimize the production process.
+This project is a team effort created for PT Panasonic, focusing on developing a system to manage and visualize the flow of materials in an electronics production line. The system tracks material stock across different sections and provides efficiency insights to help optimize the production process.
 
 ## Technologies Used
 
