@@ -8,7 +8,11 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
@@ -19,4 +23,15 @@ html {
 
 body {
   margin-bottom: 60px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#drawer {
+  width: 0;
+  transition: width 0.3s ease;
+  position: fixed;
+}
+
+#drawer.active {
+  width: 240px;
 }
