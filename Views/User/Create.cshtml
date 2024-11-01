@@ -1,0 +1,64 @@
+@model panasonic.ViewModels.CreateUserViewModel;
+
+@{
+
+    ViewData["PanelTitle"] = "Create New User";
+}
+
+<div class="card">
+    <div class="card-content">
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="form-row">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group col-md-4">
+                        <label>Employee ID</label>
+                        <input type="number" class="form-control mb-1" placeholder="Employee ID"
+                            asp-for="CreateUserDto.EmployeeID">
+                        <span class="text-danger" asp-validation-for="CreateUserDto.EmployeeID"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Full Name</label>
+                        <input type="text" class="form-control mb-1" placeholder="Full Name"
+                            asp-for="CreateUserDto.Fullname">
+                        <span class="text-danger" asp-validation-for="CreateUserDto.Fullname"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label>Email</label>
+                        <input type="email" class="form-control mb-1" placeholder="Email" asp-for="CreateUserDto.Email">
+                        <span class="text-danger" asp-validation-for="CreateUserDto.Email"></span>
+                    </div>
+
+
+                    <div class="form-group col-12">
+                        <label>Role</label>
+                        <select class="form-control mb-1" asp-for="CreateUserDto.RoleId">
+                            @foreach (var role in @Model.Roles)
+                            {
+                                <option value="@role.Id">@role.DisplayName</option>
+                            }
+                        </select>
+                        <span class="text-danger" asp-validation-for="CreateUserDto.RoleId"></span>
+
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Password</label>
+                        <input type="password" class="form-control mb-1" placeholder="Password"
+                            asp-for="CreateUserDto.Password">
+                        <span class="text-danger" asp-validation-for="CreateUserDto.Password"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Confirm Password</label>
+                        <input type="password" class="form-control" placeholder="Confirm Password"
+                            asp-for="CreateUserDto.ConfirmPassword">
+                        <span class="text-danger" asp-validation-for="CreateUserDto.ConfirmPassword"></span>
+
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>

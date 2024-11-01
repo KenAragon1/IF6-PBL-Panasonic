@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+
 
 namespace panasonic.Models;
 
@@ -11,9 +11,11 @@ public class User
 
     public required string Email { get; set; }
 
-    public string HashedPassword { get; set; }
+    public string HashedPassword { get; set; } = string.Empty;
+    public bool IsVerified { get; set; } = false;
 
     public int RoleId { get; set; }
 
     public Role Role { get; set; }
+    public DateTime CreatedAt { get; set; }
 }

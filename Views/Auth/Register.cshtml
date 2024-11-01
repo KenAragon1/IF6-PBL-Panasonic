@@ -5,49 +5,44 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="card mx-auto mt-5" style="width: 25rem;">
-    <div class="card-header bg-primary">
-
-        <p class="card-title text-center fw-bold text-white">PANASONIC</p>
-    </div>
-
-    <div class="card-body">
-        @if (ViewBag.ErrorMessage != null)
-        {
-            <div class="alert alert-danger text-sm-start">
-                @ViewBag.ErrorMessage
-            </div>
-        }
-        <form class="mb-2" method="post" asp-action="Register">
-            <div class="mb-2">
-                <label for="" class="form-label">Employee ID</label>
-                <input type="text" class="form-control" asp-for="EmployeeID">
-                <span class="text-danger" asp-validation-for="EmployeeID"></span>
-            </div>
-            <div class="mb-2">
-                <label for="" class="form-label">Email</label>
-                <input type="email" class="form-control" asp-for="Email">
-                <span class="text-danger" asp-validation-for="Email"></span>
-            </div>
-            <div class="mb-2">
-                <label for="" class="form-label">Full Name</label>
-                <input type="text" class="form-control" asp-for="Fullname">
-                <span class="text-danger" asp-validation-for="Fullname"></span>
-            </div>
-            <div class="mb-2">
-                <label for="" class="form-label">Password</label>
-                <input type="password" class="form-control" asp-for="Password">
-                <span class="text-danger" asp-validation-for="Password"></span>
-
-            </div>
-            <div class="mb-2">
-                <label for="" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" asp-for="ConfirmPassword">
-                <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
-
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Register</button>
-        </form>
-        <span>Already have an account? <a asp-action="Login" class="link-primary">Log In</a> here</span>
-    </div>
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger text-sm-start">
+    @ViewBag.ErrorMessage
 </div>
+}
+
+<form class="mb-2" method="post" asp-action="Register">
+
+    <div class="mb-2">
+        <input type="text" id="employeedd" class="form-control" asp-for="EmployeeID" placeholder="Employee ID">
+        <span class="text-danger" asp-validation-for="EmployeeID"></span>
+    </div>
+
+    <div class="mb-2">
+        <input type="email" class="form-control" asp-for="Email" id="email" placeholder="Email">
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+
+    <div class="mb-2">
+        <input type="text" id="fullname" class="form-control" asp-for="Fullname" placeholder="Full Name">
+        <span class="text-danger" asp-validation-for="Fullname"></span>
+    </div>
+
+    <div class="mb-2">
+        <input type="password" id="password" class="form-control" placeholder="Password" asp-for="Password">
+        <span class="text-danger" asp-validation-for="Password"></span>
+
+    </div>
+
+    <div class="mb-2">
+        <input type="password" id="confirmpassword" class="form-control" placeholder="Confirm Password"
+            asp-for="ConfirmPassword">
+        <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Register</button>
+</form>
+
+<span>Already Have An Account? <a asp-action="login">Log In</a> Here </span>

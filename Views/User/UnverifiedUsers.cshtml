@@ -1,0 +1,50 @@
+@{
+    ViewData["PanelTitle"] = "Unverified Users";
+}
+
+@model panasonic.ViewModels.UnverifiedUserViewModel;
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in @Model.users)
+                {
+                    <tr>
+                        <td>@user.EmployeeID</td>
+                        <td>@user.Fullname</td>
+                        <td>@user.Email</td>
+                        <td><button class="btn btn-success" data-toggle="modal"
+                                data-target="#confirm-verify-@user.Id">Verify</button>
+                            <div class="modal fade" id="confirm-verify-@user.Id">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="modal-title">Verify @user.Fullname ?</div>
+                                        </div>
+                                        <div class="modal-body">Are You Sure Want to Verify this User?</div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                            <form asp-controller="User" asp-action="Verify" asp-route-id="@user.Id">
+                                                <button type="submit" class="btn btn-success">Verify</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>

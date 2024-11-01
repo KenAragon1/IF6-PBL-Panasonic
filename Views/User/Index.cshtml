@@ -1,0 +1,100 @@
+@model panasonic.ViewModels.UserViewModel;
+
+@{
+    ViewData["PanelTitle"] = "Manage Users";
+}
+
+@section PanelButtons {
+    <a class="btn btn-success btn-round" asp-action="Create">Create User</a>
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Filter</div>
+    </div>
+    <div class="card-body">
+        <form action="">
+            <div class="form-row">
+                <div class="form-group col-4">
+                    <label>Employee ID</label>
+                    <input class="form-control" type="number" placeholder="Ex : 12345"
+                        asp-for="UserQueryObject.EmployeeID">
+                </div>
+                <div class="form-group col-4">
+                    <label>Full Name</label>
+                    <input class="form-control" placeholder="Ex : My Name" asp-for="UserQueryObject.Fullname">
+                </div>
+                <div class="form-group col-4">
+                    <label>Role</label>
+                    <select class="form-control" asp-for="UserQueryObject.RoleName">
+                        <option value="">All</option>
+                        @foreach (var role in @Model.roles)
+                        {
+                            <option value="@role.RoleName">@role.DisplayName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div>
+                <a asp-action="Index" class="btn btn-dark">Clear Filter</a>
+                <button type="submit" class="ml-2 btn btn-primary">Filter</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Employee ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in @Model.users)
+                    {
+                        <tr>
+                            <td>@user.EmployeeID</td>
+                            <td>@user.Fullname</td>
+                            <td>@user.Email</td>
+                            <td>@user.Role.DisplayName</td>
+                            <td>
+                                <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id"
+                                    class="btn btn-success">Edit</a>
+                                <button class="btn btn-danger" data-employeeid="@user.EmployeeID" data-toggle="modal"
+                                    data-target="#delete-user-confirmation-@user.Id">Delete</button>
+                                <div class="modal fade" id="delete-user-confirmation-@user.Id">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="modal-title">Delete Confirmation</div>
+                                            </div>
+                                            <div class="modal-body">Are You Sure Want To Delete @user.Fullname</div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                                <form asp-controller="User" asp-action="Delete" asp-route-id="@user.Id"
+                                                    method="post">
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

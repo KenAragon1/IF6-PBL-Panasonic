@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using panasonic.Services;
+using panasonic.Helpers;
+using panasonic.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +12,15 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 {
     option.LoginPath = "/Auth/Login";
     option.AccessDeniedPath = "/Auth/Login";
-    option.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<UserService>();
+// user
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+builder.Services.AddScoped<IFileHelper, FileHelper>();
 
 var app = builder.Build();
 

@@ -1,0 +1,115 @@
+@{
+    var currentPath = ViewContext.HttpContext.Request.Path.Value;
+    var isDashboardActive = currentPath == "/" || currentPath == "/Dashboard" || currentPath == "/Dashboard/Index";
+}
+
+<div class="sidebar sidebar-style-2">
+    <div class="scroll-wrapper sidebar-wrapper scrollbar scrollbar-inner" style="position: relative;">
+        <div class="sidebar-wrapper scrollbar scrollbar-inner scroll-content scroll-scrolly_visible"
+            style="height: auto; margin-bottom: 0px; margin-right: 0px; max-height: 314px;">
+            <div class="sidebar-content">
+                <div class="user">
+                    <div class="avatar-sm float-left mr-2">
+                        <img src="../assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
+                    </div>
+                    <div class="info">
+                        <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
+                            <span>
+                                @ViewBag.Username
+                                <span class="user-level">Administrator</span>
+                                <span class="caret"></span>
+                            </span>
+                        </a>
+                        <div class="clearfix"></div>
+
+                        <div class="collapse in" id="collapseExample">
+                            <ul class="nav">
+                                <li>
+                                    <a href="#profile">
+                                        <span class="link-collapse">My Profile</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#edit">
+                                        <span class="link-collapse">Edit Profile</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#settings">
+                                        <span class="link-collapse">Settings</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <ul class="nav nav-primary">
+                    <li class="nav-item @(isDashboardActive ? "active" : "")">
+                        <a asp-controller="Dashboard" asp-action="Index">
+                            <i class="fas fa-home"></i>
+                            <p>Dashboard</p>
+                        </a>
+                    </li>
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section">Sections</h4>
+                    </li>
+                    <li class="nav-item @(currentPath.Contains("/User") ? "active" : "")">
+                        <a data-toggle="collapse" href="#base">
+                            <i class="fas fa-layer-group"></i>
+                            <p>User</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse @(currentPath.Contains("/User") ? "show" : "")" id="base">
+                            <ul class="nav nav-collapse">
+                                <li class="@(currentPath == "/User" ? "active" : "")">
+                                    <a asp-controller="User" asp-action="Index">
+                                        <span class="sub-item">Manage Users</span>
+                                    </a>
+                                </li>
+                                <li class="@(currentPath.Contains("/User/UnverifiedUsers") ? "active" : "")">
+                                    <a asp-controller="User" asp-action="UnverifiedUsers">
+                                        <span class="sub-item">Unverified Users</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item @(currentPath.Contains("/Material") ? "active" : "")">
+                        <a data-toggle="collapse" href="#materials">
+                            <i class="fas fa-layer-group"></i>
+                            <p>Materials</p>
+                            <span class="caret"></span>
+                        </a>
+                        <div class="collapse @(currentPath.Contains("/Material") ? "show" : "")" id="materials">
+                            <ul class="nav nav-collapse">
+                                <li class="@(currentPath == "/Material" ? "active" : "")">
+                                    <a asp-controller="Material" asp-action="Index">
+                                        <span class="sub-item">Material List</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="scroll-element scroll-x scroll-scrolly_visible" style="">
+            <div class="scroll-element_outer">
+                <div class="scroll-element_size"></div>
+                <div class="scroll-element_track"></div>
+                <div class="scroll-bar ui-draggable ui-draggable-handle" style="width: 88px;"></div>
+            </div>
+        </div>
+        <div class="scroll-element scroll-y scroll-scrolly_visible" style="">
+            <div class="scroll-element_outer">
+                <div class="scroll-element_size"></div>
+                <div class="scroll-element_track"></div>
+                <div class="scroll-bar ui-draggable ui-draggable-handle" style="height: 87px; top: 0px;"></div>
+            </div>
+        </div>
+    </div>
+</div>

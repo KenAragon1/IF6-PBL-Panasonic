@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using panasonic.Models;
-using panasonic.Services;
+using panasonic.Repositories;
 using panasonic.ViewModels;
 
 namespace panasonic.Controllers;
@@ -12,11 +12,12 @@ namespace panasonic.Controllers;
 public class AuthController : Controller
 {
     private readonly PasswordHasher<User> _passwordHasher;
-    private readonly IUserService _userService;
-    public AuthController(UserService userService)
+    private readonly IUserRepository _userRepository;
+
+    public AuthController(IUserRepository userRepository)
     {
         _passwordHasher = new PasswordHasher<User>();
-        _userService = userService;
+        _userRepository = userRepository;
     }
     public IActionResult Login()
     {
@@ -31,7 +32,7 @@ public class AuthController : Controller
 
         if (!ModelState.IsValid) return View();
 
-        var user = await _userService.GetUserByEmployeeID(LoginForm.EmployeeID);
+        var user = await _userRepository.GetAsync(employeeid: LoginForm.EmployeeID);
 
         if (user == null)
         {
@@ -45,8 +46,7 @@ public class AuthController : Controller
             return View();
         }
 
-
-        if (user.Role.RoleName == "unverified")
+        if (!user.IsVerified)
         {
             ViewBag.Message = "Your account needs to be verified by an Admin first";
             return View();
@@ -76,26 +76,13 @@ public class AuthController : Controller
     {
         if (!ModelState.IsValid) return View();
 
-        var existingEmployeeId = await _userService.GetUserByEmployeeID(RegisterData.EmployeeID);
-        var existingEmail = await _userService.GetUserByEmail(RegisterData.Email);
 
-        if (existingEmployeeId != null)
-        {
-            ViewBag.ErrorMessage = "EmployeeId is already taken";
-            return View();
-        }
 
-        if (existingEmail != null)
-        {
-            ViewBag.ErrorMessage = "Email is already taken";
-            return View();
-        }
-
-        var user = new Models.User { EmployeeID = RegisterData.EmployeeID, Email = RegisterData.Email, Fullname = RegisterData.Fullname, RoleId = 1 };
+        var user = new User { EmployeeID = RegisterData.EmployeeID, Email = RegisterData.Email, Fullname = RegisterData.Fullname, RoleId = 1, IsVerified = false };
         var HashedPassword = _passwordHasher.HashPassword(user, RegisterData.Password);
         user.HashedPassword = HashedPassword;
 
-        await _userService.InsertUser(user);
+        await _userRepository.StoreAsync(user);
 
         TempData["SuccessMessage"] = "Account successfully created. Please wait for an admin to verify your account";
 

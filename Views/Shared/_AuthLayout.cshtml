@@ -5,15 +5,52 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - panasonic</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/panasonic.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/atlantis/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/lib/atlantis/css/atlantis.min.css">
+    <style>
+        body {
+            background-image: url("/assets/images/bgpanasonic.jpg");
+            background-size: auto;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.1);
+            /* Adjust alpha for more or less dim */
+            z-index: 1;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        main {
+            position: relative;
+            z-index: 2;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
 
-    <div class=""></div>
-    <main role="main">@RenderBody()</main>
+    <main role="main" class="pt-5">
+        <div class="card mx-auto" style="width: 25rem;">
+            <div class="card-header d-flex justify-content-center">
+                <img src="/assets/images/logo1.png" alt="" width="200">
+            </div>
+            <div class="card-body">
+                @RenderBody()
+            </div>
+        </div>
+    </main>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

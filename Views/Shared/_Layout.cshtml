@@ -5,32 +5,133 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>@ViewData["Title"] - panasonic</title>
-  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-  <link rel="stylesheet" href="~/panasonic.styles.css" asp-append-version="true" />
+  @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+  <link rel="stylesheet" href="~/lib/atlantis/css/bootstrap.min.css">
+  <link rel="stylesheet" href="~/lib/atlantis/css/atlantis.min.css">
+  @* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
+  @* <link rel="stylesheet" href="~/panasonic.styles.css" asp-append-version="true" /> *@
 </head>
 
 <body class="bg-light">
-  <partial name="_Navbar" />
-  <div class="d-flex">
-    @* <partial name="_Drawer" /> *@
-    <main role="main" class="pb-3 px-4 w-100">@RenderBody()</main>
+  <div class="wrapper">
+    <partial name="_Navbar" />
+    <partial name="_Sidebar" />
+
+    <div class="main-panel">
+      <div class="content">
+        <div class="panel-header bg-primary-gradient">
+          <div class="page-inner py-5">
+            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+              <div>
+                <h2 class="text-white pb-2 fw-bold">@ViewData["PanelTitle"]</h2>
+                <h5 class="text-white op-7 mb-2">@ViewData["PanelBody"]</h5>
+              </div>
+              <div class="ml-md-auto py-2 py-md-0">
+                @await RenderSectionAsync("PanelButtons", required: false)
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="page-inner mt--5">
+          @RenderBody()
+        </div>
+      </div>
+      <footer class="footer">
+        <div class="container-fluid">
+          <nav class="pull-left">
+            <ul class="nav">
+              <li class="nav-item">
+                <a class="nav-link" href="http://www.themekita.com">
+                  ThemeKita
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  Help
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  Licenses
+                </a>
+              </li>
+            </ul>
+          </nav>
+          <div class="copyright ml-auto">
+            2018, made with <i class="fa fa-heart heart text-danger"></i> by <a
+              href="http://www.themekita.com">ThemeKita</a>
+          </div>
+        </div>
+      </footer>
+    </div>
   </div>
 
-  <footer class="border-top footer text-muted">
-    <div class="container">
-      &copy; 2024 - panasonic -
-      <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-  </footer>
-  <script defer type="module">
-    $('#menu-btn').click(() => {
-      $('#drawer').toggleClass('active')
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+  <script src="~/js/site.js" asp-append-version="true"></script>
+
+  <!--   Core JS Files   -->
+  <script src="~/lib/atlantis/js/core/jquery.3.2.1.min.js"></script>
+  <script src="~/lib/atlantis/js/core/popper.min.js"></script>
+  <script src="~/lib/atlantis/js/core/bootstrap.min.js"></script>
+
+  <!-- jQuery UI -->
+  <script src="~/lib/atlantis/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+  <script src="~/lib/atlantis/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+
+  <!-- jQuery Scrollbar -->
+  <script src="~/lib/atlantis/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+
+
+  <!-- Chart JS -->
+  <script src="~/lib/atlantis/js/plugin/chart.js/chart.min.js"></script>
+
+  <!-- jQuery Sparkline -->
+  <script src="~/lib/atlantis/js/plugin/jquery.sparkline/jquery.sparkline.min.js"></script>
+
+  <!-- Chart Circle -->
+  <script src="~/lib/atlantis/js/plugin/chart-circle/circles.min.js"></script>
+
+  <!-- Datatables -->
+  <script src="~/lib/atlantis/js/plugin/datatables/datatables.min.js"></script>
+
+  <!-- Bootstrap Notify -->
+  <script src="~/lib/atlantis/js/plugin/bootstrap-notify/bootstrap-notify.min.js"></script>
+
+  <!-- jQuery Vector Maps -->
+  <script src="~/lib/atlantis/js/plugin/jqvmap/jquery.vmap.min.js"></script>
+  <script src="~/lib/atlantis/js/plugin/jqvmap/maps/jquery.vmap.world.js"></script>
+
+  <!-- Sweet Alert -->
+  <script src="~/lib/atlantis/js/plugin/sweetalert/sweetalert.min.js"></script>
+
+  <!-- Atlantis JS -->
+  <script src="~/lib/atlantis/js/atlantis.min.js"></script>
+
+
+  <!-- Fonts and icons-->
+  <script src="~/lib/atlantis/js/plugin/webfont/webfont.min.js"></script>
+  <script>
+    WebFont.load({
+      google: { "families": ["Lato:300,400,700,900"] },
+      custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['/lib/atlantis/css/fonts.min.css'] },
+      active: function () {
+        sessionStorage.fonts = true;
+      }
+    });
+  </script>
+
+  <!--custom scripts-->
+  <script>
+    $(document).ready(function () {
+      let successMessage = '@TempData["SuccessMessage"]'
+      if (successMessage)
+        $.notify({ message: successMessage }, { type: "success" })
     })
   </script>
-  <script src="~/lib/jquery/dist/jquery.min.js"></script>
-  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+
   @await RenderSectionAsync("Scripts", required: false)
 </body>
 

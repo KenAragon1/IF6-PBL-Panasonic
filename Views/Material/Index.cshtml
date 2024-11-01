@@ -1,43 +1,54 @@
 @model List<panasonic.Models.Material>;
 
+@{
+    ViewData["PanelTitle"] = "Material List";
+}
+
+@section PanelButtons {
+    <a class="btn btn-success btn-round" asp-controller="Material" asp-action="Create">Create Material</a>
+}
 
 
-
-<div class="card  ">
+<div class="card ">
     <div class="card-body">
-        <div class="mb-3 d-flex justify-content-between align-items-center">
-            <p class="fs-4 fw-bold">Manage Materials</p>
-            <div class="">
-                <button class="btn btn-primary" data-bs-toggle="modal"
-                    data-bs-target="#create-material-form-modal">Create New
-                    Material</button>
-            </div>
-        </div>
-        <div class="mb-3">
-            <input placeholder="Search Material Name" type="text" class="form-control">
-        </div>
         <table class="table table-bordered table-hover">
             <thead>
                 <tr>
                     <th scope="col">Id</th>
                     <th scope="col">Name</th>
-                    <th scope="col">Total Quantity</th>
-                    <th scope="col">Total Weight</th>
                     <th scope="col">Barcode</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var Material in @Model)
+                @foreach (var material in @Model)
                 {
+
                     <tr>
-                        <th scope="row">@Material.Id</th>
-                        <td>@Material.Name</td>
-                        <td>@Material.TotalQuantity</td>
-                        <td>@Material.TotalWeight</td>
-                        <td></td>
+                        <th>@material.Id</th>
+                        <td>@material.Name</td>
                         <td>
-                            <a asp-action="storage" asp-route-id="@Material.Id" class="btn btn-primary">Manage</a>
+                            <img src="/storage/materials/@material.QrCodeUrl" alt="" height="100" width="100">
+                        </td>
+                        <td>
+                            <a class="btn btn-success" asp-controller="Material" asp-action="Edit"
+                                asp-route-id="@material.Id">Edit</a>
+                            <button class="btn btn-danger" data-toggle="modal"
+                                data-target="#confirm-delete-modal-@material.Id">Delete</button>
+                            <div class="modal fade" id="confirm-delete-modal-@material.Id">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">Confirm Delete</div>
+                                        <div class="modal-body">Are you sure want to delete material "@material.Name"</div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-light" data-dismiss="modal">cancel</button>
+                                            <form asp-controller="Material" asp-action="Delete" asp-route-id="@material.Id">
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 }
