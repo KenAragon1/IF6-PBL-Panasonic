@@ -21,6 +21,8 @@ public class AuthController : Controller
     }
     public IActionResult Login()
     {
+        Console.WriteLine("Login page");
+
         if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Dashboard");
 
         return View();
@@ -29,7 +31,6 @@ public class AuthController : Controller
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel LoginForm)
     {
-
         if (!ModelState.IsValid) return View();
 
         var user = await _userRepository.GetAsync(employeeid: LoginForm.EmployeeID);
@@ -55,7 +56,8 @@ public class AuthController : Controller
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Fullname),
-            new Claim(ClaimTypes.Role, user.Role.RoleName)
+            new Claim(ClaimTypes.Role, user.Role.RoleName),
+            new Claim("AreaId", user.AreaId.ToString() ?? "N/A"),
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

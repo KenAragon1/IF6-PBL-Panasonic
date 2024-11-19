@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using panasonic.Data.Queries;
-using panasonic.Dtos.User;
 using panasonic.Models;
 using panasonic.Repositories;
-using panasonic.ViewModels;
+using panasonic.ViewModels.UserViewModel;
 
 namespace panasonic.Controllers;
 
@@ -26,21 +25,23 @@ public class UserController : BaseController
 
     public async Task<IActionResult> Index([FromQuery] UserQueryObject userQueryObject)
     {
-        var ViewModel = new UserViewModel
+        var ViewModel = new IndexViewModel
         {
+            roles = await _dbContext.Roles.ToListAsync(),
             users = await _userRepository.GetAllAsync(userQueryObject, isVerified: true),
-            roles = await _dbContext.Roles.ToListAsync()
         };
+
+        if (Request.Headers.ContainsKey("x-refresh")) return PartialView("~/Views/Shared/Components/User/_UserTable.cshtml", ViewModel.users);
 
         return View(ViewModel);
     }
 
     public async Task<IActionResult> UnverifiedUsers([FromQuery] UserQueryObject userQueryObject)
     {
-        var viewModel = new UnverifiedUserViewModel
+        var viewModel = new IndexViewModel
         {
+            roles = await _dbContext.Roles.ToListAsync(),
             users = await _userRepository.GetAllAsync(userQueryObject, isVerified: false),
-            roles = await _dbContext.Roles.ToListAsync()
         };
         return View(viewModel);
     }
@@ -62,30 +63,30 @@ public class UserController : BaseController
 
     public async Task<IActionResult> Create()
     {
-        var ViewModel = new CreateUserViewModel
-        {
-            Roles = await _dbContext.Roles.ToListAsync()
-        };
-        return View(ViewModel);
+        var viewModel = new CreateUserViewModel { roles = await _dbContext.Roles.ToListAsync() };
+
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateUserDto createUserDto)
+    public async Task<IActionResult> Create(CreateUserViewModel createUserViewModel)
     {
 
         if (!ModelState.IsValid)
         {
             var ViewModel = new CreateUserViewModel
             {
-                Roles = await _dbContext.Roles.ToListAsync()
+                EmployeeID = createUserViewModel.EmployeeID,
+                Email = createUserViewModel.Email,
+                Fullname = createUserViewModel.Fullname,
+                roles = await _dbContext.Roles.ToListAsync()
             };
-
             return View(ViewModel);
         }
 
-        var user = new User { EmployeeID = createUserDto.EmployeeID, Email = createUserDto.Email, Fullname = createUserDto.Fullname, RoleId = createUserDto.RoleId, IsVerified = true };
-        user.HashedPassword = _passwordHasher.HashPassword(user, createUserDto.Password);
+        var user = new User { EmployeeID = createUserViewModel.EmployeeID, Email = createUserViewModel.Email, Fullname = createUserViewModel.Fullname, RoleId = createUserViewModel.RoleId, IsVerified = true };
+        user.HashedPassword = _passwordHasher.HashPassword(user, createUserViewModel.Password);
         await _userRepository.StoreAsync(user);
 
 
@@ -93,23 +94,19 @@ public class UserController : BaseController
         return RedirectToAction("Index");
     }
 
-    public async Task<IActionResult> Edit(int Id)
+    public async Task<IActionResult> Detail(int Id)
     {
         var user = await _userRepository.GetAsync(id: Id);
 
         if (user == null) return NotFound();
 
-        var viewModel = new EditUserViewModel
-        {
-            EditUserDto = new EditUserDto { Id = user.Id, Email = user.Email, EmployeeID = user.EmployeeID, Fullname = user.Fullname, RoleId = user.RoleId },
-            Roles = await _dbContext.Roles.ToListAsync()
-        };
+        var viewModel = new UserDetailViewModel { Id = user.Id, Fullname = user.Fullname, Email = user.Email, EmployeeID = user.EmployeeID, RoleId = user.RoleId, roles = await _dbContext.Roles.ToListAsync() };
 
         return View(viewModel);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(int Id, EditUserDto editUserDto)
+    public async Task<IActionResult> Edit(int Id, UserDetailViewModel userDetailViewModel)
     {
         var user = await _userRepository.GetAsync(id: Id);
 
@@ -117,19 +114,15 @@ public class UserController : BaseController
 
         if (!ModelState.IsValid)
         {
-            var viewModel = new EditUserViewModel
-            {
-                EditUserDto = new EditUserDto { Id = user.Id, Email = user.Email, EmployeeID = user.EmployeeID, Fullname = user.Fullname, RoleId = user.RoleId },
-                Roles = await _dbContext.Roles.ToListAsync()
-            };
 
-            return View(viewModel);
+
+            return View(userDetailViewModel);
         }
 
-        user.EmployeeID = editUserDto.EmployeeID;
-        user.Email = editUserDto.Email;
-        user.Fullname = editUserDto.Fullname;
-        user.RoleId = editUserDto.RoleId;
+        user.EmployeeID = userDetailViewModel.EmployeeID;
+        user.Email = userDetailViewModel.Email;
+        user.Fullname = userDetailViewModel.Fullname;
+        user.RoleId = userDetailViewModel.RoleId;
 
         await _userRepository.UpdateAsync(user);
 
@@ -146,6 +139,7 @@ public class UserController : BaseController
         if (user == null) return NotFound();
 
         await _userRepository.DeleteAsync(user);
+
 
         TempData["SuccessMessage"] = "Delete User Success";
         return RedirectToAction("Index");

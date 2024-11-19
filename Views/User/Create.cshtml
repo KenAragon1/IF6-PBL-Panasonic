@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.CreateUserViewModel;
+@model panasonic.ViewModels.UserViewModel.CreateUserViewModel;
 
 @{
 
@@ -8,51 +8,49 @@
 <div class="card">
     <div class="card-content">
         <div class="card-body">
-            <form asp-action="Create" method="post">
+            <form asp-action="Create" method="post" role="form" aria-labelledby="register-form-label" id="">
                 <div class="form-row">
                     @Html.AntiForgeryToken()
                     <div class="form-group col-md-4">
                         <label>Employee ID</label>
-                        <input type="number" class="form-control mb-1" placeholder="Employee ID"
-                            asp-for="CreateUserDto.EmployeeID">
-                        <span class="text-danger" asp-validation-for="CreateUserDto.EmployeeID"></span>
+                        <input type="number" class="form-control mb-1" placeholder="Employee ID" asp-for="EmployeeID">
+                        <span class="text-danger" asp-validation-for="EmployeeID"></span>
                     </div>
                     <div class="form-group col-md-4">
                         <label>Full Name</label>
-                        <input type="text" class="form-control mb-1" placeholder="Full Name"
-                            asp-for="CreateUserDto.Fullname">
-                        <span class="text-danger" asp-validation-for="CreateUserDto.Fullname"></span>
+                        <input type="text" class="form-control mb-1" placeholder="Full Name" asp-for="Fullname">
+                        <span class="text-danger" asp-validation-for="Fullname"></span>
                     </div>
                     <div class="form-group col-md-4">
                         <label>Email</label>
-                        <input type="email" class="form-control mb-1" placeholder="Email" asp-for="CreateUserDto.Email">
-                        <span class="text-danger" asp-validation-for="CreateUserDto.Email"></span>
+                        <input type="email" class="form-control mb-1" placeholder="Email" asp-for="Email">
+                        <span class="text-danger" asp-validation-for="Email"></span>
                     </div>
 
 
                     <div class="form-group col-12">
                         <label>Role</label>
-                        <select class="form-control mb-1" asp-for="CreateUserDto.RoleId">
-                            @foreach (var role in @Model.Roles)
+                        <select class="form-control mb-1" asp-for="RoleId">
+                            @foreach (var role in @Model.roles)
                             {
                                 <option value="@role.Id">@role.DisplayName</option>
                             }
                         </select>
-                        <span class="text-danger" asp-validation-for="CreateUserDto.RoleId"></span>
+                        <span class="text-danger" asp-validation-for="RoleId"></span>
 
                     </div>
 
                     <div class="form-group col-md-6">
                         <label>Password</label>
                         <input type="password" class="form-control mb-1" placeholder="Password"
-                            asp-for="CreateUserDto.Password">
-                        <span class="text-danger" asp-validation-for="CreateUserDto.Password"></span>
+                            autocomplete="new-password" asp-for="Password">
+                        <span class="text-danger" asp-validation-for="Password"></span>
                     </div>
                     <div class="form-group col-md-6">
                         <label>Confirm Password</label>
                         <input type="password" class="form-control" placeholder="Confirm Password"
-                            asp-for="CreateUserDto.ConfirmPassword">
-                        <span class="text-danger" asp-validation-for="CreateUserDto.ConfirmPassword"></span>
+                            autocomplete="new-password" asp-for="ConfirmPassword">
+                        <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
 
                     </div>
                 </div>

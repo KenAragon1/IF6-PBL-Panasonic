@@ -1,6 +1,6 @@
 namespace panasonic.Models;
 
-public class MaterialStock
+public class AreaMaterial
 {
     public int Id { get; set; }
 

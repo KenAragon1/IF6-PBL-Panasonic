@@ -8,7 +8,7 @@ using panasonic.ViewModels.MaterialViewModel;
 namespace panasonic.Controllers;
 
 [Authorize]
-public class MaterialController : Controller
+public class MaterialController : BaseController
 {
     private readonly IMaterialRepository _materialRepository;
     private readonly IFileHelper _fileHelper;
@@ -72,7 +72,7 @@ public class MaterialController : Controller
 
         if (material == null) return NotFound();
 
-        var viewModel = new EditMaterialViewModel { Id = material.Id, Name = material.Name, Description = material.Name, OldQrCodeImageurl = material.QrCodeUrl };
+        var viewModel = new EditMaterialViewModel { Id = material.Id, Name = material.Name, Description = material.Description, OldQrCodeImageurl = material.QrCodeUrl };
 
         return View(viewModel);
     }

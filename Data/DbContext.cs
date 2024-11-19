@@ -11,9 +11,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<Material> Materials { get; set; }
     public DbSet<AreaType> AreaTypes { get; set; }
-    public DbSet<Area> Area { get; set; }
-    public DbSet<MaterialStock> MaterialStocks { get; set; }
-
+    public DbSet<Area> Areas { get; set; }
+    public DbSet<AreaMaterial> AreaMaterials { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,6 +26,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<User>().HasIndex(u => u.EmployeeID).IsUnique();
         modelBuilder.Entity<User>().Property(u => u.RoleId).HasDefaultValue(1);
         modelBuilder.Entity<User>().Property(u => u.CreatedAt).HasDefaultValueSql("GETDATE()");
+
         UserSeeder.Seed(modelBuilder);
 
         // Area Type

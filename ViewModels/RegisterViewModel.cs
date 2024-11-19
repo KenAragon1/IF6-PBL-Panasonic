@@ -6,7 +6,7 @@ namespace panasonic.ViewModels;
 public class RegisterViewModel
 {
     [Required(ErrorMessage = "Employee ID is required.")]
-    [Range(8, 8, ErrorMessage = "Employee Id must be 8 digits")]
+    // [Range(8, 8, ErrorMessage = "Employee Id must be 8 digits")]
     [UniqueEmployeeId]
     public int EmployeeID { get; set; }
 

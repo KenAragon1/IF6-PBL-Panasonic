@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.UserViewModel;
+@model panasonic.ViewModels.UserViewModel.IndexViewModel;
 
 @{
     ViewData["PanelTitle"] = "Manage Users";
@@ -13,7 +13,7 @@
         <div class="card-title">Filter</div>
     </div>
     <div class="card-body">
-        <form action="">
+        <form id="filter-user-form">
             <div class="form-row">
                 <div class="form-group col-4">
                     <label>Employee ID</label>
@@ -36,7 +36,7 @@
                 </div>
             </div>
             <div>
-                <a asp-action="Index" class="btn btn-dark">Clear Filter</a>
+                <button type="button" id="reset-filter-form-btn" class="btn btn-dark">Clear Filter</button>
                 <button type="submit" class="ml-2 btn btn-primary">Filter</button>
             </div>
         </form>
@@ -45,56 +45,70 @@
 
 <div class="card">
     <div class="card-body">
-        <div class="table-responsive">
-
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Employee ID</th>
-                        <th>Full Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var user in @Model.users)
-                    {
-                        <tr>
-                            <td>@user.EmployeeID</td>
-                            <td>@user.Fullname</td>
-                            <td>@user.Email</td>
-                            <td>@user.Role.DisplayName</td>
-                            <td>
-                                <a asp-controller="User" asp-action="Edit" asp-route-id="@user.Id"
-                                    class="btn btn-success">Edit</a>
-                                <button class="btn btn-danger" data-employeeid="@user.EmployeeID" data-toggle="modal"
-                                    data-target="#delete-user-confirmation-@user.Id">Delete</button>
-                                <div class="modal fade" id="delete-user-confirmation-@user.Id">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <div class="modal-title">Delete Confirmation</div>
-                                            </div>
-                                            <div class="modal-body">Are You Sure Want To Delete @user.Fullname</div>
-                                            <div class="modal-footer">
-                                                <button class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                                <form asp-controller="User" asp-action="Delete" asp-route-id="@user.Id"
-                                                    method="post">
-                                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-
-
-                    }
-
-                </tbody>
-            </table>
+        <div class="table-responsive" id="user-table">
+            <partial name="~/Views/Shared/Components/User/_UserTable.cshtml" model="@Model.users" />
         </div>
     </div>
 </div>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#filter-user-form').on('submit', function (e) {
+                e.preventDefault();
+
+                const query = $(this).serialize();
+                const baseUrl = window.location.origin + window.location.pathname;
+                const newUrl = baseUrl + "?" + query;
+
+                window.history.pushState({}, '', newUrl)
+
+                ajaxRequestAndRender(this, newUrl)
+
+            });
+
+            $('#reset-filter-form-btn').on('click', function (e) {
+                const filterUserForm = $('#filter-user-form');
+                filterUserForm.find('input, select').each(function () {
+                    $(this).val(null)
+                })
+                filterUserForm.submit();
+            })
+
+
+        });
+
+        function ajaxRequestAndRender(form, url, method = "get", successAlertMessage, onAlways = function () { }) {
+            disableAllButtons(form);
+
+            $.ajax(url, {
+                method,
+                headers: {
+                    'x-refresh': true
+                },
+                success: function (response) {
+                    $('#user-table').html(response);
+                    if (successAlertMessage) {
+                        $.notify({ message: successAlertMessage }, { type: "success" })
+                    }
+                }
+            }).always(function () {
+                enableAllButtons(form);
+                onAlways();
+
+            })
+        }
+
+        function disableAllButtons(form) {
+            $(form).find('button').prop('disabled', true)
+        }
+        function enableAllButtons(form) {
+            $(form).find('button').prop('disabled', false)
+        }
+
+
+
+    </script>
+}

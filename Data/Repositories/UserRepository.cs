@@ -25,13 +25,17 @@ public class UserRepository : IUserRepository
         _dbContext = dbContext;
     }
 
-    public async Task<List<User>> GetAllAsync(UserQueryObject userQueryObject, bool? isVerified = null)
+    public async Task<List<User>> GetAllAsync(UserQueryObject? userQueryObject = null, bool? isVerified = null)
     {
         var query = _dbContext.Users.Include(u => u.Role).OrderBy(u => u.Fullname).AsQueryable();
-        if (userQueryObject.EmployeeID.HasValue | userQueryObject.EmployeeID != 0) query = query.Where(u => EF.Functions.Like(u.EmployeeID.ToString(), userQueryObject.EmployeeID + "%"));
-        if (!string.IsNullOrEmpty(userQueryObject.Fullname)) query = query.Where(u => EF.Functions.Like(u.Fullname, userQueryObject.Fullname + "%"));
-        if (!string.IsNullOrEmpty(userQueryObject.RoleName)) query = query.Where(u => u.Role.RoleName == userQueryObject.RoleName);
-        if (isVerified != null) query = query.Where(u => u.IsVerified == isVerified);
+        if (userQueryObject != null)
+        {
+            if (userQueryObject.EmployeeID.HasValue | userQueryObject.EmployeeID != 0) query = query.Where(u => EF.Functions.Like(u.EmployeeID.ToString(), userQueryObject.EmployeeID + "%"));
+            if (!string.IsNullOrEmpty(userQueryObject.Fullname)) query = query.Where(u => EF.Functions.Like(u.Fullname, userQueryObject.Fullname + "%"));
+            if (!string.IsNullOrEmpty(userQueryObject.RoleName)) query = query.Where(u => u.Role.RoleName == userQueryObject.RoleName);
+            if (isVerified != null) query = query.Where(u => u.IsVerified == isVerified);
+            if (userQueryObject.AreaId.HasValue) query = query.Where(u => u.AreaId == userQueryObject.AreaId);
+        }
 
         return await query.ToListAsync();
     }

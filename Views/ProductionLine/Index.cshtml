@@ -1,0 +1,39 @@
+@model panasonic.ViewModels.ProductionLineViewModel.IndexViewModel;
+
+@{
+    ViewData["PanelTitle"] = "Manage Production Line";
+    var index = 1;
+}
+
+@section PanelButtons {
+    <a asp-controller="ProductionLine" asp-action="Create" class="btn btn-secondary">Add New Line</a>
+}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Line</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var area in @Model.areas)
+                {
+                    <tr>
+                        <td>@(index++)</td>
+                        <td>Line - @area.Specifier</td>
+                        <td></td>
+                        <td>
+                            <a asp-controller="ProductionLine" asp-action="Manage" asp-route-id="@area.Id"
+                                class="btn btn-primary">Manage</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

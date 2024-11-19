@@ -1,0 +1,19 @@
+@model panasonic.ViewModels.ProductionLineViewModel.CreateViewModel;
+
+@{
+    ViewData["PanelTitle"] = "Add New Production Line";
+}
+
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="">Line Number</label>
+                <input class="form-control" type="text" asp-for="@Model.LineNumber">
+            </div>
+            <button class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
