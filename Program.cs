@@ -64,4 +64,12 @@ app.MapControllerRoute(
     defaults: new { controller = "PrepRoom" }
 );
 
+//Route for Material Usage
+app.MapControllerRoute(
+    name: "materialusage",
+    pattern: "MaterialUsage/{action=Index}/{id?}",
+    defaults: new { controller = "MaterialUsage" }
+);
+
+
 app.Run();

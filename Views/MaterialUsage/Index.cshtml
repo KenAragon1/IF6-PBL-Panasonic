@@ -1,0 +1,50 @@
+@{
+    ViewData["PanelTitle"] = "Material Usage History";
+    var materialUsages = ViewData["MaterialUsages"] as List<dynamic>;
+}
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@ViewData["Title"]</h5>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Recipient's Name</th>
+                    <th scope="col">Employee ID</th>
+                    <th scope="col">Material Name</th>
+                    <th scope="col">Weight</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">Line</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (materialUsages != null && materialUsages.Any())
+                {
+                    int no = 1;
+                    foreach (var usage in materialUsages)
+                    {
+                        <tr>
+                            <td>@no</td>
+                            <td>@usage.RecipientName</td>
+                            <td>@usage.EmployeeId</td>
+                            <td>@usage.MaterialName</td>
+                            <td>@usage.Weight</td>
+                            <td>@usage.Quantity</td>
+                            <td>@usage.Unit</td>
+                            <td>@usage.Line</td>
+                        </tr>
+                        no++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">No materials used</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
