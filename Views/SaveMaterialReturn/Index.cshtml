@@ -1,0 +1,43 @@
+@{
+    ViewData["PanelTitle"] = "Material Return History";
+    var returnMaterials = ViewData["ReturnMaterials"] as List<dynamic>;
+}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Material Name</th>
+                    <th scope="col">Return Quantity</th>
+                    <th scope="col">Reason of Return</th>
+                    <th scope="col">Return Date</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (returnMaterials != null && returnMaterials.Any())
+                {
+                    foreach (var material in returnMaterials)
+                    {
+                        <tr>
+                            <td>@material.MaterialName</td>
+                            <td>@material.ReturnQuantity</td>
+                            <td>@material.ReasonOfReturn</td>
+                            <td>@material.ReturnDate</td>
+                            <td>
+                                <button class="btn btn-success btn-sm">Save</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">No material returns available</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

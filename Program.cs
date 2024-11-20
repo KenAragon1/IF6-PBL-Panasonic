@@ -90,4 +90,10 @@ app.MapControllerRoute(
     defaults: new { controller = "sendmaterialreturn" }
 );
 
+app.MapControllerRoute(
+    name: "savematerialreturn",
+    pattern: "savematerialreturn/{action=Index}/{id?}",
+    defaults: new { controller = "savematerialreturn" }
+);
+
 app.Run();
