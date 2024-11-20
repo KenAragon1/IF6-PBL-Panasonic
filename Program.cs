@@ -96,4 +96,10 @@ app.MapControllerRoute(
     defaults: new { controller = "savematerialreturn" }
 );
 
+app.MapControllerRoute(
+    name: "konfirmmaterialrequest",
+    pattern: "konfirmmaterialrequest/{action=Index}/{id?}",
+    defaults: new { controller = "konfirmmaterialrequest" }
+);
+
 app.Run();
