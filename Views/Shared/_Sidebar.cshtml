@@ -157,7 +157,22 @@
                         <span class="sub-item">Material Return</span>
                     </a>
                 </li>
-            </ul>
+
+                  @* Store Manager Menu *@
+                <li class="nav-section">
+                    <span class="sidebar-mini-icon">
+                        <i class="fa fa-ellipsis-h"></i>
+                    </span>
+                    <h4 class="text-section">Store Manager</h4>
+                </li>
+                <li class="nav-item @(currentPath == "/ManageRequestMaterial" ? "active" : "")">
+                    <a asp-controller="ManageMaterialRequest" asp-action="Index">
+                        <i class="fas fa-home"></i>
+                        <span class="sub-item">Manage Material Request</span>
+                    </a>
+                </li>
+  </li>
+            </ul> 
         </div>
     </div>
     <div class="scroll-element scroll-x scroll-scrolly_visible" style="">
