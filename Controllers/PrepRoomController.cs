@@ -5,10 +5,9 @@ namespace PBL_IF6_Panasonic.Controllers
 {
     public class PrepRoomController : Controller
     {
-        // Action untuk halaman utama
         public IActionResult Index()
         {
-            // Data statis untuk ditampilkan di view
+            
             var materials = new List<dynamic>
             {
                 new { 
@@ -43,10 +42,9 @@ namespace PBL_IF6_Panasonic.Controllers
                 }
             };
 
-            // Mengirimkan data materials ke view
+          
             ViewData["Materials"] = materials;
 
-            // Render view Data.cshtml
             return View("Data");
         }
     }

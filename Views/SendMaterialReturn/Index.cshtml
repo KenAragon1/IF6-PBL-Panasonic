@@ -47,17 +47,17 @@
 
 @section Scripts {
     <script>
-        // Event handler untuk tombol Approve
+        
         document.querySelectorAll('.approve-button').forEach(button => {
             button.addEventListener('click', function () {
                 const id = this.getAttribute('data-id');
                 const statusElement = document.getElementById(`status-${id}`);
                 const currentStatus = this.getAttribute('data-status');
 
-                // Toggle status antara "Pending" dan "Approved"
+              
                 const newStatus = currentStatus === "Pending" ? "Approved" : "Pending";
 
-                // Kirim request ke server untuk memperbarui status
+                
                 fetch('/ReturnMaterial/UpdateStatus', {
                     method: 'POST',
                     headers: {
@@ -68,7 +68,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Update status di UI
+                       
                         statusElement.textContent = data.newStatus;
                         statusElement.className = `badge ${data.newStatus === "Approved" ? "bg-success" : "bg-danger"}`;
                         this.setAttribute('data-status', data.newStatus);
