@@ -119,6 +119,13 @@
                         <span class="sub-item">Manage Preperation Room</span>
                     </a>
                 </li>
+                 <li class="nav-item @(currentPath == "/SendMaterialReturn" ? "active" : "")">
+                    <a asp-controller="SendMaterialReturn" asp-action="Index">
+                        <i class="fas fa-home"></i>
+                        <span class="sub-item">Material Return </span>
+                    </a>
+                </li>
+
 
                 @* Asistant Leader Menu *@
                 <li class="nav-section">
@@ -154,7 +161,7 @@
                  <li class="nav-item @(currentPath == "/MateriaReturn" ? "active" : "")">
                     <a asp-controller="MaterialReturn" asp-action="Index">
                         <i class="fas fa-home"></i>
-                        <span class="sub-item">Material Return</span>
+                        <span class="sub-item">Material Return </span>
                     </a>
                 </li>
 

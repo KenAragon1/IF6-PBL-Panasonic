@@ -1,0 +1,85 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["PanelTitle"] = "Return Material";
+}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-bordered table-hover" id="materialReturnTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Material Name</th>
+                    <th>Return Quantity</th>
+                    <th>Reason of Return</th>
+                    <th>Return Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var material in Model)
+                {
+                    <tr id="return-@material.No">
+                        <td>@material.No</td>
+                        <td>@material.MaterialName</td>
+                        <td>@material.ReturnQuantity</td>
+                        <td>@material.Reason</td>
+                        <td>
+                            <span id="status-@material.No" 
+                                  class="badge @((material.Status == "Approved") ? "bg-success" : "bg-danger")">
+                                @material.Status
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-success btn-sm approve-button" 
+                                    data-id="@material.No" 
+                                    data-status="@material.Status">
+                                Approve
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Event handler untuk tombol Approve
+        document.querySelectorAll('.approve-button').forEach(button => {
+            button.addEventListener('click', function () {
+                const id = this.getAttribute('data-id');
+                const statusElement = document.getElementById(`status-${id}`);
+                const currentStatus = this.getAttribute('data-status');
+
+                // Toggle status antara "Pending" dan "Approved"
+                const newStatus = currentStatus === "Pending" ? "Approved" : "Pending";
+
+                // Kirim request ke server untuk memperbarui status
+                fetch('/ReturnMaterial/UpdateStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id, status: newStatus })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update status di UI
+                        statusElement.textContent = data.newStatus;
+                        statusElement.className = `badge ${data.newStatus === "Approved" ? "bg-success" : "bg-danger"}`;
+                        this.setAttribute('data-status', data.newStatus);
+                    } else {
+                        alert('Failed to update status.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Error updating status:', err);
+                });
+            });
+        });
+    </script>
+}

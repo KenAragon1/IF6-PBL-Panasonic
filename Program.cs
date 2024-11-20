@@ -84,4 +84,10 @@ app.MapControllerRoute(
     defaults: new { controller = "managematerialrequest" }
 );
 
+app.MapControllerRoute(
+    name: "sendmaterialreturn",
+    pattern: "sendmaterialreturn/{action=Index}/{id?}",
+    defaults: new { controller = "sendmaterialreturn" }
+);
+
 app.Run();
