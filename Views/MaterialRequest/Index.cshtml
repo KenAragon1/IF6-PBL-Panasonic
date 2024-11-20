@@ -23,6 +23,20 @@
                 </tr>
             </thead>
             <tbody>
+                @foreach (var request in ViewBag.MaterialRequests)
+                {
+                    <tr>
+                        <td>@request.No</td>
+                        <td>@request.RequestedDate</td>
+                        <td>@request.RequestedBy</td>
+                        <td>@request.MaterialName</td>
+                        <td>@request.Quantity</td>
+                        <td>@request.Weight</td>
+                        <td>@request.Unit</td>
+                        <td>@request.Remark</td>
+                        <td>@request.Status</td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>
@@ -59,7 +73,7 @@
                         <input type="number" id="weight" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label for="unit" class="form-label">Unit</label> <!-- Added Unit input -->
+                        <label for="unit" class="form-label">Unit</label>
                         <input type="text" id="unit" class="form-control" required>
                     </div>
                     <div class="mb-3">
@@ -79,35 +93,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const requests = [
-        { Id: 1, No: 1, RequestedDate: "2024-11-18", RequestedBy: "John", MaterialName: "Steel", Quantity: 100, Weight: 200, Unit: "kg", Remark: "Urgent", Status: "Pending" },
-        { Id: 2, No: 2, RequestedDate: "2024-11-19", RequestedBy: "Jane", MaterialName: "Copper", Quantity: 50, Weight: 100, Unit: "kg", Remark: "Low priority", Status: "Approved" },
-        { Id: 3, No: 3, RequestedDate: "2024-11-20", RequestedBy: "Mike", MaterialName: "Aluminum", Quantity: 75, Weight: 150, Unit: "kg", Remark: "Urgent", Status: "In Progress" },
-    ];
-
-    function renderTable() {
-        const tableBody = document.querySelector("#materialRequestTable tbody");
-        tableBody.innerHTML = ""; 
-
-        requests.forEach(request => {
-            const row = `
-                <tr id="request-${request.Id}">
-                    <td>${request.No}</td>
-                    <td>${request.RequestedDate}</td>
-                    <td>${request.RequestedBy}</td>
-                    <td>${request.MaterialName}</td>
-                    <td>${request.Quantity}</td>
-                    <td>${request.Weight}</td>
-                    <td>${request.Unit}</td> <!-- Added Unit in table -->
-                    <td>${request.Remark}</td>
-                    <td>${request.Status}</td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
-    }
-
-    
     document.getElementById("submitRequestButton").addEventListener("click", function() {
         const requestedBy = document.getElementById("requestedBy").value;
         const requestedDate = document.getElementById("requestedDate").value;
@@ -117,33 +102,14 @@
         const unit = document.getElementById("unit").value;  
         const remark = document.getElementById("remark").value;
 
-      
         if (!requestedBy || !requestedDate || !materialName || !quantity || !weight || !unit || !remark) {
             alert("Please fill in all fields.");
             return;
         }
 
-        // Generate a new request with an incremented Id
-        const newRequest = {
-            Id: requests.length + 1,
-            No: requests.length + 1,
-            RequestedDate: requestedDate,
-            RequestedBy: requestedBy,
-            MaterialName: materialName,
-            Quantity: quantity,
-            Weight: weight,
-            Unit: unit, 
-            Remark: remark,
-            Status: "Pending"
-        };
 
-    
-        requests.push(newRequest);
-        renderTable();
-        
-       
+        alert("Request submitted successfully!");
+
         document.querySelector('[data-bs-dismiss="modal"]').click();
     });
-
-    document.addEventListener("DOMContentLoaded", renderTable);
 </script>

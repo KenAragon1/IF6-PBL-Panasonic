@@ -158,13 +158,13 @@
                         <span class="sub-item">Material Usage</span>
                     </a>
                 </li>
-                 <li class="nav-item @(currentPath == "/MateriaReturn" ? "active" : "")">
+                <li class="nav-item @(currentPath == "/MaterialReturn" ? "active" : "")">
                     <a asp-controller="MaterialReturn" asp-action="Index">
-                        <i class="fas fa-undo"></i>
-                        <span class="sub-item">Material Return </span>
-                    </a>
+                    <i class="fas fa-undo"></i>
+                    <span class="sub-item">Material Return</span>
+                 </a>
                 </li>
-
+                
                   @* Store Manager Menu *@
                 <li class="nav-section">
                     <span class="sidebar-mini-icon">
@@ -172,13 +172,13 @@
                     </span>
                     <h4 class="text-section">Store Manager</h4>
                 </li>
-                <li class="nav-item @(currentPath == "/ManageRequestMaterial" ? "active" : "")">
-                    <a asp-controller="ManageMaterialRequest" asp-action="Index">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span class="sub-item">Manage Material Request</span>
-                    </a>
+                <li class="nav-item @(currentPath == "/ManageMaterialRequest" ? "active" : "")">
+                     <a asp-controller="ManageMaterialRequest" asp-action="Index">
+                     <i class="fas fa-undo"></i>
+                     <span class="sub-item">Manage Material Request</span>
+                </a>
                 </li>
-  </li>
+                </li>
             </ul> 
         </div>
     </div>
