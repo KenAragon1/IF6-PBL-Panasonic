@@ -71,5 +71,11 @@ app.MapControllerRoute(
     defaults: new { controller = "MaterialUsage" }
 );
 
+//Route material return
+app.MapControllerRoute(
+    name: "materialreturn",
+    pattern: "MaterialReturn/{action=Index}/{id?}",
+    defaults: new { controller = "MaterialReturn" }
+);
 
 app.Run();
