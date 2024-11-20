@@ -57,4 +57,11 @@ app.MapControllerRoute(
     defaults: new { controller = "MaterialRequest" }
 );
 
+//Route preproom
+app.MapControllerRoute(
+    name: "preproom",
+    pattern: "PrepRoom/{action=Index}/{id?}",
+    defaults: new { controller = "PrepRoom" }
+);
+
 app.Run();
