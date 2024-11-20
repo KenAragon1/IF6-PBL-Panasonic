@@ -50,4 +50,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
+// Tambahkan routing untuk MaterialRequest
+app.MapControllerRoute(
+    name: "materialrequest",
+    pattern: "MaterialRequest/{action=Index}/{id?}",
+    defaults: new { controller = "MaterialRequest" }
+);
+
 app.Run();
