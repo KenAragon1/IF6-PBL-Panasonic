@@ -57,7 +57,7 @@ public class ProductionLineController : BaseController
             return View(createViewModel);
         }
 
-        var area = new Area { Specifier = createViewModel.LineNumber.ToString(), AreaTypeId = 3 };
+        var area = new Area { Remark = createViewModel.LineNumber, Type = AreaTypes.ProductionLine };
 
         await _areaRepository.Create(area);
 

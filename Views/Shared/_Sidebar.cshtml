@@ -72,12 +72,7 @@
                             <span class="sub-item">Manage Users</span>
                         </a>
                     </li>
-                    <li class="nav-item @(currentPath == "/Material" ? "active" : "")">
-                        <a asp-controller="Material" asp-action="Index">
-                            <i class="fas fa-home"></i>
-                            <span class="sub-item">Material List</span>
-                        </a>
-                    </li>
+
                     <li class="nav-item @(currentPath == "/ProductionLine" ? "active" : "")">
                         <a asp-controller="ProductionLine" asp-action="Index">
                             <i class="fas fa-home"></i>
@@ -86,106 +81,133 @@
                     </li>
                 }
 
+
                 @* Shift Leader Menu *@
-                <li class="nav-section">
-                    <span class="sidebar-mini-icon">
-                        <i class="fa fa-ellipsis-h"></i>
-                    </span>
-                    <h4 class="text-section">Shift Leader Menu</h4>
-                </li>
-                <li class="nav-item @(currentPath == "/User" ? "active" : "")">
-                    <a asp-controller="User" asp-action="Index">
-                        <i class="fas fa-clock"></i>
-                        <span class="sub-item">Manage Shifts</span>
-                    </a>
-                </li>
-                <li class="nav-item @(currentPath == "/KonfirmMaterialRequest" ? "active" : "")">
-                    <a asp-controller="KonfirmMaterialRequest" asp-action="Index">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span class="sub-item">Material Request</span>
-                    </a>
-                </li>
+                @if (ViewBag.Role == "ShiftLeader")
+                {
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section">Shift Leader Menu</h4>
+                    </li>
+                    <li class="nav-item @(currentPath == "/User" ? "active" : "")">
+                        <a asp-controller="User" asp-action="Index">
+                            <i class="fas fa-clock"></i>
+                            <span class="sub-item">Manage Shifts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialRequest" ? "active" : "")">
+                        <a asp-controller="MaterialRequest" asp-action="Index">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span class="sub-item">Material Request</span>
+                        </a>
+                    </li>
+                }
+
+
 
                 @* Material Handler Menu *@
-                <li class="nav-section">
-                    <span class="sidebar-mini-icon">
-                        <i class="fa fa-ellipsis-h"></i>
-                    </span>
-                    <h4 class="text-section">Material Handler Menu</h4>
-                </li>
-                <li class="nav-item @(currentPath == "/User" ? "active" : "")">
-                    <a asp-controller="User" asp-action="Index">
-                        <i class="fas fa-cogs"></i>
-                        <span class="sub-item">Manage Preperation Room</span>
-                    </a>
-                </li>
-                 <li class="nav-item @(currentPath == "/SendMaterialReturn" ? "active" : "")">
-                    <a asp-controller="SendMaterialReturn" asp-action="Index">
-                        <i class="fas fa-undo"></i>
-                        <span class="sub-item">Material Return </span>
-                    </a>
-                </li>
-
+                @if (ViewBag.Role == "MaterialHandler")
+                {
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section">Material Handler Menu</h4>
+                    </li>
+                    <li class="nav-item @(currentPath == "/User" ? "active" : "")">
+                        <a asp-controller="User" asp-action="Index">
+                            <i class="fas fa-cogs"></i>
+                            <span class="sub-item">Manage Preperation Room</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/SendMaterialReturn" ? "active" : "")">
+                        <a asp-controller="SendMaterialReturn" asp-action="Index">
+                            <i class="fas fa-undo"></i>
+                            <span class="sub-item">Material Return </span>
+                        </a>
+                    </li>
+                }
 
                 @* Asistant Leader Menu *@
-                <li class="nav-section">
-                    <span class="sidebar-mini-icon">
-                        <i class="fa fa-ellipsis-h"></i>
-                    </span>
-                    <h4 class="text-section">Asistant Leader</h4>
-                </li>
-                <li class="nav-item @(currentPath == "/User" ? "active" : "")">
-                    <a asp-controller="User" asp-action="Index">
-                        <i class="fas fa-home"></i>
-                        <span class="sub-item">Manage Line</span>
-                    </a>
-                </li>
-                <li class="nav-item @(currentPath == "/MaterialRequest" ? "active" : "")">
-                    <a asp-controller="MaterialRequest" asp-action="Index">
-                        <i class="fas fa-clipboard-list"></i>
-                        <span class="sub-item">Material Request</span>
-                    </a>
-                </li>
-                <li class="nav-item @(currentPath == "/PrepRoom" ? "active" : "")">
-                    <a asp-controller="PrepRoom" asp-action="Index">
-                        <i class="fas fa-cogs"></i>
-                        <span class="sub-item">Preparation Room</span>
-                    </a>
-                </li>
-                <li class="nav-item @(currentPath == "/MaterialUsage" ? "active" : "")">
-                    <a asp-controller="MaterialUsage" asp-action="Index">
-                        <i class="fas fa-dolly"></i>
-                        <span class="sub-item">Material Usage</span>
-                    </a>
-                </li>
-                <li class="nav-item @(currentPath == "/MaterialReturn" ? "active" : "")">
-                    <a asp-controller="MaterialReturn" asp-action="Index">
-                    <i class="fas fa-undo"></i>
-                    <span class="sub-item">Material Return</span>
-                 </a>
-                </li>
-                
-                  @* Store Manager Menu *@
-                <li class="nav-section">
-                    <span class="sidebar-mini-icon">
-                        <i class="fa fa-ellipsis-h"></i>
-                    </span>
-                    <h4 class="text-section">Store Manager</h4>
-                </li>
-                <li class="nav-item @(currentPath == "/ManageMaterialRequest" ? "active" : "")">
-                     <a asp-controller="ManageMaterialRequest" asp-action="Index">
-                     <i class="fas fa-clipboard-list"></i>
-                     <span class="sub-item">Manage Material Request</span>
-                </a>
-                </li>
-                <li class="nav-item @(currentPath == "/SaveMaterialReturn" ? "active" : "")">
-                    <a asp-controller="SaveMaterialReturn" asp-action="Index">
-                    <i class="fas fa-undo"></i>
-                    <span class="sub-item">Material Return</span>
-                 </a>
-                </li>
-                </li>
-            </ul> 
+                @if (ViewBag.Role == "AsistantLeader")
+                {
+
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section">Asistant Leader</h4>
+                    </li>
+                    <li class="nav-item @(currentPath == "/User" ? "active" : "")">
+                        <a asp-controller="User" asp-action="Index">
+                            <i class="fas fa-home"></i>
+                            <span class="sub-item">Manage Line</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialRequest" ? "active" : "")">
+                        <a asp-controller="MaterialRequest" asp-action="Index">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span class="sub-item">Material Request</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/PrepRoom" ? "active" : "")">
+                        <a asp-controller="PrepRoom" asp-action="Index">
+                            <i class="fas fa-cogs"></i>
+                            <span class="sub-item">Preparation Room</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialUsage" ? "active" : "")">
+                        <a asp-controller="MaterialUsage" asp-action="Index">
+                            <i class="fas fa-dolly"></i>
+                            <span class="sub-item">Material Usage</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialReturn" ? "active" : "")">
+                        <a asp-controller="MaterialReturn" asp-action="Index">
+                            <i class="fas fa-undo"></i>
+                            <span class="sub-item">Material Return</span>
+                        </a>
+                    </li>
+                }
+
+                @* Store Manager Menu *@
+                @if (ViewBag.Role == "StoreManager")
+                {
+
+                    <li class="nav-section">
+                        <span class="sidebar-mini-icon">
+                            <i class="fa fa-ellipsis-h"></i>
+                        </span>
+                        <h4 class="text-section">Store Manager</h4>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialRequest" ? "active" : "")">
+                        <a asp-controller="MaterialRequest" asp-action="Index">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span class="sub-item">Material Request</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/Store" ? "active" : "")">
+                        <a asp-controller="Store" asp-action="Index">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span class="sub-item">Manage Materials In Store</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/SaveMaterialReturn" ? "active" : "")">
+                        <a asp-controller="SaveMaterialReturn" asp-action="Index">
+                            <i class="fas fa-undo"></i>
+                            <span class="sub-item">Material Return</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/Material" ? "active" : "")">
+                        <a asp-controller="Material" asp-action="Index">
+                            <i class="fas fa-home"></i>
+                            <span class="sub-item">Material List</span>
+                        </a>
+                    </li>
+                }
+            </ul>
         </div>
     </div>
     <div class="scroll-element scroll-x scroll-scrolly_visible" style="">

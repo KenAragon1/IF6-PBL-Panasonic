@@ -27,7 +27,6 @@ public class AreaController : BaseController
         {
             area = await _areaRepository.GetAreaAsync(Id, true)
         };
-        Console.WriteLine(viewModel.area.Specifier);
 
         return View(viewModel);
     }

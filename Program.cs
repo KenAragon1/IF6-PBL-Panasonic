@@ -22,6 +22,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 builder.Services.AddScoped<IAreaMaterialRepository, AreaMaterialRepository>();
 builder.Services.AddScoped<IAreaRepository, AreaRepository>();
+builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
 builder.Services.AddScoped<IFileHelper, FileHelper>();
 
 var app = builder.Build();

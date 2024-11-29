@@ -1,0 +1,40 @@
+@model List<panasonic.Models.MaterialRequest>
+
+@{
+    var index = 1;
+}
+
+
+<table class="table table-bordered table-hover" id="materialRequestTable">
+    <thead>
+        <tr>
+            <th scope="col">No</th>
+            <th scope="col">Material Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Remark</th>
+            <th scope="col">Requested Date</th>
+            <th scope="col">Requested By</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@(index++)</td>
+                <td>@request.Material!.Name</td>
+                <td>@request.Quantity</td>
+                <td>@request.Destination!.Type - @request.Destination!.Remark</td>
+                <td>@request.RequestedAt</td>
+                <td>@request.RequestedBy!.Fullname</td>
+                <td>@request.Status</td>
+                <td>
+                    <button class="btn btn-success" data-toggle="modal"
+                        data-target="#verify-confirmation-@request.Id">Accept</button>
+                    <button class="btn btn-danger">Accept</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

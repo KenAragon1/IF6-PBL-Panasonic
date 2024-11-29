@@ -1,0 +1,74 @@
+@model List<panasonic.Models.MaterialRequest>
+
+@{
+    var index = 1;
+}
+
+
+<table class="table table-bordered table-hover" id="materialRequestTable">
+    <thead>
+        <tr>
+            <th scope="col">No</th>
+            <th scope="col">Requested Date</th>
+            <th scope="col">Material Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Remark</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var request in Model)
+        {
+            <tr>
+                <td>@(index++)</td>
+                <td>@request.RequestedAt</td>
+                <td>@request.Material!.Name</td>
+                <td>@request.Quantity</td>
+                <td>@request.Destination!.Type - @request.Destination!.Remark</td>
+                <td>@switch (request.Status)
+                    {
+                        case MaterialRequestStatus.Pending:
+                            <span class="badge badge-secondary">@request.Status</span>
+                            break;
+                        case MaterialRequestStatus.Approved:
+                            <span class="badge badge-success">@request.Status</span>
+                            break;
+                        case MaterialRequestStatus.Rejected:
+                            <span class="badge badge-danger">@request.Status</span>
+                            break;
+                        case MaterialRequestStatus.Verified:
+                            <span class="badge badge-info">@request.Status</span>
+                            break;
+                    }
+                </td>
+                <td>
+                    @if (@request.Status == MaterialRequestStatus.Pending)
+                    {
+                        <button class="btn btn-danger" data-toggle="modal"
+                            data-target="#confirm-cancel-@request.Id">Cancel</button>
+                        <div class="modal fade" id="confirm-cancel-@request.Id">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="modal-title">Cancel Requested Confirmation</div>
+                                    </div>
+                                    <div class="modal-body">
+                                        Are you sure want to Cancel this request?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                        <form asp-asp-controller="MaterialRequest" asp-action="Delete"
+                                            asp-route-id="@request.Id">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace panasonic.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241124185242_AddMaterialRequestTable")]
+    partial class AddMaterialRequestTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,10 +104,6 @@ namespace panasonic.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("QrCodeUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Unit")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -290,7 +289,7 @@ namespace panasonic.Migrations
                             Email = "admin@email.com",
                             EmployeeID = 301010,
                             Fullname = "Admin",
-                            HashedPassword = "AQAAAAIAAYagAAAAEHVXFgBzTtneKOha6XigIzHZrX+g2D+m4yTWjtZTmJbUmMN7uhtDua7ifbMAHwYKjg==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEEYRtuNNVTXSGVDtL22cBGXUdmwBYidsvzS5y4kvTLUZ3l1tLGHsi8L3UOlNspj4og==",
                             IsVerified = true,
                             RoleId = 2
                         },
@@ -301,7 +300,7 @@ namespace panasonic.Migrations
                             Email = "asistantleader@email.com",
                             EmployeeID = 301011,
                             Fullname = "Asistant Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAEBOC9M1/FynO5S3QP9sTyzufLiMxmVxEri3WYEuBcwg3TylxH39EaFXWMXLMsfHTKg==",
+                            HashedPassword = "AQAAAAIAAYagAAAAENDKAdted6uSrYraKBnNylqq6OA/kWFkH3IXrmA/LEgncTtEW9jOYjcacQIDm4hxqw==",
                             IsVerified = true,
                             RoleId = 5
                         },
@@ -312,7 +311,7 @@ namespace panasonic.Migrations
                             Email = "shiftleader@email.com",
                             EmployeeID = 301012,
                             Fullname = "Shift Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAEE875wxQJ6bO92chPZie/AafQYW0c4XucYQa58PhFStUtg/MK+IqGebiTl/A64W1kA==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEBAz8XeHBQuk5IX+YQJGwRfvB944fcLJW5dIXrAwguQ5EtgSrJ+dwEfhLugnsphD9A==",
                             IsVerified = true,
                             RoleId = 4
                         },
@@ -323,7 +322,7 @@ namespace panasonic.Migrations
                             Email = "storemanager@email.com",
                             EmployeeID = 301013,
                             Fullname = "Store Manager",
-                            HashedPassword = "AQAAAAIAAYagAAAAEKdqzOcqM8C7OB93TUiiIfjfPLUggyw1ljmki2S9glHlFhosy2ZLKvxB0ZGxR9xlug==",
+                            HashedPassword = "AQAAAAIAAYagAAAAENI4CzClvpkkT1zzKLgbsYpFoYLnu8x7OGvowQPZdFIzHTZXrwEtkN+p5uVdJEKvDQ==",
                             IsVerified = true,
                             RoleId = 3
                         });

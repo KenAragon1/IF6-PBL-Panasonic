@@ -1,5 +1,68 @@
+@model panasonic.ViewModels.StoreViewModel.IndexViewModel;
+
 @{
-    ViewData["PanelTitle"] = "Store Analitycs";
+    ViewData["PanelTitle"] = "Manage Materials";
+    var index = 1;
 }
 
-<div>this is the index page</div>
+@section PanelButtons {
+    <a asp-controller="Store" asp-action="CreateMaterialStock" class="btn btn-secondary btn-rounded">Tambah Stok
+        Material</a>
+}
+
+<div class="card">
+    <div class="card-body">
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr role="row">
+                    <th>No</th>
+                    <th>Material Name</th>
+                    <th>Material Quantity</th>
+                    <th>Expire Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var material in Model.materials)
+                {
+                    <tr>
+                        <td>@(index++)</td>
+                        <td>@material.Name</td>
+                        <td>@material.Quantity</td>
+                        <td>@material.ExpDate</td>
+                        <td>
+                            <button class="btn btn-success">Edit</button>
+                            <button class="btn btn-danger" data-toggle="modal"
+                                data-target="#delete-confirmation-@material.Id">Delete</button>
+                            <div class="modal fade" id="delete-confirmation-@material.Id">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <div class="modal-title">Delete Confirmation</div>
+                                        </div>
+                                        <div class="modal-body">
+                                            Proceed to delete?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                            <form asp-controller="Store" asp-action="DeleteMaterialStock"
+                                                asp-route-id="@material.Id">
+
+                                                <button class="btn btn-danger" type="submit">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+</div>

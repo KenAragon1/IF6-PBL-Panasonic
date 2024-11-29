@@ -1,36 +1,100 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using panasonic.Models;
+using panasonic.Repositories;
+using panasonic.ViewModels.MaterialRequestViewModel;
 
-namespace PBL_IF6_Panasonic.Controllers
+namespace panasonic.Controllers;
+
+[Authorize]
+public class MaterialRequestController : BaseController
 {
-    public class MaterialRequestController : Controller
+    private readonly IMaterialRequestRepository _materialRequestRepository;
+    private readonly IAreaRepository _areaRepository;
+    private readonly IMaterialRepository _materialRepository;
+    public MaterialRequestController(IMaterialRequestRepository materialRequestRepository, IAreaRepository areaRepository, IMaterialRepository materialRepository)
     {
-        public IActionResult Index()
-        {
-            var materialRequests = new List<dynamic>
-            {
-                new { No = 1, RequestedDate = "2024-11-17", RequestedBy = "Aulia", MaterialName = "Copper", Quantity = 10, Weight = 100.0, Unit = "kg", Remark = "zsa9dsj", Status = "Pending" },
-                new { No = 2, RequestedDate = "2024-11-16", RequestedBy = "Sabrina", MaterialName = "Plastic", Quantity = 20, Weight = 200.0, Unit = "kg", Remark = "8sbxss", Status = "Approved" }
-            };
-
-            ViewBag.MaterialRequests = materialRequests;
-            return View();
-        }
-
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        public IActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Delete(int id)
-        {
-            return RedirectToAction("Index");
-        }
+        _materialRequestRepository = materialRequestRepository;
+        _areaRepository = areaRepository;
+        _materialRepository = materialRepository;
     }
+    public async Task<IActionResult> Index()
+    {
+        var query = _materialRequestRepository.Query();
+
+        switch (User.FindFirst(ClaimTypes.Role)?.Value)
+        {
+            case "AsistantLeader":
+                query = query.Where(mr => mr.RequestedById == int.Parse(User.FindFirst("UserId")!.Value));
+                break;
+            case "StoreManager":
+                query = query.Where(mr => mr.Status != MaterialRequestStatus.Pending);
+                break;
+        }
+
+        return View(await query.Include(mr => mr.RequestedBy).Include(mr => mr.Material).Include(mr => mr.Destination).ToListAsync());
+    }
+
+    public async Task<IActionResult> Create()
+    {
+        var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), Destinations = await _areaRepository.GetAreasAsync(AreaType: "ProductionLine") };
+        return View(ViewModels);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "AsistantLeader")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(CreateViewModel createViewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), Destinations = await _areaRepository.GetAreasAsync(AreaType: "ProductionLine") };
+            return View(ViewModels);
+        }
+
+        int.TryParse(User.FindFirst("UserId")!.Value, out int userId);
+        var materialRequest = new MaterialRequest { DestinationId = createViewModel.DestinationId, MaterialId = createViewModel.MaterialId, Quantity = createViewModel.Quantity, RequestedById = userId };
+        await _materialRequestRepository.StoreAsync(materialRequest);
+
+        TempData["SuccessMessage"] = "Material Request Created";
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "ShiftLeader")]
+    [ValidateAntiForgeryToken]
+    [Route("MaterialRequest/{Id}/Verify")]
+    public async Task<IActionResult> Verify(int Id)
+    {
+        var request = await _materialRequestRepository.GetAsync(Id);
+        request.Status = MaterialRequestStatus.Verified;
+        await _materialRequestRepository.UpdateAsync(request);
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "ShiftLeader,StoreManager")]
+    [ValidateAntiForgeryToken]
+    [Route("MaterialRequest/{Id}/Reject")]
+    public async Task<IActionResult> Reject(int Id)
+    {
+        var request = await _materialRequestRepository.GetAsync(Id);
+        request.RejectedById = int.Parse(User.FindFirst("UserId")!.Value);
+        request.Status = MaterialRequestStatus.Rejected;
+        await _materialRequestRepository.UpdateAsync(request);
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        await _materialRequestRepository.DeleteAsync(id);
+        return RedirectToAction("Index");
+    }
+
 }
+

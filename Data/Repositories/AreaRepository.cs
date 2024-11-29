@@ -22,15 +22,14 @@ public class AreaRepository : IAreaRepository
 
     public async Task<List<Area>> GetAreasAsync(string? areaType = null)
     {
-        var query = _dbContext.Areas.Include(a => a.AreaType).AsQueryable();
-        if (areaType != null) query = query.Where(a => a.AreaType.Type == areaType);
+        var query = _dbContext.Areas.AsQueryable();
 
         return await query.ToListAsync();
     }
 
     public async Task<Area> GetAreaAsync(int areaId, bool withUser = false)
     {
-        var query = _dbContext.Areas.Include(a => a.AreaType).AsQueryable();
+        var query = _dbContext.Areas.AsQueryable();
 
         if (withUser) query = query.Include(a => a.Users).ThenInclude(u => u.Role);
 

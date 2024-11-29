@@ -1,115 +1,39 @@
+@model List<panasonic.Models.MaterialRequest>
+
 @{
     ViewData["PanelTitle"] = "Material Request List";
 }
 
 @section PanelButtons {
-    <a class="btn btn-success btn-round text-white" data-bs-toggle="modal" data-bs-target="#create-material-request-form-modal">Create Material Request</a>
+    @if (ViewBag.Role == "AsistantLeader")
+    {
+        <a class="btn btn-success btn-round" asp-controller="MaterialRequest" asp-action="Create">Create Material Request</a>
+    }
 }
 
 <div class="card">
     <div class="card-body">
-        <table class="table table-bordered table-hover" id="materialRequestTable">
-            <thead>
-                <tr>
-                    <th scope="col">No</th>
-                    <th scope="col">Requested Date</th>
-                    <th scope="col">Requested By</th>
-                    <th scope="col">Material Name</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Weight</th>
-                    <th scope="col">Unit</th> 
-                    <th scope="col">Remark</th>
-                    <th scope="col">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var request in ViewBag.MaterialRequests)
+        @switch (ViewBag.Role)
+        {
+            case "ShiftLeader":
                 {
-                    <tr>
-                        <td>@request.No</td>
-                        <td>@request.RequestedDate</td>
-                        <td>@request.RequestedBy</td>
-                        <td>@request.MaterialName</td>
-                        <td>@request.Quantity</td>
-                        <td>@request.Weight</td>
-                        <td>@request.Unit</td>
-                        <td>@request.Remark</td>
-                        <td>@request.Status</td>
-                    </tr>
+                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_ShiftLeader.cshtml" model="@Model" />
                 }
-            </tbody>
-        </table>
-    </div>
-</div>
+                break;
+            case "AsistantLeader":
+                {
+                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_AsistantLeader.cshtml" model="@Model" />
+                }
+                break;
+            case "StoreManager":
+                {
+                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_StoreManager.cshtml" model="@Model" />
 
-<!-- Modal -->
-<div class="modal fade" id="create-material-request-form-modal" tabindex="-1" aria-labelledby="createMaterialRequestModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="createMaterialRequestModalLabel">Create New Material Request</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="createRequestForm">
-                    <div class="mb-3">
-                        <label for="requestedBy" class="form-label">Requested By</label>
-                        <input type="text" id="requestedBy" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="requestedDate" class="form-label">Requested Date</label>
-                        <input type="date" id="requestedDate" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="materialName" class="form-label">Material Name</label>
-                        <input type="text" id="materialName" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="quantity" class="form-label">Quantity</label>
-                        <input type="number" id="quantity" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="weight" class="form-label">Weight</label>
-                        <input type="number" id="weight" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="unit" class="form-label">Unit</label>
-                        <input type="text" id="unit" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="remark" class="form-label">Remark</label>
-                        <textarea id="remark" class="form-control" required></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="submitRequestButton">Submit</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    document.getElementById("submitRequestButton").addEventListener("click", function() {
-        const requestedBy = document.getElementById("requestedBy").value;
-        const requestedDate = document.getElementById("requestedDate").value;
-        const materialName = document.getElementById("materialName").value;
-        const quantity = document.getElementById("quantity").value;
-        const weight = document.getElementById("weight").value;
-        const unit = document.getElementById("unit").value;  
-        const remark = document.getElementById("remark").value;
-
-        if (!requestedBy || !requestedDate || !materialName || !quantity || !weight || !unit || !remark) {
-            alert("Please fill in all fields.");
-            return;
+                }
+                break;
         }
 
 
-        alert("Request submitted successfully!");
 
-        document.querySelector('[data-bs-dismiss="modal"]').click();
-    });
-</script>
+    </div>
+</div>

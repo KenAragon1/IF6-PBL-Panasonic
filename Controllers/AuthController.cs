@@ -57,6 +57,7 @@ public class AuthController : Controller
         {
             new Claim(ClaimTypes.Name, user.Fullname),
             new Claim(ClaimTypes.Role, user.Role.RoleName),
+            new Claim("UserId", user.Id.ToString()),
             new Claim("AreaId", user.AreaId.ToString() ?? "N/A"),
         };
 

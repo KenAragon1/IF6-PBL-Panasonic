@@ -1,0 +1,39 @@
+@model panasonic.ViewModels.MaterialRequestViewModel.CreateViewModel;
+
+@{
+    ViewData["PanelTitle"] = "Create Material Request";
+}
+
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" asp-controller="MaterialRequest" asp-action="Create">
+            @Html.AntiForgeryToken()
+            <div class="form-group">
+                <label for="requestedBy" class="form-label">Material</label>
+                <select class="form-control" asp-for="@Model.MaterialId" required>
+                    <option value="">Select Material</option>
+                    @foreach (var material in Model.Materials!)
+                    {
+                        <option value="@material.Id">@material.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="requestedDate" class="form-label">Destination</label>
+                <select class="form-control" asp-for="@Model.DestinationId" required>
+                    <option value="">Select Destination</option>
+                    @foreach (var Destination in Model.Destinations!)
+                    {
+                        <option value="@Destination.Id">Production Line - @Destination.Remark</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Quantity</label>
+                <input type="number" class="form-control" required asp-for="@Model.Quantity">
+            </div>
+            <button class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>

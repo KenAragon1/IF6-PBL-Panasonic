@@ -12,6 +12,9 @@ public class MaterialViewModel
 
     [Required(ErrorMessage = "Material Description Required")]
     public string Description { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Material Unit Required")]
+    public string Unit { get; set; } = string.Empty;
 }
 
 public class CreateMaterialViewModel : MaterialViewModel

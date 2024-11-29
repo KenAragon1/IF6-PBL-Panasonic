@@ -7,7 +7,7 @@ using panasonic.ViewModels.MaterialViewModel;
 
 namespace panasonic.Controllers;
 
-[Authorize]
+[Authorize(Roles = "StoreManager")]
 public class MaterialController : BaseController
 {
     private readonly IMaterialRepository _materialRepository;
@@ -39,7 +39,7 @@ public class MaterialController : BaseController
 
         var fileName = await _fileHelper.SaveFile(createMaterialViewModel.QrCodeImage, "materials");
 
-        var material = new Material { Name = createMaterialViewModel.Name, Description = createMaterialViewModel.Description, QrCodeUrl = fileName };
+        var material = new Material { Name = createMaterialViewModel.Name, Description = createMaterialViewModel.Description, QrCodeUrl = fileName, Unit = createMaterialViewModel.Unit };
         await _materialRepository.StoreAsync(material);
 
         TempData["SuccessMessage"] = "New Mateial Added";
@@ -72,7 +72,7 @@ public class MaterialController : BaseController
 
         if (material == null) return NotFound();
 
-        var viewModel = new EditMaterialViewModel { Id = material.Id, Name = material.Name, Description = material.Description, OldQrCodeImageurl = material.QrCodeUrl };
+        var viewModel = new EditMaterialViewModel { Id = material.Id, Name = material.Name, Description = material.Description, OldQrCodeImageurl = material.QrCodeUrl, Unit = material.Unit };
 
         return View(viewModel);
     }
