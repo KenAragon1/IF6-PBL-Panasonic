@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PBL_IF6_Panasonic.Controllers
 {
-    public class MaterialUsageController : Controller
+    public class MaterialUsageController : BaseController
     {
         
         public IActionResult Index()

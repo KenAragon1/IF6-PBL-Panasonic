@@ -8,6 +8,7 @@
     @if (ViewBag.Role == "AsistantLeader")
     {
         <a class="btn btn-success btn-round" asp-controller="MaterialRequest" asp-action="Create">Create Material Request</a>
+        <a class="btn btn-success btn-round text-white" data-bs-toggle="modal" data-bs-target="#scan-modal">Scan Here</a>
     }
 }
 
@@ -28,12 +29,8 @@
             case "StoreManager":
                 {
                     <partial name="~/Views/Shared/Components/MaterialRequest/Table/_StoreManager.cshtml" model="@Model" />
-
                 }
                 break;
         }
-
-
-
     </div>
 </div>
