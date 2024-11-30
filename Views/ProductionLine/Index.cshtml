@@ -6,18 +6,17 @@
 }
 
 @section PanelButtons {
-    <a asp-controller="ProductionLine" asp-action="Create" class="btn btn-secondary">Add New Line</a>
+    <a asp-controller="ProductionLine" asp-action="Create" class="btn btn-success btn-round">Add New Line</a>
 }
 
 <div class="card">
     <div class="card-body">
-        <table class="table table-hover">
+        <table class="table table-bordered table-hover text-center">
             <thead>
                 <tr>
                     <th>No</th>
                     <th>Line</th>
-                    <th>Status</th>
-                    <th></th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,10 +25,9 @@
                     <tr>
                         <td>@(index++)</td>
                         <td>Line - @area.Remark</td>
-                        <td></td>
                         <td>
                             <a asp-controller="ProductionLine" asp-action="Manage" asp-route-id="@area.Id"
-                                class="btn btn-primary">Manage</a>
+                                class="btn btn-primary btn-sm">Manage</a>
                         </td>
                     </tr>
                 }
