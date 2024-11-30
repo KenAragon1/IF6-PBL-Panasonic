@@ -1,6 +1,7 @@
 @{
     ViewData["PanelTitle"] = "Preparation Room";
     var materials = ViewData["Materials"] as List<dynamic>;
+    var units = new List<string> { "Spool", "Kg", "Can", "Box" }; // Tambahkan unit yang diinginkan
 }
 
 <div class="card">
@@ -48,6 +49,7 @@
                                             <div class="modal-body">
                                                 <form action="UseMaterial" method="post">
                                                     <input type="hidden" name="MaterialId" value="@material.Id" />
+                                                    
                                                     <div class="mb-3">
                                                         <label for="recipient-name" class="form-label">Recipient's Name</label>
                                                         <input type="text" class="form-control" id="recipient-name" name="RecipientName" required />
@@ -55,6 +57,24 @@
                                                     <div class="mb-3">
                                                         <label for="employee-id" class="form-label">Employee ID</label>
                                                         <input type="text" class="form-control" id="employee-id" name="EmployeeId" required />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="part-number" class="form-label">Part Number</label>
+                                                        <input type="text" class="form-control" id="part-number" name="PartNumber" value="@material.PartNumber" readonly />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="unit" class="form-label">Unit</label>
+                                                        <select class="form-select" id="unit" name="Unit" required>
+                                                            <option value="" disabled selected>Select a Unit</option>
+                                                            @foreach (var unit in units)
+                                                            {
+                                                                <option value="@unit">@unit</option>
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="detail-unit" class="form-label">Detail Unit</label>
+                                                        <input type="text" class="form-control" id="detail-unit" name="DetailUnit" required />
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="quantity" class="form-label">Quantity</label>
@@ -67,7 +87,7 @@
                                                 </form>
                                             </div>
                                             <div class="modal-footer">
-                                                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                                                 <button class="btn btn-primary" type="submit">Save</button>
                                             </div>
                                         </div>
