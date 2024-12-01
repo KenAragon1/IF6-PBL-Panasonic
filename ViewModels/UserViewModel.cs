@@ -7,9 +7,8 @@ namespace panasonic.ViewModels.UserViewModel;
 
 public class IndexViewModel
 {
-    public required List<User> users { get; set; }
+    public required List<User> Users { get; set; }
 
-    public required List<Role> roles { get; set; }
     public UserQueryObject UserQueryObject { get; set; } = new UserQueryObject();
 }
 
@@ -29,7 +28,7 @@ public class CreateUserViewModel
     public string Fullname { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Role is required.")]
-    public int RoleId { get; set; }
+    public string Role { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Password is required.")]
     [StringLength(100, ErrorMessage = "Password must be at least {2} characters long.", MinimumLength = 8)]
@@ -40,7 +39,6 @@ public class CreateUserViewModel
     [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
     public string ConfirmPassword { get; set; } = string.Empty;
 
-    public List<Role>? roles { get; set; }
 }
 
 public class UserDetailViewModel
@@ -61,8 +59,7 @@ public class UserDetailViewModel
     public string Fullname { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Role is required.")]
-    public int RoleId { get; set; }
+    public string Role { get; set; } = string.Empty;
 
-    public List<Role>? roles { get; set; }
 }
 

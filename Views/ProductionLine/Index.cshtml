@@ -2,7 +2,6 @@
 
 @{
     ViewData["PanelTitle"] = "Manage Production Line";
-    var index = 1;
 }
 
 @section PanelButtons {
@@ -14,20 +13,19 @@
         <table class="table table-bordered table-hover text-center">
             <thead>
                 <tr>
-                    <th>No</th>
                     <th>Line</th>
-                    <th>Action</th>
+                    <th>Description</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var area in @Model.areas)
+                @foreach (var line in @Model.ProductionLines)
                 {
                     <tr>
-                        <td>@(index++)</td>
-                        <td>Line - @area.Remark</td>
+                        <td>Line - @line.Remark</td>
+                        <td>@line.Description</td>
                         <td>
-                            <a asp-controller="ProductionLine" asp-action="Manage" asp-route-id="@area.Id"
-                                class="btn btn-primary btn-sm">Manage</a>
+                            <button class="btn btn-danger">Delete</button>
                         </td>
                     </tr>
                 }

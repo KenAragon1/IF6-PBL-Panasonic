@@ -12,12 +12,12 @@ namespace panasonic.Controllers;
 public class MaterialRequestController : BaseController
 {
     private readonly IMaterialRequestRepository _materialRequestRepository;
-    private readonly IAreaRepository _areaRepository;
+    private readonly IProductionLineRepository _productionLineRepository;
     private readonly IMaterialRepository _materialRepository;
-    public MaterialRequestController(IMaterialRequestRepository materialRequestRepository, IAreaRepository areaRepository, IMaterialRepository materialRepository)
+    public MaterialRequestController(IMaterialRequestRepository materialRequestRepository, IProductionLineRepository areaRepository, IMaterialRepository materialRepository)
     {
         _materialRequestRepository = materialRequestRepository;
-        _areaRepository = areaRepository;
+        _productionLineRepository = areaRepository;
         _materialRepository = materialRepository;
     }
     public async Task<IActionResult> Index()
@@ -34,12 +34,12 @@ public class MaterialRequestController : BaseController
                 break;
         }
 
-        return View(await query.Include(mr => mr.RequestedBy).Include(mr => mr.Material).Include(mr => mr.Destination).ToListAsync());
+        return View(await query.Include(mr => mr.RequestedBy).Include(mr => mr.Material).Include(mr => mr.ProductionLine).ToListAsync());
     }
 
     public async Task<IActionResult> Create()
     {
-        var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), Destinations = await _areaRepository.GetAreasAsync(AreaType: "ProductionLine") };
+        var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), ProductionLines = await _productionLineRepository.GetAllAsync() };
         return View(ViewModels);
     }
 
@@ -50,12 +50,12 @@ public class MaterialRequestController : BaseController
     {
         if (!ModelState.IsValid)
         {
-            var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), Destinations = await _areaRepository.GetAreasAsync(AreaType: "ProductionLine") };
+            var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), ProductionLines = await _productionLineRepository.GetAllAsync() };
             return View(ViewModels);
         }
 
         int.TryParse(User.FindFirst("UserId")!.Value, out int userId);
-        var materialRequest = new MaterialRequest { DestinationId = createViewModel.DestinationId, MaterialId = createViewModel.MaterialId, Quantity = createViewModel.Quantity, RequestedById = userId };
+        var materialRequest = new MaterialRequest { ProductionLineId = createViewModel.ProductionLineId, MaterialId = createViewModel.MaterialId, Quantity = createViewModel.Quantity, RequestedById = userId };
         await _materialRequestRepository.StoreAsync(materialRequest);
 
         TempData["SuccessMessage"] = "Material Request Created";
@@ -70,6 +70,7 @@ public class MaterialRequestController : BaseController
     {
         var request = await _materialRequestRepository.GetAsync(Id);
         request.Status = MaterialRequestStatus.Verified;
+        request.VerifiedAt = DateTime.Now;
         await _materialRequestRepository.UpdateAsync(request);
 
         return RedirectToAction("Index");

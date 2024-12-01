@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace panasonic.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241124185242_AddMaterialRequestTable")]
-    partial class AddMaterialRequestTable
+    [Migration("20241201130007_SetNullableDateTimeToMaterialRequestDateColumn")]
+    partial class SetNullableDateTimeToMaterialRequestDateColumn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,69 +24,6 @@ namespace panasonic.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("panasonic.Models.Area", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Remark")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Remark", "Type")
-                        .IsUnique();
-
-                    b.ToTable("Areas", t =>
-                        {
-                            t.HasCheckConstraint("CK_Area_AreaType", "Type IN ('PreperationRoom', 'ProductionLine', 'Store')");
-                        });
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Remark = 0,
-                            Type = "Store"
-                        });
-                });
-
-            modelBuilder.Entity("panasonic.Models.AreaMaterial", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AreaId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly>("ExpirationDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("MaterialId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AreaId");
-
-                    b.HasIndex("MaterialId");
-
-                    b.ToTable("AreaMaterials");
-                });
-
             modelBuilder.Entity("panasonic.Models.Material", b =>
                 {
                     b.Property<int>("Id")
@@ -95,19 +32,28 @@ namespace panasonic.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
+                    b.Property<string>("DetailMeasurement")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DetailQuantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("QrCodeUrl")
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UnitMeasurement")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.ToTable("Materials");
                 });
@@ -120,16 +66,19 @@ namespace panasonic.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("ApprovedById")
                         .HasColumnType("int");
 
                     b.Property<int?>("AprrovedById")
                         .HasColumnType("int");
 
-                    b.Property<int>("DestinationId")
+                    b.Property<int>("MaterialId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MaterialId")
+                    b.Property<int>("ProductionLineId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -152,6 +101,9 @@ namespace panasonic.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("Pending");
 
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("VerifiedById")
                         .HasColumnType("int");
 
@@ -159,9 +111,9 @@ namespace panasonic.Migrations
 
                     b.HasIndex("ApprovedById");
 
-                    b.HasIndex("DestinationId");
-
                     b.HasIndex("MaterialId");
+
+                    b.HasIndex("ProductionLineId");
 
                     b.HasIndex("RejectedById");
 
@@ -175,7 +127,7 @@ namespace panasonic.Migrations
                         });
                 });
 
-            modelBuilder.Entity("panasonic.Models.Role", b =>
+            modelBuilder.Entity("panasonic.Models.ProductionLine", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,49 +135,19 @@ namespace panasonic.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Remark")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.HasIndex("Remark")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            DisplayName = "Guest",
-                            RoleName = "Guest"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            DisplayName = "Admin",
-                            RoleName = "Admin"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            DisplayName = "Store Manager",
-                            RoleName = "StoreManager"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            DisplayName = "Shift Leader",
-                            RoleName = "ShiftLeader"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            DisplayName = "Asistant Leader",
-                            RoleName = "AsistantLeader"
-                        });
+                    b.ToTable("ProductionLines");
                 });
 
             modelBuilder.Entity("panasonic.Models.User", b =>
@@ -235,9 +157,6 @@ namespace panasonic.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("AreaId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -262,14 +181,13 @@ namespace panasonic.Migrations
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
-                    b.Property<int>("RoleId")
+                    b.Property<string>("Role")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Guest");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AreaId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -277,9 +195,10 @@ namespace panasonic.Migrations
                     b.HasIndex("EmployeeID")
                         .IsUnique();
 
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
+                    b.ToTable("Users", t =>
+                        {
+                            t.HasCheckConstraint("CK_User_UserRole", "Role IN ('ShiftLeader', 'AsistantLeader', 'StoreManager', 'Admin', 'MaterialHandler', 'Guest')");
+                        });
 
                     b.HasData(
                         new
@@ -289,9 +208,9 @@ namespace panasonic.Migrations
                             Email = "admin@email.com",
                             EmployeeID = 301010,
                             Fullname = "Admin",
-                            HashedPassword = "AQAAAAIAAYagAAAAEEYRtuNNVTXSGVDtL22cBGXUdmwBYidsvzS5y4kvTLUZ3l1tLGHsi8L3UOlNspj4og==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEKNf7WVC1/iSigaKyEBA0Rxg2MxWPuJc9OcR6NtLSXbQ2VrwyeKtGlOuLvubKfV4ww==",
                             IsVerified = true,
-                            RoleId = 2
+                            Role = "Admin"
                         },
                         new
                         {
@@ -300,9 +219,9 @@ namespace panasonic.Migrations
                             Email = "asistantleader@email.com",
                             EmployeeID = 301011,
                             Fullname = "Asistant Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAENDKAdted6uSrYraKBnNylqq6OA/kWFkH3IXrmA/LEgncTtEW9jOYjcacQIDm4hxqw==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEJN79dFQ9aNUoCrU7dngwEyphBTJ2fFuDlrHnkOQn6FgkBOHEcP74IQLeBUI+YN3PQ==",
                             IsVerified = true,
-                            RoleId = 5
+                            Role = "AsistantLeader"
                         },
                         new
                         {
@@ -311,9 +230,9 @@ namespace panasonic.Migrations
                             Email = "shiftleader@email.com",
                             EmployeeID = 301012,
                             Fullname = "Shift Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAEBAz8XeHBQuk5IX+YQJGwRfvB944fcLJW5dIXrAwguQ5EtgSrJ+dwEfhLugnsphD9A==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEHSAi69r7CwrWpYLOF2nHSa4D79GHmnEyRj0wzrPGuklVHaJoYPsmIJJTplc5omfMA==",
                             IsVerified = true,
-                            RoleId = 4
+                            Role = "ShiftLeader"
                         },
                         new
                         {
@@ -322,29 +241,10 @@ namespace panasonic.Migrations
                             Email = "storemanager@email.com",
                             EmployeeID = 301013,
                             Fullname = "Store Manager",
-                            HashedPassword = "AQAAAAIAAYagAAAAENI4CzClvpkkT1zzKLgbsYpFoYLnu8x7OGvowQPZdFIzHTZXrwEtkN+p5uVdJEKvDQ==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEPFpZkoB3EX8UZxBY+Q5HsbGv+bfRsVV945h0+juF7m5s1uLoaeInS6Tk4Dt9RDWFQ==",
                             IsVerified = true,
-                            RoleId = 3
+                            Role = "StoreManager"
                         });
-                });
-
-            modelBuilder.Entity("panasonic.Models.AreaMaterial", b =>
-                {
-                    b.HasOne("panasonic.Models.Area", "Area")
-                        .WithMany("AreaMaterials")
-                        .HasForeignKey("AreaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("panasonic.Models.Material", "Material")
-                        .WithMany("AreaMaterials")
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Area");
-
-                    b.Navigation("Material");
                 });
 
             modelBuilder.Entity("panasonic.Models.MaterialRequest", b =>
@@ -353,15 +253,15 @@ namespace panasonic.Migrations
                         .WithMany()
                         .HasForeignKey("ApprovedById");
 
-                    b.HasOne("panasonic.Models.Area", "Destination")
-                        .WithMany()
-                        .HasForeignKey("DestinationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("panasonic.Models.Material", "Material")
                         .WithMany()
                         .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("panasonic.Models.ProductionLine", "ProductionLine")
+                        .WithMany()
+                        .HasForeignKey("ProductionLineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -381,49 +281,15 @@ namespace panasonic.Migrations
 
                     b.Navigation("ApprovedBy");
 
-                    b.Navigation("Destination");
-
                     b.Navigation("Material");
+
+                    b.Navigation("ProductionLine");
 
                     b.Navigation("RejectedBy");
 
                     b.Navigation("RequestedBy");
 
                     b.Navigation("VerifiedBy");
-                });
-
-            modelBuilder.Entity("panasonic.Models.User", b =>
-                {
-                    b.HasOne("panasonic.Models.Area", "Area")
-                        .WithMany("Users")
-                        .HasForeignKey("AreaId");
-
-                    b.HasOne("panasonic.Models.Role", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Area");
-
-                    b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("panasonic.Models.Area", b =>
-                {
-                    b.Navigation("AreaMaterials");
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("panasonic.Models.Material", b =>
-                {
-                    b.Navigation("AreaMaterials");
-                });
-
-            modelBuilder.Entity("panasonic.Models.Role", b =>
-                {
-                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

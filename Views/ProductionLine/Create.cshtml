@@ -10,8 +10,14 @@
         <form asp-action="Create" method="post">
             @Html.AntiForgeryToken()
             <div class="form-group">
-                <label for="">Line Number</label>
-                <input class="form-control" type="text" asp-for="@Model.LineNumber">
+                <label for="">Line Remark</label>
+                <input class="form-control" type="number" asp-for="Remark">
+                <span asp-validation-for="Remark"></span>
+            </div>
+            <div class="form-group">
+                <label for="">Description</label>
+                <textarea class="form-control" type="text" asp-for="Description">
+                </textarea>
             </div>
             <button class="btn btn-primary">Submit</button>
         </form>

@@ -56,9 +56,8 @@ public class AuthController : Controller
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Fullname),
-            new Claim(ClaimTypes.Role, user.Role.RoleName),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim("UserId", user.Id.ToString()),
-            new Claim("AreaId", user.AreaId.ToString() ?? "N/A"),
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -81,7 +80,7 @@ public class AuthController : Controller
 
 
 
-        var user = new User { EmployeeID = RegisterData.EmployeeID, Email = RegisterData.Email, Fullname = RegisterData.Fullname, RoleId = 1, IsVerified = false };
+        var user = new User { EmployeeID = RegisterData.EmployeeID, Email = RegisterData.Email, Fullname = RegisterData.Fullname, Role = UserRoles.Guest, IsVerified = false };
         var HashedPassword = _passwordHasher.HashPassword(user, RegisterData.Password);
         user.HashedPassword = HashedPassword;
 

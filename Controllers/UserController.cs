@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using panasonic.Data.Queries;
 using panasonic.Models;
@@ -27,11 +28,10 @@ public class UserController : BaseController
     {
         var ViewModel = new IndexViewModel
         {
-            roles = await _dbContext.Roles.ToListAsync(),
-            users = await _userRepository.GetAllAsync(userQueryObject, isVerified: true),
+            Users = await _userRepository.GetAllAsync(userQueryObject, isVerified: true),
         };
 
-        if (Request.Headers.ContainsKey("x-refresh")) return PartialView("~/Views/Shared/Components/User/_UserTable.cshtml", ViewModel.users);
+        if (Request.Headers.ContainsKey("x-refresh")) return PartialView("~/Views/Shared/Components/User/_UserTable.cshtml", ViewModel.Users);
 
         return View(ViewModel);
     }
@@ -40,8 +40,7 @@ public class UserController : BaseController
     {
         var viewModel = new IndexViewModel
         {
-            roles = await _dbContext.Roles.ToListAsync(),
-            users = await _userRepository.GetAllAsync(userQueryObject, isVerified: false),
+            Users = await _userRepository.GetAllAsync(userQueryObject, isVerified: false),
         };
         return View(viewModel);
     }
@@ -61,9 +60,11 @@ public class UserController : BaseController
     }
 
 
-    public async Task<IActionResult> Create()
+    public IActionResult Create()
     {
-        var viewModel = new CreateUserViewModel { roles = await _dbContext.Roles.ToListAsync() };
+        var viewModel = new CreateUserViewModel();
+
+        ViewBag.UserRoleOptions = Enum.GetValues(typeof(UserRoles)).Cast<UserRoles>().Select(ur => new SelectListItem { Value = ur.ToString(), Text = ur.ToString() }).ToList();
 
         return View(viewModel);
     }
@@ -75,17 +76,18 @@ public class UserController : BaseController
 
         if (!ModelState.IsValid)
         {
+            ViewBag.UserRoleOptions = Enum.GetValues(typeof(UserRoles)).Cast<UserRoles>().Select(ur => new SelectListItem { Value = ur.ToString(), Text = ur.ToString() }).ToList();
+
             var ViewModel = new CreateUserViewModel
             {
                 EmployeeID = createUserViewModel.EmployeeID,
                 Email = createUserViewModel.Email,
                 Fullname = createUserViewModel.Fullname,
-                roles = await _dbContext.Roles.ToListAsync()
             };
             return View(ViewModel);
         }
 
-        var user = new User { EmployeeID = createUserViewModel.EmployeeID, Email = createUserViewModel.Email, Fullname = createUserViewModel.Fullname, RoleId = createUserViewModel.RoleId, IsVerified = true };
+        var user = new User { EmployeeID = createUserViewModel.EmployeeID, Email = createUserViewModel.Email, Fullname = createUserViewModel.Fullname, Role = Enum.Parse<UserRoles>(createUserViewModel.Role), IsVerified = true };
         user.HashedPassword = _passwordHasher.HashPassword(user, createUserViewModel.Password);
         await _userRepository.StoreAsync(user);
 
@@ -100,7 +102,7 @@ public class UserController : BaseController
 
         if (user == null) return NotFound();
 
-        var viewModel = new UserDetailViewModel { Id = user.Id, Fullname = user.Fullname, Email = user.Email, EmployeeID = user.EmployeeID, RoleId = user.RoleId, roles = await _dbContext.Roles.ToListAsync() };
+        var viewModel = new UserDetailViewModel { Id = user.Id, Fullname = user.Fullname, Email = user.Email, EmployeeID = user.EmployeeID, Role = user.Role.ToString() };
 
         return View(viewModel);
     }
@@ -122,7 +124,7 @@ public class UserController : BaseController
         user.EmployeeID = userDetailViewModel.EmployeeID;
         user.Email = userDetailViewModel.Email;
         user.Fullname = userDetailViewModel.Fullname;
-        user.RoleId = userDetailViewModel.RoleId;
+        user.Role = Enum.Parse<UserRoles>(userDetailViewModel.Role);
 
         await _userRepository.UpdateAsync(user);
 

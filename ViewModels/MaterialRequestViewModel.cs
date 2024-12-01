@@ -12,8 +12,8 @@ public class CreateViewModel
     public int Quantity { get; set; }
 
     [Required]
-    public int DestinationId { get; set; }
+    public int ProductionLineId { get; set; }
 
-    public List<Area>? Destinations { get; set; }
+    public List<ProductionLine>? ProductionLines { get; set; }
     public List<Material>? Materials { get; set; }
 }

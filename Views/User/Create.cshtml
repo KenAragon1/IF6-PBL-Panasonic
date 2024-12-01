@@ -30,13 +30,10 @@
 
                     <div class="form-group col-12">
                         <label>Role</label>
-                        <select class="form-control mb-1" asp-for="RoleId">
-                            @foreach (var role in @Model.roles)
-                            {
-                                <option value="@role.Id">@role.DisplayName</option>
-                            }
+                        <select class="form-control mb-1" asp-for="Role" asp-items="ViewBag.UserRoleOptions">
+
                         </select>
-                        <span class="text-danger" asp-validation-for="RoleId"></span>
+                        <span class="text-danger" asp-validation-for="Role"></span>
 
                     </div>
 

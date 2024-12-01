@@ -3,42 +3,41 @@ using panasonic.Models;
 
 namespace panasonic.Repositories;
 
-public interface IAreaRepository
+public interface IProductionLineRepository
 {
-    Task<List<Area>> GetAreasAsync(string? AreaType = null);
-    Task<Area> GetAreaAsync(int areaId, bool withUser = false);
-    Task Create(Area area);
+    Task<List<ProductionLine>> GetAllAsync();
+    Task<ProductionLine> GetAsync(int lineId);
+    Task Create(ProductionLine area);
 }
 
-public class AreaRepository : IAreaRepository
+public class ProductionLineRepository : IProductionLineRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public AreaRepository(ApplicationDbContext dbContext)
+    public ProductionLineRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
 
-    public async Task<List<Area>> GetAreasAsync(string? areaType = null)
+    public async Task<List<ProductionLine>> GetAllAsync()
     {
-        var query = _dbContext.Areas.AsQueryable();
+        var query = _dbContext.ProductionLines.AsQueryable();
 
         return await query.ToListAsync();
     }
 
-    public async Task<Area> GetAreaAsync(int areaId, bool withUser = false)
+    public async Task<ProductionLine> GetAsync(int lineId)
     {
-        var query = _dbContext.Areas.AsQueryable();
+        var query = _dbContext.ProductionLines.AsQueryable();
 
-        if (withUser) query = query.Include(a => a.Users).ThenInclude(u => u.Role);
 
-        return await query.FirstOrDefaultAsync(a => a.Id == areaId);
+        return await query.FirstAsync(pl => pl.Id == lineId);
     }
 
-    public async Task Create(Area area)
+    public async Task Create(ProductionLine area)
     {
-        await _dbContext.Areas.AddAsync(area);
+        await _dbContext.ProductionLines.AddAsync(area);
         await _dbContext.SaveChangesAsync();
     }
 

@@ -25,7 +25,7 @@
                 <td>@request.RequestedAt</td>
                 <td>@request.Material!.Name</td>
                 <td>@request.Quantity</td>
-                <td>@request.Destination!.Type - @request.Destination!.Remark</td>
+                <td>Line - @request.ProductionLine!.Remark</td>
                 <td>@switch (request.Status)
                     {
                         case MaterialRequestStatus.Pending:

@@ -17,8 +17,7 @@
                     <th scope="col">Id</th>
                     <th scope="col">Name</th>
                     <th scope="col">Unit</th>
-                    <th scope="col">Barcode</th>
-                    <th scope="col">Action</th>
+                    <th scope="col">Detail Measurement</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
@@ -29,10 +28,9 @@
                     <tr>
                         <th>@material.Id</th>
                         <td>@material.Name</td>
-                        <td>@material.Unit</td>
-                        <td>
-                            <img src="/storage/materials/@material.QrCodeUrl" alt="" height="100" width="100">
-                        </td>
+                        <td>@material.UnitMeasurement</td>
+                        <td>@material.DetailQuantity @material.DetailMeasurement</td>
+
                         <td>
                             <a class="btn btn-success" asp-controller="Material" asp-action="Edit"
                                 asp-route-id="@material.Id">Edit</a>

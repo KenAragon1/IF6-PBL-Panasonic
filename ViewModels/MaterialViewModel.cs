@@ -10,24 +10,27 @@ public class MaterialViewModel
     [Required(ErrorMessage = "Material Name Required")]
     public string Name { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Material Description Required")]
-    public string Description { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Material Number Required")]
+    public int Number { get; set; }
 
     [Required(ErrorMessage = "Material Unit Required")]
-    public string Unit { get; set; } = string.Empty;
+    public string UnitMeasurement { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Detail Measurement Required")]
+    public string DetailMeasurement { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Detail Quantity Required")]
+    public int DetailQuantity { get; set; }
+
+
 }
 
 public class CreateMaterialViewModel : MaterialViewModel
 {
-    [Required(ErrorMessage = "QR Code Image Required")]
-    [ImageFile]
-    public IFormFile QrCodeImage { get; set; }
+
 }
 public class EditMaterialViewModel : MaterialViewModel
 {
-    [ImageFile]
-    public IFormFile? QrCodeImage { get; set; }
 
-    public string OldQrCodeImageurl { get; set; } = string.Empty;
 }
 

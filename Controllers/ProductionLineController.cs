@@ -11,13 +11,13 @@ namespace panasonic.Controllers;
 [Authorize(Roles = "ShiftLeader,AsistantLeader,Admin")]
 public class ProductionLineController : BaseController
 {
-    private readonly IAreaRepository _areaRepository;
+    private readonly IProductionLineRepository _productionLineRepository;
     private readonly IUserRepository _userRepository;
     private readonly IMaterialRepository _materialRepository;
 
-    public ProductionLineController(IAreaRepository areaRepository, IUserRepository userRepository, IMaterialRepository materialRepository)
+    public ProductionLineController(IProductionLineRepository areaRepository, IUserRepository userRepository, IMaterialRepository materialRepository)
     {
-        _areaRepository = areaRepository;
+        _productionLineRepository = areaRepository;
         _userRepository = userRepository;
         _materialRepository = materialRepository;
     }
@@ -27,7 +27,7 @@ public class ProductionLineController : BaseController
 
         var viewModel = new IndexViewModel
         {
-            areas = await _areaRepository.GetAreasAsync("ProductionLine")
+            ProductionLines = await _productionLineRepository.GetAllAsync()
         };
 
         return View(viewModel);
@@ -37,7 +37,6 @@ public class ProductionLineController : BaseController
     {
         var viewModel = new ManageViewModel
         {
-            users = await _userRepository.GetAllAsync(new UserQueryObject { AreaId = Id }),
             materials = await _materialRepository.GetAllAsync()
         };
         return View(viewModel);
@@ -57,9 +56,9 @@ public class ProductionLineController : BaseController
             return View(createViewModel);
         }
 
-        var area = new Area { Remark = createViewModel.LineNumber, Type = AreaTypes.ProductionLine };
+        var area = new ProductionLine { Remark = createViewModel.Remark, Description = createViewModel.Description };
 
-        await _areaRepository.Create(area);
+        await _productionLineRepository.Create(area);
 
         TempData["SuccessMessage"] = "Create New Production Line Success";
 

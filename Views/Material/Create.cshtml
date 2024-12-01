@@ -18,50 +18,27 @@
             </div>
             <div class="mb-2">
                 <div class="form-group">
-                    <label>Material Description</label>
-                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <label>Unit Measurement</label>
+                    <input type="text" asp-for="UnitMeasurement" class="form-control" />
                 </div>
-                <span asp-validation-for="Description" class="text-danger"></span>
+                <span asp-validation-for="UnitMeasurement" class="text-danger"></span>
             </div>
             <div class="mb-2">
                 <div class="form-group">
-                    <label>Material Unit</label>
-                    <input type="text" asp-for="Unit" class="form-control" />
+                    <label>Detail Measurement</label>
+                    <input type="text" asp-for="DetailMeasurement" class="form-control" />
                 </div>
-                <span asp-validation-for="Unit" class="text-danger"></span>
+                <span asp-validation-for="DetailMeasurement" class="text-danger"></span>
             </div>
             <div class="mb-2">
                 <div class="form-group">
-                    <label>QR Code</label>
-                    <input type="file" asp-for="QrCodeImage" id="js-image-input" class="form-control">
-                    <img src="" alt="preview image" id="js-image-preview" class="bg-light" width="100" height="100">
+                    <label>Detail Quantity</label>
+                    <input type="text" asp-for="DetailQuantity" class="form-control" />
                 </div>
-                <span asp-validation-for="QrCodeImage" class="text-danger"></span>
+                <span asp-validation-for="DetailQuantity" class="text-danger"></span>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#js-image-input").on("change", function (e) {
-                const imageInput = e.target;
-                const preview = $("#js-image-preview");
-
-                if (imageInput.files && imageInput.files[0]) {
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        preview.attr("src", e.target.result);
-                        preview.show();
-                    };
-
-                    reader.readAsDataURL(imageInput.files[0]);
-                }
-            })
-        })
-    </script>
-}

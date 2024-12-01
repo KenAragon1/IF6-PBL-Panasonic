@@ -2,6 +2,11 @@
 
 namespace panasonic.Models;
 
+public enum UserRoles
+{
+    Guest = 0, ShiftLeader, AsistantLeader, StoreManager, Admin, MaterialHandler
+}
+
 public class User
 {
     public int Id { get; set; }
@@ -10,9 +15,6 @@ public class User
     public required string Email { get; set; }
     public string HashedPassword { get; set; } = string.Empty;
     public bool IsVerified { get; set; } = false;
-    public int RoleId { get; set; }
-    public Role Role { get; set; }
-    public int? AreaId { get; set; }
-    public Area Area { get; set; }
+    public UserRoles Role { get; set; }
     public DateTime CreatedAt { get; set; }
 }

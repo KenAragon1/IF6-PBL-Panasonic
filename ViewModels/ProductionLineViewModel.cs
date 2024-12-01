@@ -5,18 +5,20 @@ namespace panasonic.ViewModels.ProductionLineViewModel;
 
 public class IndexViewModel
 {
-    public List<Area> areas;
+    public required List<ProductionLine> ProductionLines;
 }
 
 public class ManageViewModel
 {
-    public List<Material> materials;
+    public required List<Material> materials;
 
-    public List<User> users;
 }
 
 public class CreateViewModel
 {
     [Required]
-    public int LineNumber { get; set; }
+    public int Remark { get; set; }
+
+    [Required]
+    public string Description { get; set; } = string.Empty;
 }

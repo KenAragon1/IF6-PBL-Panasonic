@@ -3,10 +3,9 @@ namespace panasonic.Models;
 public class Material
 {
     public int Id { get; set; }
+    public int Number { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string Unit { get; set; } = string.Empty;
-    public string QrCodeUrl { get; set; } = string.Empty;
-
-    public List<AreaMaterial>? AreaMaterials { get; set; }
+    public string UnitMeasurement { get; set; } = string.Empty;
+    public int DetailQuantity { get; set; }
+    public string DetailMeasurement { get; set; } = string.Empty;
 }

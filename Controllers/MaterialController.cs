@@ -37,9 +37,14 @@ public class MaterialController : BaseController
             return View(createMaterialViewModel);
         }
 
-        var fileName = await _fileHelper.SaveFile(createMaterialViewModel.QrCodeImage, "materials");
-
-        var material = new Material { Name = createMaterialViewModel.Name, Description = createMaterialViewModel.Description, QrCodeUrl = fileName, Unit = createMaterialViewModel.Unit };
+        var material = new Material
+        {
+            Name = createMaterialViewModel.Name,
+            UnitMeasurement = createMaterialViewModel.UnitMeasurement,
+            Number = createMaterialViewModel.Number,
+            DetailMeasurement = createMaterialViewModel.DetailMeasurement,
+            DetailQuantity = createMaterialViewModel.DetailQuantity
+        };
         await _materialRepository.StoreAsync(material);
 
         TempData["SuccessMessage"] = "New Mateial Added";
@@ -55,7 +60,6 @@ public class MaterialController : BaseController
 
         if (material == null) return NotFound();
 
-        _fileHelper.DeleteFile(material.QrCodeUrl, "materials");
 
         await _materialRepository.DeleteAsync(material);
 
@@ -72,7 +76,15 @@ public class MaterialController : BaseController
 
         if (material == null) return NotFound();
 
-        var viewModel = new EditMaterialViewModel { Id = material.Id, Name = material.Name, Description = material.Description, OldQrCodeImageurl = material.QrCodeUrl, Unit = material.Unit };
+        var viewModel = new EditMaterialViewModel
+        {
+            Id = material.Id,
+            Name = material.Name,
+            UnitMeasurement = material.UnitMeasurement,
+            Number = material.Number,
+            DetailMeasurement = material.DetailMeasurement,
+            DetailQuantity = material.DetailQuantity
+        };
 
         return View(viewModel);
     }
@@ -90,17 +102,10 @@ public class MaterialController : BaseController
         }
 
         material.Name = editMaterialViewModel.Name;
-        material.Description = editMaterialViewModel.Description;
-
-        if (editMaterialViewModel.QrCodeImage != null)
-        {
-            // delete old image
-            _fileHelper.DeleteFile(material.QrCodeUrl, "materials");
-            // add new image
-            var fileName = await _fileHelper.SaveFile(editMaterialViewModel.QrCodeImage, "materials");
-            material.QrCodeUrl = fileName;
-        }
-
+        material.Number = editMaterialViewModel.Number;
+        material.UnitMeasurement = editMaterialViewModel.UnitMeasurement;
+        material.DetailMeasurement = material.DetailMeasurement;
+        material.DetailQuantity = editMaterialViewModel.DetailQuantity;
 
         await _materialRepository.UpdateAsync(material);
 
