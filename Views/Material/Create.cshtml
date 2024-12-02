@@ -18,6 +18,13 @@
             </div>
             <div class="mb-2">
                 <div class="form-group">
+                    <label>Material Number</label>
+                    <input type="number" class="form-control" asp-for="Number">
+                </div>
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <div class="form-group">
                     <label>Unit Measurement</label>
                     <input type="text" asp-for="UnitMeasurement" class="form-control" />
                 </div>

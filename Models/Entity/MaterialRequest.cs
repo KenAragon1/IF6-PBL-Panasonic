@@ -9,7 +9,7 @@ public class MaterialRequest
 {
     public int Id { get; set; }
     public required int Quantity { get; set; }
-    public DateOnly RequestedAt { get; set; }
+    public DateTime RequestedAt { get; set; }
     public MaterialRequestStatus Status { get; set; }
     public required int MaterialId { get; set; }
     public Material? Material { get; set; }
@@ -25,6 +25,19 @@ public class MaterialRequest
     public DateTime? ApprovedAt { get; set; }
     public int? RejectedById { get; set; }
     public User? RejectedBy { get; set; }
+
+    public void SetToVerified(int verifiedById)
+    {
+        Status = MaterialRequestStatus.Verified;
+        VerifiedAt = DateTime.Now;
+        VerifiedById = verifiedById;
+    }
+
+    public void Reject(int rejectedById)
+    {
+        Status = MaterialRequestStatus.Verified;
+        RejectedById = rejectedById;
+    }
 
 
 }

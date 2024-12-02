@@ -8,6 +8,7 @@ public interface IMaterialRequestRepository
     Task<List<MaterialRequest>> GetAllAsync(string? status = null);
     Task<MaterialRequest> GetAsync(int id);
     Task StoreAsync(MaterialRequest materialRequest);
+    Task StoreManyAsync(List<MaterialRequest> materialRequests);
     Task UpdateAsync(MaterialRequest materialRequest);
 
     Task DeleteAsync(int id);
@@ -47,6 +48,12 @@ public class MaterialRequestRepository : IMaterialRequestRepository
     public async Task StoreAsync(MaterialRequest materialRequest)
     {
         await _dbContext.MaterialRequests.AddAsync(materialRequest);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task StoreManyAsync(List<MaterialRequest> materialRequests)
+    {
+        await _dbContext.MaterialRequests.AddRangeAsync(materialRequests);
         await _dbContext.SaveChangesAsync();
     }
 

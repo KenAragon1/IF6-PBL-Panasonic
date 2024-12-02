@@ -55,8 +55,8 @@ public class MaterialRequestController : BaseController
         }
 
         int.TryParse(User.FindFirst("UserId")!.Value, out int userId);
-        var materialRequest = new MaterialRequest { ProductionLineId = createViewModel.ProductionLineId, MaterialId = createViewModel.MaterialId, Quantity = createViewModel.Quantity, RequestedById = userId };
-        await _materialRequestRepository.StoreAsync(materialRequest);
+        var materialRequest = createViewModel.CreateForms.Select(f => new MaterialRequest { MaterialId = f.MaterialId, ProductionLineId = f.ProductionLineId, Quantity = f.Quantity, RequestedById = userId }).ToList();
+        await _materialRequestRepository.StoreManyAsync(materialRequest);
 
         TempData["SuccessMessage"] = "Material Request Created";
         return RedirectToAction("Index");
@@ -69,8 +69,7 @@ public class MaterialRequestController : BaseController
     public async Task<IActionResult> Verify(int Id)
     {
         var request = await _materialRequestRepository.GetAsync(Id);
-        request.Status = MaterialRequestStatus.Verified;
-        request.VerifiedAt = DateTime.Now;
+        request.SetToVerified(int.Parse(User.FindFirst("UserId")!.Value));
         await _materialRequestRepository.UpdateAsync(request);
 
         return RedirectToAction("Index");
@@ -83,8 +82,7 @@ public class MaterialRequestController : BaseController
     public async Task<IActionResult> Reject(int Id)
     {
         var request = await _materialRequestRepository.GetAsync(Id);
-        request.RejectedById = int.Parse(User.FindFirst("UserId")!.Value);
-        request.Status = MaterialRequestStatus.Rejected;
+        request.Reject(int.Parse(User.FindFirst("UserId")!.Value));
         await _materialRequestRepository.UpdateAsync(request);
 
         return RedirectToAction("Index");
