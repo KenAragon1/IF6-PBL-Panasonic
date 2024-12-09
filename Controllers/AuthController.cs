@@ -21,8 +21,6 @@ public class AuthController : Controller
     }
     public IActionResult Login()
     {
-        Console.WriteLine("Login page");
-
         if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Dashboard");
 
         return View();

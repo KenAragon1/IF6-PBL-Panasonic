@@ -22,3 +22,14 @@ public class CreateViewModel
     [Required]
     public string Description { get; set; } = string.Empty;
 }
+
+public class EditViewModel
+{
+    [Required]
+    public int Remark { get; set; }
+
+    [Required]
+    public string Description { get; set; } = string.Empty;
+
+    public ProductionLine? ProductionLine { get; set; }
+}

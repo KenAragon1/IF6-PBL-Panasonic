@@ -24,21 +24,6 @@
 
                     <div class="collapse in" id="collapseExample">
                         <ul class="nav">
-                            <li>
-                                <a href="#profile">
-                                    <span class="link-collapse">My Profile</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#edit">
-                                    <span class="link-collapse">Edit Profile</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#settings">
-                                    <span class="link-collapse">Settings</span>
-                                </a>
-                            </li>
                             <li><a href="#">
                                     <span class="" data-toggle="modal" data-target="#logout-modal">Log
                                         Out</span>
@@ -56,6 +41,12 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
+                <li class="nav-item @(currentPath == "MaterialInventory/Reports" ? "active" : "")">
+                    <a asp-controller="MaterialInventory" asp-action="Reports">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>Material Reports</p>
+                    </a>
+                </li>
 
                 @* Admin Menu *@
                 @if (ViewBag.Role == "Admin")
@@ -70,6 +61,12 @@
                         <a asp-controller="User" asp-action="Index">
                             <i class="fas fa-home"></i>
                             <span class="sub-item">Manage Users</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/User/Unverified" ? "active" : "")">
+                        <a asp-controller="User" asp-action="Unverified">
+                            <i class="fas fa-home"></i>
+                            <span class="sub-item">Unverified Users</span>
                         </a>
                     </li>
 
@@ -133,17 +130,29 @@
                 @* Asistant Leader Menu *@
                 @if (ViewBag.Role == "AsistantLeader")
                 {
-
                     <li class="nav-section">
                         <span class="sidebar-mini-icon">
                             <i class="fa fa-ellipsis-h"></i>
                         </span>
                         <h4 class="text-section">Asistant Leader</h4>
                     </li>
-                    <li class="nav-item @(currentPath == "/User" ? "active" : "")">
-                        <a asp-controller="User" asp-action="Index">
-                            <i class="fas fa-home"></i>
+                    <li class="nav-item @(currentPath == "/ProductionLine" ? "active" : "")">
+                        <a asp-controller="ProductionLine" asp-action="Index">
+                            <i class="fa-solid fa-conveyor-belt-arm"></i>
                             <span class="sub-item">Manage Line</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialInventory/ProductionLine" ? "active" : "")">
+                        <a asp-controller="MaterialInventory" asp-action="ProductionLine">
+                            <i class="fas fa-home"></i>
+                            <span class="sub-item">Materials In Production Line</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialInventory/PreperationRoom" ? "active" : "")">
+                        <a asp-controller="MaterialInventory" asp-action="PreperationRoom">
+                            <i class="fas fa-warehouse"></i>
+                            <span class="sub-item">Materials In Preperation
+                                Room</span>
                         </a>
                     </li>
                     <li class="nav-item @(currentPath == "/MaterialRequest" ? "active" : "")">
@@ -158,10 +167,10 @@
                             <span class="sub-item">Preparation Room</span>
                         </a>
                     </li>
-                    <li class="nav-item @(currentPath == "/MaterialUsage" ? "active" : "")">
-                        <a asp-controller="MaterialUsage" asp-action="Index">
+                    <li class="nav-item @(currentPath == "/MaterialInventory/Pickup" ? "active" : "")">
+                        <a asp-controller="MaterialInventory" asp-action="Pickup">
                             <i class="fas fa-dolly"></i>
-                            <span class="sub-item">Material Usage</span>
+                            <span class="sub-item">Pickup Material</span>
                         </a>
                     </li>
                     <li class="nav-item @(currentPath == "/MaterialReturn" ? "active" : "")">
@@ -175,7 +184,6 @@
                 @* Store Manager Menu *@
                 @if (ViewBag.Role == "StoreManager")
                 {
-
                     <li class="nav-section">
                         <span class="sidebar-mini-icon">
                             <i class="fa fa-ellipsis-h"></i>
@@ -188,16 +196,16 @@
                             <span class="sub-item">Material Request</span>
                         </a>
                     </li>
-                    <li class="nav-item @(currentPath == "/Store" ? "active" : "")">
-                        <a asp-controller="Store" asp-action="Index">
+                    <li class="nav-item @(currentPath == "/Store/Material" ? "active" : "")">
+                        <a asp-controller="Store" asp-action="Material">
                             <i class="fas fa-clipboard-list"></i>
                             <span class="sub-item">Manage Materials In Store</span>
                         </a>
                     </li>
-                    <li class="nav-item @(currentPath == "/SaveMaterialReturn" ? "active" : "")">
-                        <a asp-controller="SaveMaterialReturn" asp-action="Index">
+                    <li class="nav-item @(currentPath == "/store/material/send" ? "active" : "")">
+                        <a asp-controller="Store" asp-action="Send">
                             <i class="fas fa-undo"></i>
-                            <span class="sub-item">Material Return</span>
+                            <span class="sub-item">Send Material</span>
                         </a>
                     </li>
                     <li class="nav-item @(currentPath == "/Material" ? "active" : "")">

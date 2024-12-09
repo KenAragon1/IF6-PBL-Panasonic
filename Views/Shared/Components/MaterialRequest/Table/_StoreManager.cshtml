@@ -30,9 +30,33 @@
                 <td>@request.RequestedBy!.Fullname</td>
                 <td>@request.Status</td>
                 <td>
-                    <button class="btn btn-success" data-toggle="modal"
-                        data-target="#verify-confirmation-@request.Id">Accept</button>
-                    <button class="btn btn-danger">Accept</button>
+                    @if (request.Status != MaterialRequestStatus.Approved)
+                    {
+
+                        <button class="btn btn-success" data-toggle="modal"
+                            data-target="#accept-confirmation-@request.Id">Accept</button>
+                        <div class="modal fade" id="accept-confirmation-@request.Id">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <div class="modal-title">Accept Confirmation</div>
+                                    </div>
+                                    <div class="modal-body">
+                                        Confirmation Accept
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                        <form asp-controller="MaterialRequest" asp-action="Accept" asp-route-id="@request.Id"
+                                            method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-success">Accept</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger">Reject</button>
+                    }
                 </td>
             </tr>
         }

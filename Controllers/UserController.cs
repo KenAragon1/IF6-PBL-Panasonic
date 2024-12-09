@@ -36,7 +36,7 @@ public class UserController : BaseController
         return View(ViewModel);
     }
 
-    public async Task<IActionResult> UnverifiedUsers([FromQuery] UserQueryObject userQueryObject)
+    public async Task<IActionResult> Unverified([FromQuery] UserQueryObject userQueryObject)
     {
         var viewModel = new IndexViewModel
         {
@@ -101,6 +101,9 @@ public class UserController : BaseController
         var user = await _userRepository.GetAsync(id: Id);
 
         if (user == null) return NotFound();
+
+        ViewBag.UserRoleOptions = Enum.GetValues(typeof(UserRoles)).Cast<UserRoles>().Select(ur => new SelectListItem { Value = ur.ToString(), Text = ur.ToString() }).ToList();
+
 
         var viewModel = new UserDetailViewModel { Id = user.Id, Fullname = user.Fullname, Email = user.Email, EmployeeID = user.EmployeeID, Role = user.Role.ToString() };
 

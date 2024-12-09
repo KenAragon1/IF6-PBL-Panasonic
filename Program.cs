@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using panasonic.Helpers;
 using panasonic.Repositories;
+using panasonic.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 builder.Services.AddScoped<IProductionLineRepository, ProductionLineRepository>();
 builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
+
+
+builder.Services.AddScoped<IMaterialInventoryService, MaterialInventoryService>();
+builder.Services.AddScoped<IMaterialInventoryRepository, MaterialInventoryRepository>();
+
+builder.Services.AddScoped<IMaterialTransferRepo, MaterialTransferRepo>();
 builder.Services.AddScoped<IFileHelper, FileHelper>();
 
 var app = builder.Build();

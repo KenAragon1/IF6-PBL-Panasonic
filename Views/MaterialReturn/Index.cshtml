@@ -4,7 +4,9 @@
 }
 
 @section PanelButtons {
-    <a class="btn btn-success btn-round text-white" data-bs-toggle="modal" data-bs-target="#create-material-return-modal">Return Material</a>
+    <a class="btn btn-success rounded-0 text-white" data-bs-toggle="modal"
+        data-bs-target="#create-material-return-modal">Return
+        Material</a>
 }
 
 <div class="card">
@@ -50,7 +52,8 @@
 </div>
 
 <!-- Modal for creating material return -->
-<div class="modal fade" id="create-material-return-modal" tabindex="-1" aria-labelledby="create-material-return-modal-label" aria-hidden="true">
+<div class="modal fade" id="create-material-return-modal" tabindex="-1"
+    aria-labelledby="create-material-return-modal-label" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -62,17 +65,20 @@
                 <form>
                     <div class="mb-3">
                         <label for="materialName" class="form-label">Material Name</label>
-                        <input type="text" class="form-control" id="materialName" placeholder="Enter material name" required>
+                        <input type="text" class="form-control" id="materialName" placeholder="Enter material name"
+                            required>
                     </div>
                     <div class="mb-3">
                         <label for="returnQuantity" class="form-label">Return Quantity</label>
-                        <input type="number" class="form-control" id="returnQuantity" placeholder="Enter return quantity" required>
+                        <input type="number" class="form-control" id="returnQuantity"
+                            placeholder="Enter return quantity" required>
                     </div>
                     <div class="mb-3">
                         <label for="reasonOfReturn" class="form-label">Reason of Return</label>
-                        <textarea class="form-control" id="reasonOfReturn" rows="3" placeholder="Enter reason for returning the material" required></textarea>
+                        <textarea class="form-control" id="reasonOfReturn" rows="3"
+                            placeholder="Enter reason for returning the material" required></textarea>
                     </div>
-                   <div class="mb-3">
+                    <div class="mb-3">
                         <label for="returnDate" class="form-label">Return Date</label>
                         <input type="date" class="form-control" id="returnDate" required>
                     </div>
@@ -88,7 +94,7 @@
 
 @section Scripts {
     <script>
-        document.getElementById('submitReturnMaterial').addEventListener('click', function() {
+        document.getElementById('submitReturnMaterial').addEventListener('click', function () {
             var materialName = document.getElementById('materialName').value;
             var returnQuantity = document.getElementById('returnQuantity').value;
             var reasonOfReturn = document.getElementById('reasonOfReturn').value;

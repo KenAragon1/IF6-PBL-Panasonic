@@ -53,7 +53,7 @@ public class MaterialRequestRepository : IMaterialRequestRepository
 
     public async Task StoreManyAsync(List<MaterialRequest> materialRequests)
     {
-        await _dbContext.MaterialRequests.AddRangeAsync(materialRequests);
+        _dbContext.MaterialRequests.AddRange(materialRequests);
         await _dbContext.SaveChangesAsync();
     }
 

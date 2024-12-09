@@ -14,6 +14,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<Material> Materials { get; set; }
     public DbSet<ProductionLine> ProductionLines { get; set; }
     public DbSet<MaterialRequest> MaterialRequests { get; set; }
+    public DbSet<MaterialInventory> MaterialInventories { get; set; }
+    public DbSet<MaterialTransaction> MaterialTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,6 +41,16 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<MaterialRequest>().Property(mr => mr.RequestedAt).HasDefaultValueSql("GETDATE()");
         modelBuilder.Entity<MaterialRequest>().Property(mr => mr.Status).HasConversion<string>().HasDefaultValue(MaterialRequestStatus.Pending);
         modelBuilder.Entity<MaterialRequest>().ToTable(tb => tb.HasCheckConstraint("CK_MaterialRequest_MaterialRequestStatus", "Status IN ('Pending', 'Verified', 'Approved', 'Rejected', 'Completed')"));
+
+        // MaterialInventory
+        modelBuilder.Entity<MaterialInventory>().Property(mi => mi.Location).HasConversion<string>();
+        modelBuilder.Entity<MaterialInventory>().ToTable(tb => tb.HasCheckConstraint("CK_MaterialInventory_MaterialInventoryLocation", "Location IN ('Store', 'PreperationRoom', 'ProductionLine')"));
+
+        // Material Transaction
+        modelBuilder.Entity<MaterialTransaction>().Property(mt => mt.CreatedAt).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<MaterialTransaction>().Property(mt => mt.Type).HasConversion<string>();
+        modelBuilder.Entity<MaterialTransaction>().ToTable(tb => tb.HasCheckConstraint("CK_MaterialTransaction_MaterialTransactionType", "Type IN ('Send', 'Production', 'Return', 'Pickup')"));
+
     }
 
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace panasonic.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241203082552_CreateMaterialInventoryTable")]
+    partial class CreateMaterialInventoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,9 +66,8 @@ namespace panasonic.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Location")
+                        .HasColumnType("int");
 
                     b.Property<int>("MaterialId")
                         .HasColumnType("int");
@@ -87,10 +89,7 @@ namespace panasonic.Migrations
 
                     b.HasIndex("StagingProductionLineId");
 
-                    b.ToTable("MaterialInventories", t =>
-                        {
-                            t.HasCheckConstraint("CK_MaterialInventory_MaterialInventoryLocation", "Location IN ('Store', 'PreperationRoom', 'ProductionLine')");
-                        });
+                    b.ToTable("MaterialInventories");
                 });
 
             modelBuilder.Entity("panasonic.Models.MaterialRequest", b =>
@@ -159,44 +158,6 @@ namespace panasonic.Migrations
                     b.ToTable("MaterialRequests", t =>
                         {
                             t.HasCheckConstraint("CK_MaterialRequest_MaterialRequestStatus", "Status IN ('Pending', 'Verified', 'Approved', 'Rejected', 'Completed')");
-                        });
-                });
-
-            modelBuilder.Entity("panasonic.Models.MaterialTransaction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<int>("MaterialId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductionLineId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MaterialId");
-
-                    b.HasIndex("ProductionLineId");
-
-                    b.ToTable("MaterialTransactions", t =>
-                        {
-                            t.HasCheckConstraint("CK_MaterialTransaction_MaterialTransactionType", "Type IN ('Send', 'Production', 'Return', 'Pickup')");
                         });
                 });
 
@@ -281,7 +242,7 @@ namespace panasonic.Migrations
                             Email = "admin@email.com",
                             EmployeeID = 301010,
                             Fullname = "Admin",
-                            HashedPassword = "AQAAAAIAAYagAAAAEM8q/fZLPWBqDjrcG2lvBWyngyNxWLL4qrw9OG9gjgBdn9nxCnbtPABhvo8J3yLeaw==",
+                            HashedPassword = "AQAAAAIAAYagAAAAELjRwx4nk/TG4YGfDS0y8L5I6oZhp8yUB825N0h62FgwS+bMnCuA9sEIuRGvhCeFgg==",
                             IsVerified = true,
                             Role = "Admin"
                         },
@@ -292,7 +253,7 @@ namespace panasonic.Migrations
                             Email = "asistantleader@email.com",
                             EmployeeID = 301011,
                             Fullname = "Asistant Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAEC9k5DdFYCXQDoTV2uax7Nklesiny/QFS1KUcoxlNAgjIuD2/7y6hNNrYfyXEL84KA==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEOuhqN5U1D0Rt18oh7INvwSbYQp2aLJoi//WvPzr2FP4yaBLJrOwME8IZTIrdhrFjw==",
                             IsVerified = true,
                             Role = "AsistantLeader"
                         },
@@ -303,7 +264,7 @@ namespace panasonic.Migrations
                             Email = "shiftleader@email.com",
                             EmployeeID = 301012,
                             Fullname = "Shift Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAEL17Xa9qaf/JVpH0QZgoZYMprzisxgyzkkElRP5Il5lWPcLrkyAyer72pDN/ZiuX0Q==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEDrhfBmDQ2PNfh4amXsDMFuU14TuV9dkGgxsFUOrfFYwtxze+cd1ZYQ0kbSVD9T7dA==",
                             IsVerified = true,
                             Role = "ShiftLeader"
                         },
@@ -314,7 +275,7 @@ namespace panasonic.Migrations
                             Email = "storemanager@email.com",
                             EmployeeID = 301013,
                             Fullname = "Store Manager",
-                            HashedPassword = "AQAAAAIAAYagAAAAEAj68Da8Jzh0E+ErralR2WnPL6nIw/JGOYOsRwOQkHYJlz5OvACWxGHwT0MdGObI8w==",
+                            HashedPassword = "AQAAAAIAAYagAAAAECYbl97iIFXTnnoh0N0Lg8sMFvh3cwOd1DznUPYFem7BYQm+s3jTwCDCuqyk3d5SJg==",
                             IsVerified = true,
                             Role = "StoreManager"
                         });
@@ -386,23 +347,6 @@ namespace panasonic.Migrations
                     b.Navigation("RequestedBy");
 
                     b.Navigation("VerifiedBy");
-                });
-
-            modelBuilder.Entity("panasonic.Models.MaterialTransaction", b =>
-                {
-                    b.HasOne("panasonic.Models.Material", "Material")
-                        .WithMany()
-                        .HasForeignKey("MaterialId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("panasonic.Models.ProductionLine", "ProductionLine")
-                        .WithMany()
-                        .HasForeignKey("ProductionLineId");
-
-                    b.Navigation("Material");
-
-                    b.Navigation("ProductionLine");
                 });
 #pragma warning restore 612, 618
         }

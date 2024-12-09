@@ -37,6 +37,7 @@ public class MaterialRequestController : BaseController
         return View(await query.Include(mr => mr.RequestedBy).Include(mr => mr.Material).Include(mr => mr.ProductionLine).ToListAsync());
     }
 
+    [Authorize(Roles = "AsistantLeader")]
     public async Task<IActionResult> Create()
     {
         var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), ProductionLines = await _productionLineRepository.GetAllAsync() };
@@ -70,6 +71,18 @@ public class MaterialRequestController : BaseController
     {
         var request = await _materialRequestRepository.GetAsync(Id);
         request.SetToVerified(int.Parse(User.FindFirst("UserId")!.Value));
+        await _materialRequestRepository.UpdateAsync(request);
+
+        return RedirectToAction("Index");
+    }
+    [HttpPost]
+    [Authorize(Roles = "StoreManager")]
+    [ValidateAntiForgeryToken]
+    [Route("MaterialRequest/{Id}/Accept")]
+    public async Task<IActionResult> Accept(int Id)
+    {
+        var request = await _materialRequestRepository.GetAsync(Id);
+        request.Accept(int.Parse(User.FindFirst("UserId")!.Value));
         await _materialRequestRepository.UpdateAsync(request);
 
         return RedirectToAction("Index");

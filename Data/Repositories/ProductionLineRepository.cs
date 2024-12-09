@@ -8,6 +8,7 @@ public interface IProductionLineRepository
     Task<List<ProductionLine>> GetAllAsync();
     Task<ProductionLine> GetAsync(int lineId);
     Task Create(ProductionLine area);
+    Task UpdateAsync(ProductionLine line);
 }
 
 public class ProductionLineRepository : IProductionLineRepository
@@ -38,6 +39,12 @@ public class ProductionLineRepository : IProductionLineRepository
     public async Task Create(ProductionLine area)
     {
         await _dbContext.ProductionLines.AddAsync(area);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(ProductionLine line)
+    {
+        _dbContext.Update(line);
         await _dbContext.SaveChangesAsync();
     }
 

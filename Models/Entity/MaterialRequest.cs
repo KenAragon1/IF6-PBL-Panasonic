@@ -39,5 +39,11 @@ public class MaterialRequest
         RejectedById = rejectedById;
     }
 
+    public void Accept(int approvedById)
+    {
+        Status = MaterialRequestStatus.Approved;
+        AprrovedById = approvedById;
+    }
+
 
 }

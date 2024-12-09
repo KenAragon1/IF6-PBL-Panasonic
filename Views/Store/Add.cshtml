@@ -1,0 +1,42 @@
+@model panasonic.ViewModels.StoreViewModel.AddViewModel;
+@{
+    ViewData["PanelTitle"] = "Add Material To The Store";
+}
+
+
+<form asp-controller="Store" asp-action="Add" method="post" id="add-form">
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group row">
+                <label for="" class="col-form-label col-sm-2">Material</label>
+                <div class="col-sm-10">
+                    <select asp-for="MaterialId" class="form-control">
+                        <option value="">Select a material</option>
+                        @if (Model.Materials != null)
+                        {
+                            @foreach (var material in Model.Materials)
+                            {
+                                <option value="@material.Id">@material.Name</option>
+                            }
+                        }
+                    </select>
+                    <span class="text-danger" asp-validation-for="MaterialId"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="" class="col-form-label col-sm-2">Quantity</label>
+                <div class="col-sm-10">
+                    <input type="number" asp-for="Quantity" class="form-control">
+                    <span class="text-danger" asp-validation-for="Quantity"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-body">
+        <button class="btn btn-primary" type="submit" form="add-form">Submit</button>
+        <button class="btn btn-secondary">New Material</button>
+    </div>
+</div>
