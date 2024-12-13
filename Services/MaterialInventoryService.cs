@@ -43,7 +43,7 @@ public class MaterialInventoryService : IMaterialInventoryService
     {
         var viewModel = new ReturnViewModel
         {
-            MaterialInventories = await _materialInventoryRepository.GetAllByConditionAsync(mi => mi.Location == MaterialInventoryLocations.ProductionLine),
+            MaterialInventories = await _materialInventoryRepository.GetAllByConditionAsync(mi => mi.Location == MaterialInventoryLocations.ProductionLine && mi.Quantity > 0),
             ProductionLines = await _productionLineRepository.GetAllAsync()
         };
 
@@ -215,6 +215,15 @@ public class MaterialInventoryService : IMaterialInventoryService
             if (form.Quantity > materialInventoryInProductionLine.Quantity) throw new ExceptionWithModelError($"Forms[{index}].Quantity", "Cant use that many quantity since its more than what is available");
 
             materialInventoryInProductionLine.Quantity -= form.Quantity;
+
+            ListOfNewMaterialTransactions.Add(new MaterialTransaction
+            {
+                MaterialId = materialInventoryInProductionLine.MaterialId,
+                Quantity = form.Quantity,
+                Type = TransactionTypes.Production
+            });
         }
+
+        await _materialInventoryRepository.SaveChangesAsync(ListOfNewMaterialTransactions);
     }
 }

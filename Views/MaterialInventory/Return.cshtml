@@ -25,6 +25,7 @@
                 <thead>
                     <tr>
                         <th>Material</th>
+                        <th>Available Quantity</th>
                         <th>Return Quantity</th>
                         <th></th>
                     </tr>
@@ -32,19 +33,20 @@
                 <tbody id="form-body">
                     @foreach (var form in Model.Forms)
                     {
-                        <tr>
+                        <tr class="js-form-row">
                             <td>
-                                <div class="py-2">
+                                <div class="form-group">
                                     <select name="" id="" class="form-control"></select>
                                 </div>
                             </td>
+                            <td class="available-quantity-row">0</td>
                             <td>
                                 <div class="py-2">
                                     <input type="number" name="" id="" class="form-control col-sm-2">
                                 </div>
                             </td>
                             <td>
-                                <button class="btn btn-danger">X</button>
+                                <button class="btn btn-danger remove-row-btn" type="button">X</button>
                             </td>
                         </tr>
 
@@ -81,43 +83,77 @@
 
                 materialOptionsHtml = " <option value=''>Select Material</option> "
                 materialOptions.forEach(function (option) {
-                    materialOptionsHtml += ` <option value="${option.Id}">${option.Material.Name}</option> `
+                    materialOptionsHtml += ` <option value="${option.Id}" data-available-quantity="${option.Quantity}" data-detail-measurement="${option.Material.DetailMeasurement}">${option.Material.Name}</option> `
                 });
 
                 rowCount = 0;
                 $('#form-body').html(generateFormHtml(materialOptionsHtml));
 
-
-
             })
+
+            $(document).on("change", ".material-select", function () {
+                console.log('test')
+
+                var availableQuantity = $(this)
+                    .find(":selected")
+                    .data("available-quantity") || 0;
+                var detailMeasurement = $(this)
+                    .find(":selected")
+                    .data("detail-measurement") || "";
+
+                $(this)
+                    .closest(".js-form-row")
+                    .find(".available-quantity-row")
+                    .text(`${availableQuantity} ${detailMeasurement}`);
+
+                console.log($(this).closest(".js-form-row"))
+            });
+
 
             $('#new-form-btn').on('click', function () {
                 $('#form-body').append(generateFormHtml(materialOptionsHtml));
             });
+
+            $(document).on('click', '.remove-row-btn', function () {
+                console.log('hello world');
+                $(this).closest('.js-form-row').remove();
+
+                $('.js-form-row').each(function (index) {
+                    $(this).find('select, input').each(function () {
+                        const nameAttr = $(this).attr('name');
+                        if (nameAttr) {
+                            const newName = nameAttr.replace(/\[\d+\]/, `[${index}]`);
+                            $(this).attr('name', newName)
+                        }
+                    })
+                })
+
+                rowCount = $('js-form-row').length - 1;
+            })
 
         });
 
 
         function generateFormHtml(materialOptionsHtml) {
             console.log(materialOptionsHtml);
-            let html = `<tr>
-                                                                                                                                    <td>
-                                                                                                                                        <div class="py-2">
-                                                                                                                                            <select name="Forms[${rowCount}].MaterialInventoryId" class="form-control">
-                                                                                                                                            ${materialOptionsHtml}
-                                                                                                                                            </select>
-                                                                                                                                        </div>
-                                                                                                                                    </td>
-                                                                                                                                    <td>
-                                                                                                                                        <div class="py-2">
-                                                                                                                                            <input type="number" name="Forms[${rowCount}].Quantity" id="" class="form-control col-sm-2">
-                                                                                                                                        </div>
-                                                                                                                                    </td>
-                                                                                                                                    <td>
-                                                                                                                                        <button class="btn btn-danger">X</button>
-                                                                                                                                    </td>
-                                                                                                                                </tr>
-                                                                                                                        `
+            let html = `<tr tr class= "js-form-row" >
+    <td>                                                                                                        <div class="form-group">
+                                                                                                            <select name="Forms[${rowCount}].MaterialInventoryId" class="form-control material-select">
+                                                                                                            ${materialOptionsHtml}
+                                                                                                            </select>
+                                                                                                            </div>
+                                                                                                            </td>
+                                                                                                            <td class="available-quantity-row">0</td>
+                                                                                                            <td>
+                                                                                                            <div class="py-2">
+                                                                                                            <input type="number" name="Forms[${rowCount}].Quantity" id="" class="form-control col-sm-2">
+                                                                                                            </div>
+                                                                                                            </td>
+                                                                                                            <td>
+                                                                                                            <button class="btn btn-danger remove-row-btn" type="button">X</button>
+                                                                                                            </td>
+                                                                                                            </tr >
+                                                                                                                                                                                                                                                                `
             rowCount++;
             return html
 

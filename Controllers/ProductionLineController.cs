@@ -33,14 +33,7 @@ public class ProductionLineController : BaseController
         return View(viewModel);
     }
 
-    public async Task<IActionResult> Manage(int Id)
-    {
-        var viewModel = new ManageViewModel
-        {
-            materials = await _materialRepository.GetAllAsync()
-        };
-        return View(viewModel);
-    }
+
 
     public IActionResult Create()
     {
@@ -78,7 +71,8 @@ public class ProductionLineController : BaseController
     {
         if (!ModelState.IsValid)
         {
-            return View(editViewModel);
+            var viewModel = new EditViewModel { ProductionLine = await _productionLineRepository.GetAsync(Id), Remark = editViewModel.Remark, Description = editViewModel.Description };
+            return View(viewModel);
         }
 
         var line = await _productionLineRepository.GetAsync(Id);

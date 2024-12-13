@@ -31,5 +31,5 @@ public class EditViewModel
     [Required]
     public string Description { get; set; } = string.Empty;
 
-    public ProductionLine? ProductionLine { get; set; }
+    public ProductionLine ProductionLine { get; set; } = new ProductionLine();
 }
