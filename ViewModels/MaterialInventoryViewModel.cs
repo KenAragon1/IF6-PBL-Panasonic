@@ -50,6 +50,8 @@ public class PickupViewModel
 
 public class ReturnViewModel
 {
+    public int ProductionLineId { get; set; }
+
     public List<MaterialInventoryForm> Forms { get; set; } = new List<MaterialInventoryForm> { new MaterialInventoryForm() };
 
     public List<MaterialInventory> MaterialInventories { get; set; } = new List<MaterialInventory>();

@@ -9,7 +9,7 @@ namespace panasonic.Services;
 public interface IMaterialInventoryService
 {
     Task<SendViewModel> CreateSendViewModelAsync(List<SendForm>? sendForms = null);
-    Task<ReturnViewModel> ReturnViewModelAsync(List<MaterialInventoryForm>? materialInventoryForms = null);
+    Task<ReturnViewModel> ReturnViewModelAsync(ReturnViewModel? returnViewModel = null);
     Task SendMaterialAsync(SendViewModel sendViewModel);
     Task PickupMaterial(int lineDestination, List<MaterialInventoryForm> inventoryForms);
     Task ReturnMaterialAsync(List<MaterialInventoryForm> materialInventoryForms);
@@ -39,7 +39,7 @@ public class MaterialInventoryService : IMaterialInventoryService
         return viewModel;
     }
 
-    public async Task<ReturnViewModel> ReturnViewModelAsync(List<MaterialInventoryForm>? materialInventoryForms = null)
+    public async Task<ReturnViewModel> ReturnViewModelAsync(ReturnViewModel? returnViewModel = null)
     {
         var viewModel = new ReturnViewModel
         {
@@ -47,9 +47,15 @@ public class MaterialInventoryService : IMaterialInventoryService
             ProductionLines = await _productionLineRepository.GetAllAsync()
         };
 
-        if (materialInventoryForms != null) viewModel.Forms = materialInventoryForms;
+        if (returnViewModel != null)
+        {
+            viewModel.ProductionLineId = returnViewModel.ProductionLineId;
+            if (returnViewModel.Forms != null) viewModel.Forms = returnViewModel.Forms;
+        }
 
         return viewModel;
+
+
     }
 
 

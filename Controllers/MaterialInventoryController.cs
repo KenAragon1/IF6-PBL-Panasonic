@@ -95,7 +95,7 @@ public class MaterialInventoryController : BaseController
         {
             if (!ModelState.IsValid)
             {
-                var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel.Forms);
+                var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel);
                 return View(viewModel);
             }
 
@@ -106,13 +106,13 @@ public class MaterialInventoryController : BaseController
         catch (OperationNotAllowed e)
         {
             ModelState.AddModelError(e.ModelErrorKey, e.Message);
-            var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel.Forms);
+            var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel);
             return View(viewModel);
         }
         catch (System.Exception)
         {
             ModelState.AddModelError(string.Empty, "Internal Server Error");
-            var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel.Forms);
+            var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel);
             return View(viewModel);
         }
     }
