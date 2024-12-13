@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using panasonic.Errors;
 using panasonic.Exceptions;
 using panasonic.Models;
 using panasonic.Repositories;
@@ -103,9 +104,9 @@ public class MaterialInventoryController : BaseController
 
             return RedirectToAction("ProductionLine");
         }
-        catch (OperationNotAllowed e)
+        catch (ExceptionWithModelError e)
         {
-            ModelState.AddModelError(e.ModelErrorKey, e.Message);
+            ModelState.AddModelError(e.ModelKey, e.Message);
             var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel);
             return View(viewModel);
         }
@@ -142,7 +143,7 @@ public class MaterialInventoryController : BaseController
             }
             await _materialInventoryService.PickupMaterial(pickupViewModel.ProductionLineDestination, pickupViewModel.Forms);
 
-            ViewBag.SuccessMessage = "Material send to preperation room success. To check the report <a href='/Dashboard/Report'>Click here</a>";
+            TempData["SuccessMessage"] = "Material send to preperation room success";
 
             return RedirectToAction("PreperationRoom");
         }
@@ -150,8 +151,6 @@ public class MaterialInventoryController : BaseController
         {
             throw;
         }
-
-
 
     }
 

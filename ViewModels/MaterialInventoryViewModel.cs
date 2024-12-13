@@ -60,8 +60,8 @@ public class ReturnViewModel
 
 public class MaterialInventoryForm
 {
-    [Required]
-    public int MaterialInventoryId { get; set; }
+    [Required(ErrorMessage = "Please pick a material")]
+    public int? MaterialInventoryId { get; set; }
 
     [Required]
     [Range(1, int.MaxValue, ErrorMessage = "Quantity must be greater than 0")]

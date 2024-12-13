@@ -162,7 +162,7 @@ public class MaterialInventoryService : IMaterialInventoryService
         var ListOfNewMaterialTransactions = new List<MaterialTransaction>();
         var ListOfNewMaterialInventoriesInPreperationRoom = new List<MaterialInventory>();
 
-        foreach (var form in materialInventoryForms)
+        foreach (var (form, index) in materialInventoryForms.Select((value, index) => (value, index)))
         {
             var materialInProductionLine = await _materialInventoryRepository.GetAsync(form.MaterialInventoryId);
 
@@ -180,7 +180,7 @@ public class MaterialInventoryService : IMaterialInventoryService
 
             ListOfNewMaterialTransactions.Add(newMaterialTransaction);
 
-            if (materialInProductionLine.Quantity < form.Quantity) throw new OperationNotAllowed("Cannot return material more than what's available");
+            if (materialInProductionLine.Quantity < form.Quantity) throw new ExceptionWithModelError($"Forms[{index}].Quantity", "Cannot return material more than what's available");
 
             materialInProductionLine.Quantity -= form.Quantity;
 

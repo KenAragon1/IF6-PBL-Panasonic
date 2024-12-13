@@ -5,7 +5,7 @@ namespace panasonic.ViewModels;
 public class LoginViewModel
 {
     [Required(ErrorMessage = "Employee ID Required")]
-    public int EmployeeID { get; set; }
+    public int? EmployeeID { get; set; }
 
     [Required(ErrorMessage = "Password Required")]
     [DataType(DataType.Password)]

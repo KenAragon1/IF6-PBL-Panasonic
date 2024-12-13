@@ -82,6 +82,7 @@ public class MaterialRequestController : BaseController
         try
         {
             await _materialRequestService.VerifyAsync(Id);
+            TempData["SuccessMessage"] = "Request Verified";
             return RedirectToAction("Index");
         }
         catch (System.Exception ex)
@@ -102,6 +103,7 @@ public class MaterialRequestController : BaseController
         try
         {
             await _materialRequestService.ApproveAsync(Id);
+            TempData["SuccessMessage"] = "Request Approved";
             return RedirectToAction("Index");
         }
         catch (System.Exception ex)
@@ -120,6 +122,7 @@ public class MaterialRequestController : BaseController
         try
         {
             await _materialRequestService.RejectAsync(Id);
+            TempData["SuccessMessage"] = "Request Rejected";
             return RedirectToAction("Index");
         }
         catch (System.Exception ex)
@@ -136,6 +139,7 @@ public class MaterialRequestController : BaseController
         try
         {
             await _materialRequestRepository.DeleteAsync(id);
+            TempData["SuccessMessage"] = "Request Cancelled";
             return RedirectToAction("Index");
         }
         catch (System.Exception ex)
