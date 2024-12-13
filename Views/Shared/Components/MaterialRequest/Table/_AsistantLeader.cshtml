@@ -4,14 +4,15 @@
     var index = 1;
 }
 
-
-<table class="table table-bordered table-hover" id="materialRequestTable">
+<table class="table table-striped table-hover" id="materialRequestTable">
     <thead>
         <tr>
             <th scope="col">No</th>
             <th scope="col">Requested Date</th>
             <th scope="col">Material Name</th>
-            <th scope="col">Quantity</th>
+            <th scope="col">Required Quantity</th>
+            <th scope="col">Fullfilled Quantity</th>
+            <th scope="col">Required At</th>
             <th scope="col">Remark</th>
             <th scope="col">Status</th>
             <th scope="col"></th>
@@ -22,9 +23,11 @@
         {
             <tr>
                 <td>@(index++)</td>
-                <td>@request.RequestedAt</td>
+                <td>@request.CreatedAt</td>
                 <td>@request.Material!.Name</td>
-                <td>@request.Quantity</td>
+                <td>@($"{request.RequestedQuantity} {request.Material.DetailMeasurement}")</td>
+                <td>@($"{request.FullfilledQuantity} {request.Material.DetailMeasurement}")</td>
+                <td>@request.RequiredAt</td>
                 <td>Line - @request.ProductionLine!.Remark</td>
                 <td>@switch (request.Status)
                     {
@@ -67,7 +70,11 @@
                             </div>
                         </div>
                     }
+                    @* <button class="btn btn-primary">
+                        Details
+                    </button> *@
                 </td>
+
             </tr>
         }
     </tbody>

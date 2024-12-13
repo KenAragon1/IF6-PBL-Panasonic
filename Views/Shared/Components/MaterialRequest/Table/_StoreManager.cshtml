@@ -4,15 +4,16 @@
     var index = 1;
 }
 
-
-<table class="table table-bordered table-hover" id="materialRequestTable">
+<table class="table table-striped table-hover" id="materialRequestTable">
     <thead>
         <tr>
             <th scope="col">No</th>
             <th scope="col">Material Name</th>
-            <th scope="col">Quantity</th>
+            <th scope="col">Required Quantity</th>
+            <th scope="col">Fullfilled Quantity</th>
             <th scope="col">Remark</th>
             <th scope="col">Requested Date</th>
+            <th scope="col">Required At</th>
             <th scope="col">Requested By</th>
             <th scope="col">Status</th>
             <th scope="col"></th>
@@ -21,44 +22,62 @@
     <tbody>
         @foreach (var request in Model)
         {
-            <tr>
-                <td>@(index++)</td>
-                <td>@request.Material!.Name</td>
-                <td>@request.Quantity</td>
-                <td>Line - @request.ProductionLine!.Remark</td>
-                <td>@request.RequestedAt</td>
-                <td>@request.RequestedBy!.Fullname</td>
-                <td>@request.Status</td>
-                <td>
+                <tr>
+                    <td>@(index++)</td>
+                    <td>@request.Material!.Name</td>
+                    <td>@request.RequestedQuantity</td>
+                    <td>@request.FullfilledQuantity</td>
+                    <td>Line - @request.ProductionLine!.Remark</td>d
+                    <td>@request.CreatedAt</td>d
+                    <td>@request.RequiredAt</td>
+                    <td>@request.RequestedBy.Fullname</td>
+                    <td>
+                        @switch (request.Status)
+                    {
+                        case MaterialRequestStatus.Pending:
+                            <span class="badge badge-secondary">@request.Status</span>
+                            break;
+                        case MaterialRequestStatus.Approved:
+                            <span class="badge badge-success">@request.Status</span>
+                            break;
+                        case MaterialRequestStatus.Rejected:
+                            <span class="badge badge-danger">@request.Status</span>
+                            break;
+                        case MaterialRequestStatus.Verified:
+                            <span class="badge badge-info">@request.Status</span>
+                            break;
+                    }
+                    </td>
+                    <td>
                     @if (request.Status != MaterialRequestStatus.Approved)
                     {
-
-                        <button class="btn btn-success" data-toggle="modal"
+        <button class="btn btn-success" data-toggle="modal"
                             data-target="#accept-confirmation-@request.Id">Accept</button>
-                        <div class="modal fade" id="accept-confirmation-@request.Id">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <div class="modal-title">Accept Confirmation</div>
-                                    </div>
-                                    <div class="modal-body">
-                                        Confirmation Accept
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button class="btn btn-light" data-dismiss="modal">Cancel</button>
-                                        <form asp-controller="MaterialRequest" asp-action="Accept" asp-route-id="@request.Id"
-                                            method="post">
+                                <div class="modal fade" id="accept-confirmation-@request.Id">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <div class="modal-title">Accept Confirmation</div>
+                                            </div>
+                                            <div class="modal-body">
+                                                Confirmation Accept
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-light" data-dismiss="modal">Cancel</button>
+                                                <form asp-controller="MaterialRequest" asp-action="Approve" asp-route-id="@request.Id"
+                                                    method="post">
                                             @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-success">Accept</button>
-                                        </form>
+                                                    <button type="submit" class="btn btn-success">Accept</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-danger">Reject</button>
+                                <button class="btn btn-danger">Reject</button>
+
                     }
-                </td>
-            </tr>
+                    </td>
+                </tr>
         }
     </tbody>
 </table>

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using panasonic.Helpers;
+using panasonic.Models;
 using panasonic.Repositories;
 using panasonic.Services;
 
@@ -18,10 +19,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddHttpContextAccessor();
+
+// Helper
+builder.Services.AddScoped<IUserClaimHelper, UserClaimHelper>();
+builder.Services.AddScoped<IFileHelper, FileHelper>();
+
+
 // user
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 builder.Services.AddScoped<IProductionLineRepository, ProductionLineRepository>();
+
+builder.Services.AddScoped<IMaterialRequestService, MaterialRequestService>();
 builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
 
 
@@ -29,7 +39,6 @@ builder.Services.AddScoped<IMaterialInventoryService, MaterialInventoryService>(
 builder.Services.AddScoped<IMaterialInventoryRepository, MaterialInventoryRepository>();
 
 builder.Services.AddScoped<IMaterialTransferRepo, MaterialTransferRepo>();
-builder.Services.AddScoped<IFileHelper, FileHelper>();
 
 var app = builder.Build();
 
@@ -57,56 +66,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
-// Tambahkan routing untuk MaterialRequest
-app.MapControllerRoute(
-    name: "materialrequest",
-    pattern: "MaterialRequest/{action=Index}/{id?}",
-    defaults: new { controller = "MaterialRequest" }
-);
 
-//Route preproom
-app.MapControllerRoute(
-    name: "preproom",
-    pattern: "PrepRoom/{action=Index}/{id?}",
-    defaults: new { controller = "PrepRoom" }
-);
-
-//Route for Material Usage
-app.MapControllerRoute(
-    name: "materialusage",
-    pattern: "MaterialUsage/{action=Index}/{id?}",
-    defaults: new { controller = "MaterialUsage" }
-);
-
-//Route material return
-app.MapControllerRoute(
-    name: "materialreturn",
-    pattern: "MaterialReturn/{action=Index}/{id?}",
-    defaults: new { controller = "MaterialReturn" }
-);
-
-app.MapControllerRoute(
-    name: "managematerialrequest",
-    pattern: "managematerialrequest/{action=Index}/{id?}",
-    defaults: new { controller = "managematerialrequest" }
-);
-
-app.MapControllerRoute(
-    name: "sendmaterialreturn",
-    pattern: "sendmaterialreturn/{action=Index}/{id?}",
-    defaults: new { controller = "sendmaterialreturn" }
-);
-
-app.MapControllerRoute(
-    name: "savematerialreturn",
-    pattern: "savematerialreturn/{action=Index}/{id?}",
-    defaults: new { controller = "savematerialreturn" }
-);
-
-app.MapControllerRoute(
-    name: "konfirmmaterialrequest",
-    pattern: "konfirmmaterialrequest/{action=Index}/{id?}",
-    defaults: new { controller = "konfirmmaterialrequest" }
-);
 
 app.Run();

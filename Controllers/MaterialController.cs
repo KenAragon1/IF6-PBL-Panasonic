@@ -72,6 +72,9 @@ public class MaterialController : BaseController
 
     public async Task<IActionResult> Edit(int Id)
     {
+
+
+
         var material = await _materialRepository.GetAsync(Id);
 
         if (material == null) return NotFound();
@@ -85,33 +88,46 @@ public class MaterialController : BaseController
             DetailMeasurement = material.DetailMeasurement,
             DetailQuantity = material.DetailQuantity
         };
-
         return View(viewModel);
+
+
     }
 
     [HttpPost]
     public async Task<IActionResult> Edit(int Id, EditMaterialViewModel editMaterialViewModel)
     {
-        var material = await _materialRepository.GetAsync(Id);
 
-        if (material == null) return NotFound();
-
-        if (!ModelState.IsValid)
+        try
         {
+            var material = await _materialRepository.GetAsync(Id);
+
+            if (material == null) return NotFound();
+
+            if (!ModelState.IsValid)
+            {
+                return View(editMaterialViewModel);
+            }
+
+            material.Name = editMaterialViewModel.Name;
+            material.Number = editMaterialViewModel.Number;
+            material.UnitMeasurement = editMaterialViewModel.UnitMeasurement;
+            material.DetailMeasurement = material.DetailMeasurement;
+            material.DetailQuantity = editMaterialViewModel.DetailQuantity;
+
+            await _materialRepository.UpdateAsync(material);
+
+            TempData["SuccessMessage"] = "Update Material Success";
+
+            return RedirectToAction("Index");
+
+        }
+        catch (System.Exception e)
+        {
+            ModelState.AddModelError("ErrorMessage", e.Message);
             return View(editMaterialViewModel);
+
         }
 
-        material.Name = editMaterialViewModel.Name;
-        material.Number = editMaterialViewModel.Number;
-        material.UnitMeasurement = editMaterialViewModel.UnitMeasurement;
-        material.DetailMeasurement = material.DetailMeasurement;
-        material.DetailQuantity = editMaterialViewModel.DetailQuantity;
-
-        await _materialRepository.UpdateAsync(material);
-
-        TempData["SuccessMessage"] = "Update Material Success";
-
-        return RedirectToAction("Index");
     }
 
 

@@ -41,8 +41,8 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item @(currentPath == "MaterialInventory/Reports" ? "active" : "")">
-                    <a asp-controller="MaterialInventory" asp-action="Reports">
+                <li class="nav-item @(currentPath == "Dashboard/Report" ? "active" : "")">
+                    <a asp-controller="Dashboard" asp-action="Report">
                         <i class="fas fa-clipboard-list"></i>
                         <p>Material Reports</p>
                     </a>
@@ -102,34 +102,10 @@
                     </li>
                 }
 
-
-
-                @* Material Handler Menu *@
-                @if (ViewBag.Role == "MaterialHandler")
-                {
-                    <li class="nav-section">
-                        <span class="sidebar-mini-icon">
-                            <i class="fa fa-ellipsis-h"></i>
-                        </span>
-                        <h4 class="text-section">Material Handler Menu</h4>
-                    </li>
-                    <li class="nav-item @(currentPath == "/User" ? "active" : "")">
-                        <a asp-controller="User" asp-action="Index">
-                            <i class="fas fa-cogs"></i>
-                            <span class="sub-item">Manage Preperation Room</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @(currentPath == "/SendMaterialReturn" ? "active" : "")">
-                        <a asp-controller="SendMaterialReturn" asp-action="Index">
-                            <i class="fas fa-undo"></i>
-                            <span class="sub-item">Material Return </span>
-                        </a>
-                    </li>
-                }
-
                 @* Asistant Leader Menu *@
                 @if (ViewBag.Role == "AsistantLeader")
                 {
+
                     <li class="nav-section">
                         <span class="sidebar-mini-icon">
                             <i class="fa fa-ellipsis-h"></i>
@@ -138,7 +114,7 @@
                     </li>
                     <li class="nav-item @(currentPath == "/ProductionLine" ? "active" : "")">
                         <a asp-controller="ProductionLine" asp-action="Index">
-                            <i class="fa-solid fa-conveyor-belt-arm"></i>
+                            <i class="fas fa-project-diagram"></i>
                             <span class="sub-item">Manage Line</span>
                         </a>
                     </li>
@@ -161,12 +137,6 @@
                             <span class="sub-item">Material Request</span>
                         </a>
                     </li>
-                    <li class="nav-item @(currentPath == "/PrepRoom" ? "active" : "")">
-                        <a asp-controller="PrepRoom" asp-action="Index">
-                            <i class="fas fa-cogs"></i>
-                            <span class="sub-item">Preparation Room</span>
-                        </a>
-                    </li>
                     <li class="nav-item @(currentPath == "/MaterialInventory/Pickup" ? "active" : "")">
                         <a asp-controller="MaterialInventory" asp-action="Pickup">
                             <i class="fas fa-dolly"></i>
@@ -174,9 +144,9 @@
                         </a>
                     </li>
                     <li class="nav-item @(currentPath == "/MaterialReturn" ? "active" : "")">
-                        <a asp-controller="MaterialReturn" asp-action="Index">
+                        <a asp-controller="MaterialInventory" asp-action="Return">
                             <i class="fas fa-undo"></i>
-                            <span class="sub-item">Material Return</span>
+                            <span class="sub-item">Return Material</span>
                         </a>
                     </li>
                 }
@@ -196,14 +166,8 @@
                             <span class="sub-item">Material Request</span>
                         </a>
                     </li>
-                    <li class="nav-item @(currentPath == "/Store/Material" ? "active" : "")">
-                        <a asp-controller="Store" asp-action="Material">
-                            <i class="fas fa-clipboard-list"></i>
-                            <span class="sub-item">Manage Materials In Store</span>
-                        </a>
-                    </li>
-                    <li class="nav-item @(currentPath == "/store/material/send" ? "active" : "")">
-                        <a asp-controller="Store" asp-action="Send">
+                    <li class="nav-item @(currentPath == "/MaterialInventory/Send" ? "active" : "")">
+                        <a asp-controller="MaterialInventory" asp-action="Send">
                             <i class="fas fa-undo"></i>
                             <span class="sub-item">Send Material</span>
                         </a>

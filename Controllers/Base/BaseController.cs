@@ -7,7 +7,7 @@ public class BaseController : Controller
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity!.IsAuthenticated)
         {
             var username = User.Identity.Name;
 

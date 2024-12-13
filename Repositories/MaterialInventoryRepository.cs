@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using panasonic.Models;
 
@@ -5,8 +6,10 @@ namespace panasonic.Repositories;
 
 public interface IMaterialInventoryRepository
 {
-    Task<List<MaterialInventory>> GetAllAsync(MaterialInventoryLocations? location = null, bool withMaterial = false);
-    Task<MaterialInventory> GetAsync(int? id = null, int? materialId = null, MaterialInventoryLocations? location = null, int? productionLineId = null);
+    Task<List<MaterialInventory>> GetAllAsync(MaterialInventoryLocations? location = null, bool withMaterial = false, bool withProductionLine = false);
+    Task<List<MaterialInventory>> GetAllByConditionAsync(Expression<Func<MaterialInventory, bool>> predicate);
+    Task<MaterialInventory?> GetAsync(int? id = null, int? materialId = null, MaterialInventoryLocations? location = null, int? productionLineId = null);
+    Task<MaterialInventory?> GetByConditionAsync(Expression<Func<MaterialInventory, bool>> predicate);
     Task StoreAsync(MaterialInventory materialInventory);
     Task UpdateAsync(MaterialInventory materialInventory);
     Task UpdateManyAsync(List<MaterialInventory> materialInventories);
@@ -23,18 +26,26 @@ public class MaterialInventoryRepository : IMaterialInventoryRepository
     {
         _dbContext = dbContext;
     }
-    public async Task<List<MaterialInventory>> GetAllAsync(MaterialInventoryLocations? location = null, bool withMaterial = false)
+    public async Task<List<MaterialInventory>> GetAllAsync(MaterialInventoryLocations? location = null, bool withMaterial = false, bool withProductionLine = false)
     {
         var query = _dbContext.MaterialInventories.Include(mi => mi.Material).AsQueryable();
 
         if (location != null) query = query.Where(mi => mi.Location == location);
         if (withMaterial) query = query.Include(mi => mi.Material);
+        if (withProductionLine) query = query.Include(mi => mi.ProductionLine);
 
         return await query.ToListAsync();
     }
 
+    public async Task<List<MaterialInventory>> GetAllByConditionAsync(Expression<Func<MaterialInventory, bool>> predicate)
+    {
+        return await _dbContext.MaterialInventories.Where(predicate).Include(mi => mi.Material).ToListAsync();
+    }
 
-    public async Task<MaterialInventory> GetAsync(int? id = null, int? materialId = null, MaterialInventoryLocations? location = null, int? productionLineId = null)
+
+
+
+    public async Task<MaterialInventory?> GetAsync(int? id = null, int? materialId = null, MaterialInventoryLocations? location = null, int? productionLineId = null)
     {
         var query = _dbContext.MaterialInventories.AsQueryable();
 
@@ -45,6 +56,12 @@ public class MaterialInventoryRepository : IMaterialInventoryRepository
 
         return await query.FirstOrDefaultAsync();
     }
+
+    public async Task<MaterialInventory?> GetByConditionAsync(Expression<Func<MaterialInventory, bool>> predicate)
+    {
+        return await _dbContext.MaterialInventories.Where(predicate).FirstOrDefaultAsync();
+    }
+
 
     public async Task StoreAsync(MaterialInventory materialInventory)
     {
@@ -96,5 +113,6 @@ public class MaterialInventoryRepository : IMaterialInventoryRepository
             throw;
         }
     }
+
 
 }

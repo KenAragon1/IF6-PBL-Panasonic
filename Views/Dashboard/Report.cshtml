@@ -1,0 +1,35 @@
+@model panasonic.ViewModels.DashboardViewModel.ReportViewModel;
+
+@{
+    ViewData["PanelTitle"] = "Material Reports";
+}
+
+<div class="card">
+    <div class="card-body">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Report Type</th>
+                    <th>Material Number</th>
+                    <th>Material name</th>
+                    <th>Material Quantity</th>
+                    <th>Created At</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model.MaterialTransactions)
+                {
+                        <tr>
+                            <td>@report.Type</td>
+                            <td>@report.Material!.Number</td>
+                            <td>@report.Material.Name</td>
+                            <td>@report.Quantity</td>
+                            <td>@report.CreatedAt.ToString("d MMMMM yyyy, HH:mm")</td>
+                            <td><button class="btn btn-primary">Details</button></td>
+                        </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

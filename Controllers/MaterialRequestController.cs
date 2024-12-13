@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using panasonic.Models;
 using panasonic.Repositories;
+using panasonic.Services;
 using panasonic.ViewModels.MaterialRequestViewModel;
 
 namespace panasonic.Controllers;
@@ -14,16 +15,18 @@ public class MaterialRequestController : BaseController
     private readonly IMaterialRequestRepository _materialRequestRepository;
     private readonly IProductionLineRepository _productionLineRepository;
     private readonly IMaterialRepository _materialRepository;
-    public MaterialRequestController(IMaterialRequestRepository materialRequestRepository, IProductionLineRepository areaRepository, IMaterialRepository materialRepository)
+    private readonly IMaterialRequestService _materialRequestService;
+
+    public MaterialRequestController(IMaterialRequestRepository materialRequestRepository, IProductionLineRepository areaRepository, IMaterialRepository materialRepository, IMaterialRequestService materialRequestService)
     {
         _materialRequestRepository = materialRequestRepository;
         _productionLineRepository = areaRepository;
         _materialRepository = materialRepository;
+        _materialRequestService = materialRequestService;
     }
     public async Task<IActionResult> Index()
     {
         var query = _materialRequestRepository.Query();
-
         switch (User.FindFirst(ClaimTypes.Role)?.Value)
         {
             case "AsistantLeader":
@@ -34,7 +37,7 @@ public class MaterialRequestController : BaseController
                 break;
         }
 
-        return View(await query.Include(mr => mr.RequestedBy).Include(mr => mr.Material).Include(mr => mr.ProductionLine).ToListAsync());
+        return View(await query.Include(mr => mr.RequestedBy).Include(mr => mr.Material).Include(mr => mr.ProductionLine).Include(mr => mr.ApprovedBy).ToListAsync());
     }
 
     [Authorize(Roles = "AsistantLeader")]
@@ -49,18 +52,25 @@ public class MaterialRequestController : BaseController
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateViewModel createViewModel)
     {
-        if (!ModelState.IsValid)
+
+        try
         {
-            var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), ProductionLines = await _productionLineRepository.GetAllAsync() };
-            return View(ViewModels);
+            if (!ModelState.IsValid)
+            {
+                var ViewModels = new CreateViewModel { Materials = await _materialRepository.GetAllAsync(), ProductionLines = await _productionLineRepository.GetAllAsync() };
+                return View(ViewModels);
+            }
+
+            await _materialRequestService.CreateAsync(createViewModel);
+
+            TempData["SuccessMessage"] = "Material Request Created";
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception)
+        {
+            throw;
         }
 
-        int.TryParse(User.FindFirst("UserId")!.Value, out int userId);
-        var materialRequest = createViewModel.CreateForms.Select(f => new MaterialRequest { MaterialId = f.MaterialId, ProductionLineId = f.ProductionLineId, Quantity = f.Quantity, RequestedById = userId }).ToList();
-        await _materialRequestRepository.StoreManyAsync(materialRequest);
-
-        TempData["SuccessMessage"] = "Material Request Created";
-        return RedirectToAction("Index");
     }
 
     [HttpPost]
@@ -69,23 +79,36 @@ public class MaterialRequestController : BaseController
     [Route("MaterialRequest/{Id}/Verify")]
     public async Task<IActionResult> Verify(int Id)
     {
-        var request = await _materialRequestRepository.GetAsync(Id);
-        request.SetToVerified(int.Parse(User.FindFirst("UserId")!.Value));
-        await _materialRequestRepository.UpdateAsync(request);
+        try
+        {
+            await _materialRequestService.VerifyAsync(Id);
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            throw;
+            return RedirectToAction("Index");
+        }
 
-        return RedirectToAction("Index");
     }
+
     [HttpPost]
     [Authorize(Roles = "StoreManager")]
     [ValidateAntiForgeryToken]
     [Route("MaterialRequest/{Id}/Accept")]
-    public async Task<IActionResult> Accept(int Id)
+    public async Task<IActionResult> Approve(int Id)
     {
-        var request = await _materialRequestRepository.GetAsync(Id);
-        request.Accept(int.Parse(User.FindFirst("UserId")!.Value));
-        await _materialRequestRepository.UpdateAsync(request);
-
-        return RedirectToAction("Index");
+        try
+        {
+            await _materialRequestService.ApproveAsync(Id);
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return RedirectToAction("Index");
+        }
     }
 
     [HttpPost]
@@ -94,18 +117,33 @@ public class MaterialRequestController : BaseController
     [Route("MaterialRequest/{Id}/Reject")]
     public async Task<IActionResult> Reject(int Id)
     {
-        var request = await _materialRequestRepository.GetAsync(Id);
-        request.Reject(int.Parse(User.FindFirst("UserId")!.Value));
-        await _materialRequestRepository.UpdateAsync(request);
+        try
+        {
+            await _materialRequestService.RejectAsync(Id);
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return RedirectToAction("Index");
+        }
 
-        return RedirectToAction("Index");
     }
 
     [HttpPost]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        await _materialRequestRepository.DeleteAsync(id);
-        return RedirectToAction("Index");
+        try
+        {
+            await _materialRequestRepository.DeleteAsync(id);
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception ex)
+        {
+            TempData["ErrorMessage"] = ex.Message;
+            return RedirectToAction("Index");
+        }
+
     }
 
 }

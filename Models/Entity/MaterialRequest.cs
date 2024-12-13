@@ -8,8 +8,10 @@ public enum MaterialRequestStatus
 public class MaterialRequest
 {
     public int Id { get; set; }
-    public required int Quantity { get; set; }
-    public DateTime RequestedAt { get; set; }
+    public required int RequestedQuantity { get; set; }
+    public int FullfilledQuantity { get; set; }
+    public DateTime RequiredAt { get; set; }
+    public DateTime CreatedAt { get; set; }
     public MaterialRequestStatus Status { get; set; }
     public required int MaterialId { get; set; }
     public Material? Material { get; set; }
@@ -20,13 +22,13 @@ public class MaterialRequest
     public int? VerifiedById { get; set; }
     public User? VerifiedBy { get; set; }
     public DateTime? VerifiedAt { get; set; }
-    public int? AprrovedById { get; set; }
+    public int? ApprovedById { get; set; }
     public User? ApprovedBy { get; set; }
     public DateTime? ApprovedAt { get; set; }
     public int? RejectedById { get; set; }
     public User? RejectedBy { get; set; }
 
-    public void SetToVerified(int verifiedById)
+    public void Verify(int verifiedById)
     {
         Status = MaterialRequestStatus.Verified;
         VerifiedAt = DateTime.Now;
@@ -39,10 +41,10 @@ public class MaterialRequest
         RejectedById = rejectedById;
     }
 
-    public void Accept(int approvedById)
+    public void Approve(int approvedById)
     {
         Status = MaterialRequestStatus.Approved;
-        AprrovedById = approvedById;
+        ApprovedById = approvedById;
     }
 
 

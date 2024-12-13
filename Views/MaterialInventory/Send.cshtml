@@ -1,0 +1,272 @@
+@model panasonic.ViewModels.MaterialInventoryViewModel.SendViewModel;
+
+@{
+    ViewData["PanelTitle"] = "Send Material To Preperation Room";
+
+}
+
+<form asp-controller="MaterialInventory" asp-action="Send" id="send-form" method="post">
+
+    @for (var i = 0; i < Model.Forms.Count(); i++)
+    {
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group row border-bottom">
+                    <label for="" class="col-sm-2 col-form-label">Material Request</label>
+                    <div class="col-sm-10">
+                        <select asp-for="Forms[i].MaterialRequestId" class="form-control request-select" required>
+                            <option value="">Select Material Request Thats need to be fullfilled</option>
+                            @foreach (var requestOption in Model.MaterialRequests)
+                            {
+                                <option value="@requestOption.Id" data-material-name="@requestOption.Material!.Name"
+                                    data-requested-by="@requestOption.RequestedBy!.Fullname"
+                                    data-line-destination="@requestOption.ProductionLine!.Remark"
+                                    data-requested-quantity="@requestOption.RequestedQuantity"
+                                    data-required-at="@requestOption.RequiredAt"
+                                    data-fullfilled-quantity="@requestOption.FullfilledQuantity"
+                                    data-unit-measurement="@requestOption.Material!.UnitMeasurement"
+                                    data-detail-measurement="@requestOption.Material!.DetailMeasurement">Request -
+                                    @requestOption.Id
+
+                                </option>
+                            }
+                        </select>
+                        <span class="text-danger" asp-validation-for="Forms[i].Measurement"></span>
+                    </div>
+                </div>
+
+                <div class="p-3">
+                    <div class="card-title fw-bold">Request Detail</div>
+                    @{
+                        var request = @Model.MaterialRequests.Where(mr => mr.Id ==
+                        Model.Forms[i].MaterialRequestId).FirstOrDefault();
+                    }
+                    <table class="table">
+                        <tr>
+                            <th>Material Name</th>
+                            <td class="material-name">
+                                @request?.Material!.Name
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Requested By</th>
+                            <td class="requested-by">
+                                @request?.RequestedBy!.Fullname
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Remark</th>
+                            <td>Line - <span class="line-destination">
+                                    @request?.ProductionLine!.Remark
+
+                                </span></td>
+                        </tr>
+                        <tr>
+                            <th>Required At</th>
+                            <td class="required-at">
+                                @request?.RequiredAt
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Request Quantity</th>
+                            <td class="requested-quantity">
+                                @request?.RequestedQuantity
+                                <span class="requested-quantity-span"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Fullfilled Quantity</th>
+                            <td class="fullfilled-quantity">
+                                @request?.FullfilledQuantity
+                                <span class="fullfilled-quantity-span"></span>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Send Quantity</th>
+                            <td>
+                                <div class="row gap-2">
+                                    <input type="number" class="form-control col-sm-3 quantity-input"
+                                        asp-for="Forms[i].QuantitySend" min="1"
+                                        max="@(request?.RequestedQuantity - request?.FullfilledQuantity)" required>
+                                    <select asp-for="Forms[i].Measurement" class="form-control col-sm-3 measurement-select">
+                                        <option value="">Select Measurement</option>
+                                        @if (request != null)
+                                        {
+                                            <option value="Unit">@request.Material!.UnitMeasurement</option>
+                                            <option value="Detail">@request.Material!.DetailMeasurement</option>
+                                        }
+                                    </select>
+
+                                </div>
+
+                                <span class="text-danger" asp-validation-for="Forms[i].QuantitySend"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <button class="btn btn-danger remove-row-btn">Remove</button>
+            </div>
+        </div>
+    }
+</form>
+
+
+
+
+<div class="card">
+    <div class="card-body">
+        <button class="btn btn-primary" type="submit" form="send-form">Submit</button>
+        <button class="btn btn-secondary" id="new-form-btn">New Material Send</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            let rowCount = @Model.Forms.Count;
+            $('#new-form-btn').on('click', function () {
+
+                let newRow = `
+                                                                            <div class="card">
+                                                                            <div class="card-body">
+                                                                            <div class="form-group row border-bottom">
+                                                                            <label for="" class="col-sm-2 col-form-label">Material Request</label>
+                                                                            <div class="col-sm-10">
+                                                                            <select name="Forms[${rowCount}].MaterialRequestId" class="form-control request-select" required>
+                                                                            <option value="">Select Material Request Thats need to be fullfilled</option>
+        @foreach (var request in Model.MaterialRequests)
+        {
+                                                                                                                                                        <option value="@request.Id" data-material-name="@request.Material!.Name"
+                                                                                                                                                data-requested-by="@request.RequestedBy!.Fullname"
+                                                                                                                                                data-line-destination="@request.ProductionLine!.Remark"
+                                                                                                                                                data-requested-quantity="@request.RequestedQuantity" 
+                                                                                                                                                data-required-at="@request.RequiredAt"
+                                                                                                                                                data-fullfilled-quantity="@request.FullfilledQuantity"
+                                                                                                                                                data-unit-measurement="@request.Material!.UnitMeasurement"
+                                                                                                                                                data-detail-measurement="@request.Material!.DetailMeasurement"
+                                                                                                                                                >Request - @request.Id</option>
+        }
+                                                                            </select>
+                                                                            </div>
+                                                                            </div>
+                                                                            <div class="p-3">
+                                                                            <div class="card-title fw-bold">Request Detail</div>
+                                                                            <table class="table">
+                                                                            <tr>
+                                                                            <th>Material Name</th>
+                                                                            <td class="material-name"></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                            <th>Requested By</th>
+                                                                            <td class="requested-by"></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                            <th>Remark</th>
+                                                                            <td>Line - <span class="line-destination"></span></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                            <th>Required At</th>
+                                                                            <td class="required-at"></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                            <th>Request Quantity</th>
+                                                                            <td >
+                                                                            <span class="requested-quantity"></span><span class="requested-quantity-span"></span>
+
+                                                                            </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                            <th>Fullfilled Quantity</th>
+                                                                            <td >
+                                                                            <span class="fullfilled-quantity"></span>
+                                                                                                            <span class="fullfilled-quantity-span"></span>
+
+                                                                            </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                            <th>Send Quantity</th>
+                                                                            <td>
+                                                                                                            <div class="row gap-2">
+
+                                                                            <input type="number" class="form-control col-sm-3 quantity-input"
+                                                                    name="Forms[${rowCount}].QuantitySend" min="1"
+                                                                    required>
+                                                                    <select name="Forms[${rowCount}].Measurement" class="form-control col-sm-3 measurement-select">
+                                                                    <option value="">Select Measurement</option>
+                                                                    </select>
+                                                                    </div>
+                                                                            </td>
+                                                                            </tr>
+                                                                            </table>
+                                                                            </div>
+                                                                            <button class="btn btn-danger remove-row-btn">Remove</button>
+                                                                            </div>
+                                                                            </div>
+                                                                            `
+
+                $('#send-form').append(newRow)
+
+                rowCount++;
+
+
+            })
+
+            $(document).on('click', '.remove-row-btn', function () {
+                $(this).closest('div.card').remove();
+
+                $('div.card').each(function (index) {
+                    $(this).find('select, input').each(function () {
+                        const nameAttr = $(this).attr('name');
+                        if (nameAttr) {
+                            const newName = nameAttr.replace(/\[\d+\]/, `[${index}]`);
+                            $(this).attr('name', newName)
+                        }
+                    })
+                })
+
+                rowCount = $('div.card').length - 1;
+            })
+
+            $(document).on('change', '#send-form .request-select', function () {
+                console.log('hello world')
+
+                var selectedoption = $(this).find('option:selected');
+
+                var card = $(this).closest('div.card')
+
+                var materialName = selectedoption.data('material-name') || "";
+                var requestedBy = selectedoption.data('requested-by') || "";
+                var lineDestination = selectedoption.data('line-destination') || "";
+                var requiredAt = selectedoption.data('required-at') || "";
+                var requestedQuantity = selectedoption.data('requested-quantity') || 0;
+                var fullfilledQuantity = selectedoption.data('fullfilled-quantity') || 0;
+                var unitMeasurement = selectedoption.data('unit-measurement') || "";
+                var detailMeasurement = selectedoption.data('detail-measurement') || "";
+
+
+                card.find('.material-name').text(materialName);
+                card.find('.requested-by').text(requestedBy);
+                card.find('.line-destination').text(lineDestination);
+                card.find('.required-at').text(requiredAt);
+                card.find('.requested-quantity').text(requestedQuantity);
+                card.find('.fullfilled-quantity').text(fullfilledQuantity);
+                card.find('.requested-quantity-span').text(detailMeasurement);
+                card.find('.fullfilled-quantity-span').text(detailMeasurement);
+
+                card.find('.quantity-input').attr('max', requestedQuantity - fullfilledQuantity)
+                card.find('.measurement-select').html(
+                    `
+                                                                    <option value="">Select a Measurement</option>
+                                                                    <option value="Unit">${unitMeasurement}</option>
+                                                                    <option value="Detail">${detailMeasurement}</option>
+                                                                                        `
+                )
+
+            })
+
+
+        })
+
+    </script>
+}

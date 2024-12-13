@@ -1,0 +1,126 @@
+@model panasonic.ViewModels.MaterialInventoryViewModel.ReturnViewModel;
+
+@{
+    ViewData["PanelTitle"] = "Return Material To Preperation Room";
+}
+
+<div class="card">
+    <div class="card-body">
+        <div class="form-group row">
+            <label for="" class="col-form-label col-sm-2">Production Line</label>
+            <div class="col-sm-10">
+                <select class="form-control " id="line-select">
+                    <option value="">Select Production Line</option>
+                    @foreach (var lineOption in Model.ProductionLines)
+                    {
+                        <option value="@lineOption.Id">Line - @lineOption.Remark</option>
+                    }
+                </select>
+                <small class="text-muted form-text">Changing the Production Line will reset the forms</small>
+            </div>
+        </div>
+        <form id="return-form" asp-controller="MaterialInventory" asp-action="Return">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Return Quantity</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="form-body">
+                    @foreach (var form in Model.Forms)
+                    {
+                        <tr>
+                            <td>
+                                <div class="py-2">
+                                    <select name="" id="" class="form-control"></select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="py-2">
+                                    <input type="number" name="" id="" class="form-control col-sm-2">
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger">X</button>
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+            </table>
+        </form>
+
+        <div class="">
+            <button class="btn btn-secondary" id="new-form-btn">New Material Return</button>
+            <button class="btn btn-primary" type="submit" form="return-form">Submit</button>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        let rowCount = @Model.Forms.Count ;
+
+        $(document).ready(function () {
+            let materialInventories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MaterialInventories));
+
+            let materialOptionsHtml = "";
+
+            console.log(materialInventories);
+
+            $('#line-select').on('change', function () {
+                var selectedoption = $(this).find('option:selected');
+
+                var materialOptions = materialInventories.filter((material) => material.ProductionLineId == selectedoption.val());
+
+                console.log(materialOptions);
+
+                materialOptionsHtml = " <option value=''>Select Material</option> "
+                materialOptions.forEach(function (option) {
+                    materialOptionsHtml += ` <option value="${option.Id}">${option.Material.Name}</option> `
+                });
+
+                rowCount = 0;
+                $('#form-body').html(generateFormHtml(materialOptionsHtml));
+
+
+
+            })
+
+            $('#new-form-btn').on('click', function () {
+                $('#form-body').append(generateFormHtml(materialOptionsHtml));
+            });
+
+        });
+
+
+        function generateFormHtml(materialOptionsHtml) {
+            console.log(materialOptionsHtml);
+            let html = `<tr>
+                                                                                                                                    <td>
+                                                                                                                                        <div class="py-2">
+                                                                                                                                            <select name="Forms[${rowCount}].MaterialInventoryId" class="form-control">
+                                                                                                                                            ${materialOptionsHtml}
+                                                                                                                                            </select>
+                                                                                                                                        </div>
+                                                                                                                                    </td>
+                                                                                                                                    <td>
+                                                                                                                                        <div class="py-2">
+                                                                                                                                            <input type="number" name="Forms[${rowCount}].Quantity" id="" class="form-control col-sm-2">
+                                                                                                                                        </div>
+                                                                                                                                    </td>
+                                                                                                                                    <td>
+                                                                                                                                        <button class="btn btn-danger">X</button>
+                                                                                                                                    </td>
+                                                                                                                                </tr>
+                                                                                                                        `
+            rowCount++;
+            return html
+
+        }
+    </script>
+}

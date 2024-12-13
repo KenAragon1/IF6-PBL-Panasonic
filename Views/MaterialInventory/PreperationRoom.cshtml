@@ -2,11 +2,16 @@
 
 @{
     ViewData["PanelTitle"] = "Materials In PreperationRoom";
+    var index = 1;
+}
+
+@section PanelButtons {
+    <a class="btn btn-secondary btn-round" asp-controller="MaterialInventory" asp-action="Pickup">Pickup Material</a>
 }
 
 <div class="card">
     <div class="card-body">
-        <table class="table table-bordered table-hover">
+        <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th>No</th>
@@ -19,10 +24,10 @@
                 @foreach (var material in Model.MaterialInventories)
                 {
                     <tr>
-                        <td>1</td>
-                        <td>Material - @material.Material.Number</td>
+                        <td>@(index++)</td>
+                        <td>Material - @material.Material!.Number</td>
                         <td>@material.Material.Name</td>
-                        <td>@material.Quantity</td>
+                        <td>@material.Quantity @material.Material.DetailMeasurement</td>
                     </tr>
                 }
             </tbody>

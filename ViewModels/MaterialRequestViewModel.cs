@@ -21,4 +21,7 @@ public class CreateForm
 
     [Required]
     public int ProductionLineId { get; set; }
+
+    [Required]
+    public DateTime RequiredAt { get; set; } = DateTime.Now;
 }

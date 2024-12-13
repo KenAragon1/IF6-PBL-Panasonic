@@ -38,13 +38,13 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<ProductionLine>().HasIndex(pl => pl.Remark).IsUnique();
 
         // MaterialRequest
-        modelBuilder.Entity<MaterialRequest>().Property(mr => mr.RequestedAt).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<MaterialRequest>().Property(mr => mr.CreatedAt).HasDefaultValueSql("GETDATE()");
         modelBuilder.Entity<MaterialRequest>().Property(mr => mr.Status).HasConversion<string>().HasDefaultValue(MaterialRequestStatus.Pending);
         modelBuilder.Entity<MaterialRequest>().ToTable(tb => tb.HasCheckConstraint("CK_MaterialRequest_MaterialRequestStatus", "Status IN ('Pending', 'Verified', 'Approved', 'Rejected', 'Completed')"));
 
         // MaterialInventory
         modelBuilder.Entity<MaterialInventory>().Property(mi => mi.Location).HasConversion<string>();
-        modelBuilder.Entity<MaterialInventory>().ToTable(tb => tb.HasCheckConstraint("CK_MaterialInventory_MaterialInventoryLocation", "Location IN ('Store', 'PreperationRoom', 'ProductionLine')"));
+        modelBuilder.Entity<MaterialInventory>().ToTable(tb => tb.HasCheckConstraint("CK_MaterialInventory_MaterialInventoryLocation", "Location IN ('PreperationRoom', 'ProductionLine')"));
 
         // Material Transaction
         modelBuilder.Entity<MaterialTransaction>().Property(mt => mt.CreatedAt).HasDefaultValueSql("GETDATE()");

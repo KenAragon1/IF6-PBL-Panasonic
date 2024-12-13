@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using panasonic.Exceptions;
 using panasonic.Models;
 using panasonic.Repositories;
 using panasonic.Services;
@@ -37,25 +39,87 @@ public class MaterialInventoryController : BaseController
         };
         return View(viewModel);
     }
+    public async Task<IActionResult> ProductionLine()
+    {
+        var viewModel = new PreperationRoomViewModel
+        {
+            MaterialInventories = await _materialInventoryRepository.GetAllAsync(location: MaterialInventoryLocations.ProductionLine, withMaterial: true, withProductionLine: true)
+        };
+        return View(viewModel);
+    }
+
+    public async Task<IActionResult> Send()
+    {
+        var viewModel = await _materialInventoryService.CreateSendViewModelAsync();
+        return View(viewModel);
+    }
+
+
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "StoreManager")]
-    public IActionResult Send()
+    public async Task<IActionResult> Send(SendViewModel sendViewModel)
     {
-        return RedirectToAction();
+        try
+        {
+            Console.WriteLine(sendViewModel.Forms.Count);
+            if (!ModelState.IsValid)
+            {
+                var viewModel = await _materialInventoryService.CreateSendViewModelAsync(sendViewModel.Forms);
+                return View(viewModel);
+            }
+            await _materialInventoryService.SendMaterialAsync(sendViewModel);
+            return RedirectToAction("Index", "MaterialRequest");
+        }
+        catch (System.Exception)
+        {
+
+            throw;
+        }
+    }
+
+    public async Task<IActionResult> Return()
+    {
+        var viewModel = await _materialInventoryService.ReturnViewModelAsync();
+        return View(viewModel);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "AsistantLeader")]
-    public IActionResult Return()
+    public async Task<IActionResult> Return(ReturnViewModel returnViewModel)
     {
-        return RedirectToAction();
+        try
+        {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel.Forms);
+                return View(viewModel);
+            }
+
+            await _materialInventoryService.ReturnMaterialAsync(returnViewModel.Forms);
+
+            return RedirectToAction("ProductionLine");
+        }
+        catch (OperationNotAllowed e)
+        {
+            ModelState.AddModelError(e.ModelErrorKey, e.Message);
+            var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel.Forms);
+            return View(viewModel);
+        }
+        catch (System.Exception)
+        {
+            ModelState.AddModelError(string.Empty, "Internal Server Error");
+            var viewModel = await _materialInventoryService.ReturnViewModelAsync(returnViewModel.Forms);
+            return View(viewModel);
+        }
     }
 
     public async Task<IActionResult> Pickup()
     {
+
         var viewModel = new PickupViewModel
         {
             ProductionLineOptions = await _productionLineRepository.GetAllAsync(),
@@ -77,6 +141,8 @@ public class MaterialInventoryController : BaseController
                 return View();
             }
             await _materialInventoryService.PickupMaterial(pickupViewModel.ProductionLineDestination, pickupViewModel.Forms);
+
+            ViewBag.SuccessMessage = "Material send to preperation room success. To check the report <a href='/Dashboard/Report'>Click here</a>";
 
             return RedirectToAction("PreperationRoom");
         }

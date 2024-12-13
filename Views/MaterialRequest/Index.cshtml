@@ -5,32 +5,41 @@
 }
 
 @section PanelButtons {
-    @if (ViewBag.Role == "AsistantLeader")
+    @switch (ViewBag.Role)
     {
-        <a class="btn btn-success btn-round" asp-controller="MaterialRequest" asp-action="Create">Create Material Request</a>
-        <a class="btn btn-success btn-round text-white" data-bs-toggle="modal" data-bs-target="#scan-modal">Scan Here</a>
+        case ("AsistantLeader"):
+            <a class="btn btn-success btn-round" asp-controller="MaterialRequest" asp-action="Create">Create Material Request</a>
+            <a class="btn btn-success btn-round text-white" data-bs-toggle="modal" data-bs-target="#scan-modal">Scan Here</a>
+            break;
+
+        case ("StoreManager"):
+            <a class="btn btn-primary btn-round" asp-controller="MaterialInventory" asp-action="Send">Send Material</a>
+            break;
     }
 }
 
 <div class="card">
     <div class="card-body">
-        @switch (ViewBag.Role)
-        {
-            case "ShiftLeader":
-                {
-                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_ShiftLeader.cshtml" model="@Model" />
-                }
-                break;
-            case "AsistantLeader":
-                {
-                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_AsistantLeader.cshtml" model="@Model" />
-                }
-                break;
-            case "StoreManager":
-                {
-                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_StoreManager.cshtml" model="@Model" />
-                }
-                break;
-        }
+        <div class="table-responsive">
+            @switch (ViewBag.Role)
+            {
+                case "ShiftLeader":
+                    {
+                        <partial name="~/Views/Shared/Components/MaterialRequest/Table/_ShiftLeader.cshtml" model="@Model" />
+                    }
+                    break;
+                case "AsistantLeader":
+                    {
+                        <partial name="~/Views/Shared/Components/MaterialRequest/Table/_AsistantLeader.cshtml" model="@Model" />
+                    }
+                    break;
+                case "StoreManager":
+                    {
+                        <partial name="~/Views/Shared/Components/MaterialRequest/Table/_StoreManager.cshtml" model="@Model" />
+                    }
+                    break;
+            }
+        </div>
+
     </div>
 </div>

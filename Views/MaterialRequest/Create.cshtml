@@ -32,7 +32,10 @@
                         Quantity
                     </label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" required asp-for="@Model.CreateForms[i].Quantity">
+                        <input type="number" class="form-control col-1" required asp-for="@Model.CreateForms[i].Quantity">
+                        <span class="measurement-text">
+
+                        </span>
 
                     </div>
                 </div>
@@ -48,6 +51,15 @@
                                 <option value="@line.Id">@($"Production Line - {line.Remark}")</option>
                             }
                         </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="" class="col-sm-2 col-form-label">
+                        required Date
+                    </label>
+                    <div class="col-sm-10">
+                        <input type="date" asp-for="CreateForms[i].RequiredAt" class="form-control">
+
                     </div>
                 </div>
                 <button type="button" class="btn btn-danger remove-row-btn">
@@ -77,57 +89,67 @@
     <script>
         $(document).ready(function () {
             let rowCount = @Model.CreateForms.Count();
+            let currentDate = new Date();
 
 
             $('#add-new-row-btn').on('click', function (e) {
 
 
                 let newRow = `
-                                                                        <div class="card">
-                                                                            <div class="card-body">
-                                                                                <div class="form-group row">
-                                                                                    <label for="" class="col-sm-2 col-form-label">
-                                                                                        Material
-                                                                                    </label>
-                                                                                    <div class="col-sm-10">
-                                                                                        <select class="form-control" name="CreateForms[${rowCount}].MaterialId" required>
-                                                                                            <option value="">Select Material</option>
+                        <div class="card">
+                        <div class="card-body">
+                        <div class="form-group row">
+                        <label for="" class="col-sm-2 col-form-label">
+                                                                                                                            Material
+                                                                                                                        </label>
+                                                                                                                        <div class="col-sm-10">
+                                                                                                                            <select class="form-control" name="CreateForms[${rowCount}].MaterialId" required>
+                                                                                                                                <option value="">Select Material</option>
         @foreach (var material in Model.Materials!)
         {
-                                                                                                                                                                            <option value="@material.Id">@material.Name</option>
+                                                                                                                                                                                                                                                    <option value="@material.Id">@material.Name</option>
         }
-                                                                                            </select>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="form-group row">
-                                                                                        <label for="" class="col-sm-2 col-form-label">
-                                                                                            Quantity
-                                                                                        </label>
-                                                                                        <div class="col-sm-10">
-                                                                                            <input type="number" class="form-control" required name="CreateForms[${rowCount}].Quantity">
+                                                                                                                                </select>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                        <div class="form-group row">
+                                                                                                                            <label for="" class="col-sm-2 col-form-label">
+                                                                                                                                Quantity
+                                                                                                                            </label>
+                                                                                                                            <div class="col-sm-10">
+                                                                                                                                <input type="number" class="form-control" required name="CreateForms[${rowCount}].Quantity">
 
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div class="form-group row">
-                                                                                        <label for="" class="col-sm-2 col-form-label">
-                                                                                            Production Line Destination
-                                                                                        </label>
-                                                                                        <div class="col-sm-10">
-                                                                                            <select class="form-control" name="CreateForms[${rowCount}].ProductionLineId" required>
-                                                                                                <option value="">Select Production Line</option>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                        <div class="form-group row">
+                                                                                                                            <label for="" class="col-sm-2 col-form-label">
+                                                                                                                                Production Line Destination
+                                                                                                                            </label>
+                                                                                                                            <div class="col-sm-10">
+                                                                                                                                <select class="form-control" name="CreateForms[${rowCount}].ProductionLineId" required>
+                                                                                                                                    <option value="">Select Production Line</option>
         @foreach (var line in Model.ProductionLines!)
         {
-                                                                                                                                                                            <option value="@line.Id">@($"Production Line - {line.Remark}")</option>
+                                                                                                                                                                                                                                                    <option value="@line.Id">@($"Production Line - {line.Remark}")</option>
         }
-                                                                                            </select>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                     <button type="button" class="btn btn-danger remove-row-btn">
-                                                                Remove request
-                                                            </button>
-                                                                                </div>
-                                                                            </div>
-                                                                                    `;
+                                                                                                                                </select>
+                                                                                                                            </div>
+                        </div>
+                        <div class="form-group row">
+                                                <label for="" class="col-sm-2 col-form-label">
+                                                    required Date
+                                                </label>
+                                                <div class="col-sm-10">
+                                                    <input type="date" name="CreateForms[i].RequiredAt" class="form-control" value="${currentDate.toISOString().split('T')[0]}">
+
+                                                </div>
+                                            </div>
+                                                                                                                         <button type="button" class="btn btn-danger remove-row-btn">
+                                                                                                    Remove request
+                                                                                                </button>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                                        `;
 
                 $('#form-test').append(newRow);
 
