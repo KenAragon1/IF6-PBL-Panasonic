@@ -59,23 +59,22 @@
                     </li>
                     <li class="nav-item @(currentPath == "/User" ? "active" : "")">
                         <a asp-controller="User" asp-action="Index">
-                            <i class="fas fa-home"></i>
+                            <i class="fas fa-user-cog"></i>
                             <span class="sub-item">Manage Users</span>
                         </a>
                     </li>
                     <li class="nav-item @(currentPath == "/User/Unverified" ? "active" : "")">
                         <a asp-controller="User" asp-action="Unverified">
-                            <i class="fas fa-home"></i>
+                            <i class="fas fa-user-plus"></i>
                             <span class="sub-item">Unverified Users</span>
                         </a>
                     </li>
-
-                    <li class="nav-item @(currentPath == "/ProductionLine" ? "active" : "")">
+                        @* <li class="nav-item @(currentPath == "/ProductionLine" ? "active" : "")">
                         <a asp-controller="ProductionLine" asp-action="Index">
                             <i class="fas fa-home"></i>
                             <p>Production Lines</p>
                         </a>
-                    </li>
+                    </li> *@
                 }
 
 
@@ -145,7 +144,7 @@
                     </li>
                     <li class="nav-item @(currentPath == "/MaterialReturn" ? "active" : "")">
                         <a asp-controller="MaterialInventory" asp-action="Return">
-                            <i class="fas fa-undo"></i>
+                            <i class="fas fa-reply-all"></i>
                             <span class="sub-item">Return Material</span>
                         </a>
                     </li>

@@ -4,13 +4,60 @@
 
 <div class="card">
     <div class="card-body">
-        <div class="form-group row">
-            <label for="" class="col-sm-2 col-form-label">Report Type</label>
-            <div class="col-sm-10">
-                <select class="form-control" asp-items="ViewBag.ReportTypeOptions">
-
-                </select>
-            </div>
-        </div>
+        <table id="multi-filter-select" class="display table table-striped table-hover" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Report Type</th>
+                    <th>Material Number</th>
+                    <th>Material Name</th>
+                    <th>Material Quantity</th>
+                    <th>Created At</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var report in Model.MaterialTransactions)
+                {
+                    <tr>
+                        <td>@report.Type</td>
+                        <td>@report.Material!.Number</td>
+                        <td>@report.Material.Name</td>
+                        <td>@report.Quantity</td>
+                        <td>@report.CreatedAt.ToString("d MMMMM yyyy, HH:mm")</td>
+                        <td><button class="btn btn-primary">Details</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+    $('#multi-filter-select').DataTable( {
+	"pageLength": 5,
+	initComplete: function () {
+		this.api().columns().every( function () {
+			var column = this;
+			var select = $('')
+			.appendTo( $(column.footer()).empty() )
+			.on( 'change', function () {
+				var val = $.fn.dataTable.util.escapeRegex(
+					$(this).val()
+					);
+
+				column
+				.search( val ? '^'+val+'$' : '', true, false )
+				.draw();
+			} );
+
+			column.data().unique().sort().each( function ( d, j ) {
+				select.append( ''+d+'' )
+			} );
+		} );
+	}
+});
+
+</script>
+}

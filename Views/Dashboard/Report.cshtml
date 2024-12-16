@@ -4,14 +4,16 @@
     ViewData["PanelTitle"] = "Material Reports";
 }
 
+@* table reponsive *@
+
 <div class="card">
     <div class="card-body">
-        <table class="table table-striped table-bordered table-hover">
+        <table id="multi-filter-select"  class="display table table-striped table-hover" cellspacing="0" width="100%">
             <thead>
                 <tr>
                     <th>Report Type</th>
                     <th>Material Number</th>
-                    <th>Material name</th>
+                    <th>Material Name</th>
                     <th>Material Quantity</th>
                     <th>Created At</th>
                     <th></th>
@@ -33,3 +35,34 @@
         </table>
     </div>
 </div>
+
+@section Scripts
+{
+<script>
+    $('#multi-filter-select').DataTable( {
+	"pageLength": 5,
+	initComplete: function () {
+		this.api().columns().every( function () {
+			var column = this;
+			var select = $('')
+			.appendTo( $(column.footer()).empty() )
+			.on( 'change', function () {
+				var val = $.fn.dataTable.util.escapeRegex(
+					$(this).val()
+					);
+
+				column
+				.search( val ? '^'+val+'$' : '', true, false )
+				.draw();
+			} );
+
+			column.data().unique().sort().each( function ( d, j ) {
+				select.append( ''+d+'' )
+			} );
+		} );
+	}
+});
+
+</script>
+
+}
