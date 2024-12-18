@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.MaterialViewModel.EditMaterialViewModel;
+@model panasonic.ViewModels.MaterialViewModel.MaterialViewModel;
 
 @{
     ViewData["PanelTitle"] = "Edit Material";
@@ -54,23 +54,23 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#js-image-input").on("change", function (e) {
-                const imageInput = e.target;
-                const preview = $("#js-image-preview");
+        <script>
+            $(document).ready(function () {
+                $("#js-image-input").on("change", function (e) {
+                    const imageInput = e.target;
+                    const preview = $("#js-image-preview");
 
-                if (imageInput.files && imageInput.files[0]) {
-                    const reader = new FileReader();
+                    if (imageInput.files && imageInput.files[0]) {
+                        const reader = new FileReader();
 
-                    reader.onload = function (e) {
-                        preview.attr("src", e.target.result);
-                        preview.show();
-                    };
+                        reader.onload = function (e) {
+                            preview.attr("src", e.target.result);
+                            preview.show();
+                        };
 
-                    reader.readAsDataURL(imageInput.files[0]);
-                }
+                        reader.readAsDataURL(imageInput.files[0]);
+                    }
+                })
             })
-        })
-    </script>
+        </script>
 }

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using panasonic.Helpers;
-using panasonic.Models;
-using panasonic.Repositories;
+using panasonic.Errors;
+using panasonic.Exceptions;
+using panasonic.Services;
 using panasonic.ViewModels.MaterialViewModel;
 
 namespace panasonic.Controllers;
@@ -10,85 +10,99 @@ namespace panasonic.Controllers;
 [Authorize(Roles = "StoreManager")]
 public class MaterialController : BaseController
 {
-    private readonly IMaterialRepository _materialRepository;
-    private readonly IFileHelper _fileHelper;
+    private readonly IMaterialService _materialService;
 
-    public MaterialController(IMaterialRepository materialRepository, IFileHelper fileHelper)
+    public MaterialController(IMaterialService materialService)
     {
-        _materialRepository = materialRepository;
-        _fileHelper = fileHelper;
+        _materialService = materialService;
     }
 
     public async Task<IActionResult> Index()
     {
-        var material = await _materialRepository.GetAllAsync();
+        var material = await _materialService.GetAllAsync();
         return View(material);
     }
     public IActionResult Create()
     {
-        return View();
+        var viewModel = new CreateMaterialViewModel();
+        return View(viewModel);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create(CreateMaterialViewModel createMaterialViewModel)
     {
-        if (!ModelState.IsValid)
+        try
         {
+            if (!ModelState.IsValid)
+            {
+                return View(createMaterialViewModel);
+            }
+            await _materialService.CreateAsync(createMaterialViewModel);
+
+            TempData["SuccessMessage"] = "New Mateial Added";
+            return RedirectToAction("Index");
+        }
+        catch (ExceptionWithModelError e)
+        {
+            ModelState.AddModelError(e.ModelKey, e.Message);
+            return View(createMaterialViewModel);
+        }
+        catch (System.Exception)
+        {
+            TempData["SuccessMessage"] = "New Mateial Added";
             return View(createMaterialViewModel);
         }
 
-        var material = new Material
-        {
-            Name = createMaterialViewModel.Name,
-            UnitMeasurement = createMaterialViewModel.UnitMeasurement,
-            Number = createMaterialViewModel.Number,
-            DetailMeasurement = createMaterialViewModel.DetailMeasurement,
-            DetailQuantity = createMaterialViewModel.DetailQuantity
-        };
-        await _materialRepository.StoreAsync(material);
-
-        TempData["SuccessMessage"] = "New Mateial Added";
-        return RedirectToAction("Index");
 
 
     }
 
     public async Task<IActionResult> Delete(int Id)
     {
+        try
+        {
+            await _materialService.DeleteAsync(Id);
 
-        var material = await _materialRepository.GetAsync(Id);
+            TempData["SuccessMessage"] = "Delete Material Success";
 
-        if (material == null) return NotFound();
+            return RedirectToAction("Index");
+        }
+        catch (ItemNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception)
+        {
+            TempData["ErrorMessage"] = "Something Went Wrong";
+            return RedirectToAction("Index");
 
+        }
 
-        await _materialRepository.DeleteAsync(material);
-
-        TempData["SuccessMessage"] = "Delete Material Success";
-
-        return RedirectToAction("Index");
     }
 
 
 
     public async Task<IActionResult> Edit(int Id)
     {
-
-
-
-        var material = await _materialRepository.GetAsync(Id);
-
-        if (material == null) return NotFound();
-
-        var viewModel = new EditMaterialViewModel
+        try
         {
-            Id = material.Id,
-            Name = material.Name,
-            UnitMeasurement = material.UnitMeasurement,
-            Number = material.Number,
-            DetailMeasurement = material.DetailMeasurement,
-            DetailQuantity = material.DetailQuantity
-        };
-        return View(viewModel);
+            var material = await _materialService.GetByIdAsync(Id);
+
+            var viewModel = _materialService.MaterialViewModel(material);
+
+            return View(viewModel);
+        }
+        catch (ItemNotFoundException e)
+        {
+            TempData["ErrorMessage"] = e.Message;
+            return RedirectToAction("Index");
+        }
+        catch (System.Exception)
+        {
+            TempData["ErrorMessage"] = "Something went wrong";
+            return RedirectToAction("Index");
+        }
 
 
     }
@@ -99,33 +113,27 @@ public class MaterialController : BaseController
 
         try
         {
-            var material = await _materialRepository.GetAsync(Id);
-
-            if (material == null) return NotFound();
-
             if (!ModelState.IsValid)
             {
                 return View(editMaterialViewModel);
             }
 
-            material.Name = editMaterialViewModel.Name;
-            material.Number = editMaterialViewModel.Number;
-            material.UnitMeasurement = editMaterialViewModel.UnitMeasurement;
-            material.DetailMeasurement = material.DetailMeasurement;
-            material.DetailQuantity = editMaterialViewModel.DetailQuantity;
-
-            await _materialRepository.UpdateAsync(material);
+            await _materialService.UpdateAsync(editMaterialViewModel);
 
             TempData["SuccessMessage"] = "Update Material Success";
 
             return RedirectToAction("Index");
 
         }
-        catch (System.Exception e)
+        catch (ItemNotFoundException e)
         {
-            ModelState.AddModelError("ErrorMessage", e.Message);
+            TempData["ErrorMessage"] = e.Message;
             return View(editMaterialViewModel);
-
+        }
+        catch (System.Exception)
+        {
+            TempData["ErrorMessage"] = "Something went wrong";
+            return View(editMaterialViewModel);
         }
 
     }

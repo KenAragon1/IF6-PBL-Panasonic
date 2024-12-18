@@ -41,8 +41,8 @@
                         <p>Dashboard</p>
                     </a>
                 </li>
-                <li class="nav-item @(currentPath == "Dashboard/Report" ? "active" : "")">
-                    <a asp-controller="Dashboard" asp-action="Report">
+                <li class="nav-item @(currentPath == "Dashboard/MaterialTransaction" ? "active" : "")">
+                    <a asp-controller="MaterialTransaction" asp-action="Index">
                         <i class="fas fa-clipboard-list"></i>
                         <p>Material Reports</p>
                     </a>
@@ -69,12 +69,7 @@
                             <span class="sub-item">Unverified Users</span>
                         </a>
                     </li>
-                        @* <li class="nav-item @(currentPath == "/ProductionLine" ? "active" : "")">
-                        <a asp-controller="ProductionLine" asp-action="Index">
-                            <i class="fas fa-home"></i>
-                            <p>Production Lines</p>
-                        </a>
-                    </li> *@
+
                 }
 
 
@@ -86,12 +81,6 @@
                             <i class="fa fa-ellipsis-h"></i>
                         </span>
                         <h4 class="text-section">Shift Leader Menu</h4>
-                    </li>
-                    <li class="nav-item @(currentPath == "/User" ? "active" : "")">
-                        <a asp-controller="User" asp-action="Index">
-                            <i class="fas fa-clock"></i>
-                            <span class="sub-item">Manage Shifts</span>
-                        </a>
                     </li>
                     <li class="nav-item @(currentPath == "/MaterialRequest" ? "active" : "")">
                         <a asp-controller="MaterialRequest" asp-action="Index">
@@ -142,10 +131,16 @@
                             <span class="sub-item">Pickup Material</span>
                         </a>
                     </li>
-                    <li class="nav-item @(currentPath == "/MaterialReturn" ? "active" : "")">
+                    <li class="nav-item @(currentPath == "/MaterialInventory/Return" ? "active" : "")">
                         <a asp-controller="MaterialInventory" asp-action="Return">
                             <i class="fas fa-reply-all"></i>
                             <span class="sub-item">Return Material</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialInventory/Use" ? "active" : "")">
+                        <a asp-controller="MaterialInventory" asp-action="Use">
+                            <i class="fas fa-undo"></i>
+                            <span class="sub-item">Use Material</span>
                         </a>
                     </li>
                 }
@@ -169,6 +164,13 @@
                         <a asp-controller="MaterialInventory" asp-action="Send">
                             <i class="fas fa-undo"></i>
                             <span class="sub-item">Send Material</span>
+                        </a>
+                    </li>
+                    <li class="nav-item @(currentPath == "/MaterialInventory/PreperationRoom" ? "active" : "")">
+                        <a asp-controller="MaterialInventory" asp-action="PreperationRoom">
+                            <i class="fas fa-warehouse"></i>
+                            <span class="sub-item">Preperation
+                                Room</span>
                         </a>
                     </li>
                     <li class="nav-item @(currentPath == "/Material" ? "active" : "")">

@@ -16,6 +16,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<MaterialRequest> MaterialRequests { get; set; }
     public DbSet<MaterialInventory> MaterialInventories { get; set; }
     public DbSet<MaterialTransaction> MaterialTransactions { get; set; }
+    public DbSet<MaterialTransactionDetail> MaterialTransactionDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,6 +51,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<MaterialTransaction>().Property(mt => mt.CreatedAt).HasDefaultValueSql("GETDATE()");
         modelBuilder.Entity<MaterialTransaction>().Property(mt => mt.Type).HasConversion<string>();
         modelBuilder.Entity<MaterialTransaction>().ToTable(tb => tb.HasCheckConstraint("CK_MaterialTransaction_MaterialTransactionType", "Type IN ('Send', 'Production', 'Return', 'Pickup')"));
+        modelBuilder.Entity<MaterialTransaction>().HasMany(mt => mt.MaterialTransactionDetails).WithOne(mtd => mtd.MaterialTransaction).HasForeignKey(mtd => mtd.TransactionId);
 
     }
 

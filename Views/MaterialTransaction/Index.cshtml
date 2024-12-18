@@ -1,42 +1,32 @@
-@model panasonic.ViewModels.MaterialInventoryViewModel.PreperationRoomViewModel;
+@model panasonic.ViewModels.ReportViewModel.IndexViewModel;
 
 @{
-    ViewData["PanelTitle"] = "Materials In PreperationRoom";
-    var index = 1;
+    ViewData["PanelTitle"] = "Material Reports";
 }
 
-@section PanelButtons {
-    @if (ViewBag.Role == "StoreManager")
-    {
-        <a class="btn btn-secondary btn-round" asp-controller="MaterialInventory" asp-action="Send">Send Material</a>
-
-    }
-    else if (ViewBag.Role == "AsistantLeader")
-    {
-        <a class="btn btn-secondary btn-round" asp-controller="MaterialInventory" asp-action="Pickup">Pickup Material</a>
-
-    }
-}
+@* table reponsive *@
 
 <div class="card">
     <div class="card-body">
-        <table class="table table-bordered dataTable no-footer dtr-inline" id="multi-filter-select">
+        <table id="multi-filter-select" class="table table-bordered dataTable no-footer dtr-inline table-hover"
+            cellspacing="0" width="100%">
             <thead>
                 <tr>
                     <th>No</th>
-                    <th>Material Number</th>
-                    <th>Material Name</th>
-                    <th>Quantity</th>
+                    <th>Report Type</th>
+                    <th>Created At</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var material in Model.MaterialInventories)
+                @foreach (var (report, index) in Model.MaterialTransactions.Select((value, index) => (value, index)))
                 {
                     <tr>
-                        <td>@(index++)</td>
-                        <td>Material - @material.Material!.Number</td>
-                        <td>@material.Material.Name</td>
-                        <td>@material.Quantity @material.Material.DetailMeasurement</td>
+                        <td>@(index + 1)</td>
+                        <td>@report.Type</td>
+                        <td>@report.CreatedAt.ToString("d MMMMM yyyy, HH:mm")</td>
+                        <td><a class="btn btn-outline-primary btn-sm" asp-controller="MaterialTransaction"
+                                asp-action="Detail" asp-route-id="@report.Id">Details</a></td>
                     </tr>
                 }
             </tbody>
@@ -70,5 +60,7 @@
                 });
             }
         });
+
     </script>
+
 }

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using panasonic.Data.Queries;
 using panasonic.Models;
 using panasonic.Repositories;
@@ -56,7 +55,7 @@ public class UserController : BaseController
         await _userRepository.UpdateAsync(user);
 
         TempData["SuccessMessage"] = "Verify User Success";
-        return RedirectToAction("UnverifiedUsers");
+        return RedirectToAction("Unverified");
     }
 
 

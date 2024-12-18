@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using panasonic.Data.DTOs;
 using panasonic.Models;
 
 namespace panasonic.ViewModels.StoreViewModel;

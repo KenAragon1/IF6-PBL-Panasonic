@@ -1,7 +1,5 @@
 namespace panasonic.Models;
 
-
-
 public class ProductionLine
 {
     public int Id { get; set; }

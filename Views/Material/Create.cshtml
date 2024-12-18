@@ -10,39 +10,49 @@
     <div class="card-body">
         <form asp-controller="Material" asp-action="Create" method="post" enctype="multipart/form-data">
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Material Name</label>
-                    <input type="text" class="form-control" asp-for="Name">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Material Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" asp-for="Name">
+                        <span asp-validation-for="Name" class="text-danger form-text"></span>
+                    </div>
                 </div>
-                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Material Number</label>
-                    <input type="number" class="form-control" asp-for="Number">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Material Number</label>
+                    <div class="col-sm-9">
+                        <input type="number" class="form-control" asp-for="Number">
+                        <span asp-validation-for="Number" class="text-danger"></span>
+                    </div>
                 </div>
-                <span asp-validation-for="Number" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Unit Measurement</label>
-                    <input type="text" asp-for="UnitMeasurement" class="form-control" />
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Unit Measurement</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="UnitMeasurement" class="form-control" />
+                        <span asp-validation-for="UnitMeasurement" class="text-danger"></span>
+                    </div>
                 </div>
-                <span asp-validation-for="UnitMeasurement" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Detail Measurement</label>
-                    <input type="text" asp-for="DetailMeasurement" class="form-control" />
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Detail Measurement</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="DetailMeasurement" class="form-control" />
+                        <span asp-validation-for="DetailMeasurement" class="text-danger"></span>
+                    </div>
                 </div>
-                <span asp-validation-for="DetailMeasurement" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Detail Quantity</label>
-                    <input type="text" asp-for="DetailQuantity" class="form-control" />
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Detail Quantity</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="DetailQuantity" class="form-control" />
+                        <span asp-validation-for="DetailQuantity" class="text-danger"></span>
+                    </div>
                 </div>
-                <span asp-validation-for="DetailQuantity" class="text-danger"></span>
             </div>
 
             <button type="submit" class="btn btn-primary">Submit</button>

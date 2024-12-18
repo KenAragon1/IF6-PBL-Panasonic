@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using panasonic.Validations;
 
 namespace panasonic.ViewModels.MaterialViewModel;
 
@@ -11,7 +10,7 @@ public class MaterialViewModel
     public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Material Number Required")]
-    public int Number { get; set; }
+    public int? Number { get; set; } = 0;
 
     [Required(ErrorMessage = "Material Unit Required")]
     public string UnitMeasurement { get; set; } = string.Empty;
@@ -20,7 +19,7 @@ public class MaterialViewModel
     public string DetailMeasurement { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Detail Quantity Required")]
-    public int DetailQuantity { get; set; }
+    public int? DetailQuantity { get; set; } = 0;
 
 
 }

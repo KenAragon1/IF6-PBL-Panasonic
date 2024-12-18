@@ -14,7 +14,7 @@ public interface IMaterialInventoryRepository
     Task UpdateAsync(MaterialInventory materialInventory);
     Task UpdateManyAsync(List<MaterialInventory> materialInventories);
     Task DeleteAsync(int id);
-    Task SaveChangesAsync(List<MaterialTransaction> materialTransactions, List<MaterialInventory>? materialInventories = null);
+    Task SaveChangesAsync(MaterialTransaction materialTransaction, List<MaterialInventory>? materialInventories = null);
 }
 
 
@@ -92,14 +92,14 @@ public class MaterialInventoryRepository : IMaterialInventoryRepository
         }
     }
 
-    public async Task SaveChangesAsync(List<MaterialTransaction> materialTransactions, List<MaterialInventory>? materialInventories = null)
+    public async Task SaveChangesAsync(MaterialTransaction materialTransaction, List<MaterialInventory>? materialInventories = null)
     {
         Console.WriteLine("dsfdkf");
         using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
         try
         {
-            if (materialTransactions.Any()) await _dbContext.MaterialTransactions.AddRangeAsync(materialTransactions);
+            await _dbContext.MaterialTransactions.AddAsync(materialTransaction);
 
             if (materialInventories != null && materialInventories.Any()) await _dbContext.MaterialInventories.AddRangeAsync(materialInventories);
 

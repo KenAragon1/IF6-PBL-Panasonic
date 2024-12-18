@@ -28,7 +28,10 @@ builder.Services.AddScoped<IFileHelper, FileHelper>();
 
 // user
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+builder.Services.AddScoped<IMaterialService, MaterialService>();
+
 builder.Services.AddScoped<IProductionLineRepository, ProductionLineRepository>();
 
 builder.Services.AddScoped<IMaterialRequestService, MaterialRequestService>();
@@ -38,7 +41,8 @@ builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository
 builder.Services.AddScoped<IMaterialInventoryService, MaterialInventoryService>();
 builder.Services.AddScoped<IMaterialInventoryRepository, MaterialInventoryRepository>();
 
-builder.Services.AddScoped<IMaterialTransferRepo, MaterialTransferRepo>();
+builder.Services.AddScoped<IMaterialTransactionRepository, MaterialTransactionRepository>();
+
 
 var app = builder.Build();
 

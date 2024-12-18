@@ -116,8 +116,8 @@
 
 <div class="card">
     <div class="card-body">
+        <button class="btn btn-outline-info" id="new-form-btn">New Material Send</button>
         <button class="btn btn-primary" type="submit" form="send-form">Submit</button>
-        <button class="btn btn-secondary" id="new-form-btn">New Material Send</button>
     </div>
 </div>
 
@@ -128,82 +128,82 @@
             $('#new-form-btn').on('click', function () {
 
                 let newRow = `
-                                                                            <div class="card">
-                                                                            <div class="card-body">
-                                                                            <div class="form-group row border-bottom">
-                                                                            <label for="" class="col-sm-2 col-form-label">Material Request</label>
-                                                                            <div class="col-sm-10">
-                                                                            <select name="Forms[${rowCount}].MaterialRequestId" class="form-control request-select" required>
-                                                                            <option value="">Select Material Request Thats need to be fullfilled</option>
+                                                                                                <div class="card">
+                                                                                                <div class="card-body">
+                                                                                                <div class="form-group row border-bottom">
+                                                                                                <label for="" class="col-sm-2 col-form-label">Material Request</label>
+                                                                                                <div class="col-sm-10">
+                                                                                                <select name="Forms[${rowCount}].MaterialRequestId" class="form-control request-select" required>
+                                                                                                <option value="">Select Material Request Thats need to be fullfilled</option>
         @foreach (var request in Model.MaterialRequests)
         {
-                                                                                                                                                        <option value="@request.Id" data-material-name="@request.Material!.Name"
-                                                                                                                                                data-requested-by="@request.RequestedBy!.Fullname"
-                                                                                                                                                data-line-destination="@request.ProductionLine!.Remark"
-                                                                                                                                                data-requested-quantity="@request.RequestedQuantity" 
-                                                                                                                                                data-required-at="@request.RequiredAt"
-                                                                                                                                                data-fullfilled-quantity="@request.FullfilledQuantity"
-                                                                                                                                                data-unit-measurement="@request.Material!.UnitMeasurement"
-                                                                                                                                                data-detail-measurement="@request.Material!.DetailMeasurement"
-                                                                                                                                                >Request - @request.Id</option>
+                                                                                                                                                                                                <option value="@request.Id" data-material-name="@request.Material!.Name"
+                                                                                                                                                                                        data-requested-by="@request.RequestedBy!.Fullname"
+                                                                                                                                                                                        data-line-destination="@request.ProductionLine!.Remark"
+                                                                                                                                                                                        data-requested-quantity="@request.RequestedQuantity" 
+                                                                                                                                                                                        data-required-at="@request.RequiredAt"
+                                                                                                                                                                                        data-fullfilled-quantity="@request.FullfilledQuantity"
+                                                                                                                                                                                        data-unit-measurement="@request.Material!.UnitMeasurement"
+                                                                                                                                                                                        data-detail-measurement="@request.Material!.DetailMeasurement"
+                                                                                                                                                                                        >Request - @request.Id</option>
         }
-                                                                            </select>
-                                                                            </div>
-                                                                            </div>
-                                                                            <div class="p-3">
-                                                                            <div class="card-title fw-bold">Request Detail</div>
-                                                                            <table class="table">
-                                                                            <tr>
-                                                                            <th>Material Name</th>
-                                                                            <td class="material-name"></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                            <th>Requested By</th>
-                                                                            <td class="requested-by"></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                            <th>Remark</th>
-                                                                            <td>Line - <span class="line-destination"></span></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                            <th>Required At</th>
-                                                                            <td class="required-at"></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                            <th>Request Quantity</th>
-                                                                            <td >
-                                                                            <span class="requested-quantity"></span><span class="requested-quantity-span"></span>
+                                                                                                </select>
+                                                                                                </div>
+                                                                                                </div>
+                                                                                                <div class="p-3">
+                                                                                                <div class="card-title fw-bold">Request Detail</div>
+                                                                                                <table class="table">
+                                                                                                <tr>
+                                                                                                <th>Material Name</th>
+                                                                                                <td class="material-name"></td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                <th>Requested By</th>
+                                                                                                <td class="requested-by"></td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                <th>Remark</th>
+                                                                                                <td>Line - <span class="line-destination"></span></td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                <th>Required At</th>
+                                                                                                <td class="required-at"></td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                <th>Request Quantity</th>
+                                                                                                <td >
+                                                                                                <span class="requested-quantity"></span><span class="requested-quantity-span"></span>
 
-                                                                            </td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                            <th>Fullfilled Quantity</th>
-                                                                            <td >
-                                                                            <span class="fullfilled-quantity"></span>
-                                                                                                            <span class="fullfilled-quantity-span"></span>
+                                                                                                </td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                <th>Fullfilled Quantity</th>
+                                                                                                <td >
+                                                                                                <span class="fullfilled-quantity"></span>
+                                                                                                                                <span class="fullfilled-quantity-span"></span>
 
-                                                                            </td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                            <th>Send Quantity</th>
-                                                                            <td>
-                                                                                                            <div class="row gap-2">
+                                                                                                </td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                <th>Send Quantity</th>
+                                                                                                <td>
+                                                                                                                                <div class="row gap-2">
 
-                                                                            <input type="number" class="form-control col-sm-3 quantity-input"
-                                                                    name="Forms[${rowCount}].QuantitySend" min="1"
-                                                                    required>
-                                                                    <select name="Forms[${rowCount}].Measurement" class="form-control col-sm-3 measurement-select">
-                                                                    <option value="">Select Measurement</option>
-                                                                    </select>
-                                                                    </div>
-                                                                            </td>
-                                                                            </tr>
-                                                                            </table>
-                                                                            </div>
-                                                                            <button class="btn btn-danger remove-row-btn">Remove</button>
-                                                                            </div>
-                                                                            </div>
-                                                                            `
+                                                                                                <input type="number" class="form-control col-sm-3 quantity-input"
+                                                                                        name="Forms[${rowCount}].QuantitySend" min="1"
+                                                                                        required>
+                                                                                        <select name="Forms[${rowCount}].Measurement" class="form-control col-sm-3 measurement-select">
+                                                                                        <option value="">Select Measurement</option>
+                                                                                        </select>
+                                                                                        </div>
+                                                                                                </td>
+                                                                                                </tr>
+                                                                                                </table>
+                                                                                                </div>
+                                                                                                <button class="btn btn-danger remove-row-btn">Remove</button>
+                                                                                                </div>
+                                                                                                </div>
+                                                                                                `
 
                 $('#send-form').append(newRow)
 
@@ -257,10 +257,10 @@
                 card.find('.quantity-input').attr('max', requestedQuantity - fullfilledQuantity)
                 card.find('.measurement-select').html(
                     `
-                                                                    <option value="">Select a Measurement</option>
-                                                                    <option value="Unit">${unitMeasurement}</option>
-                                                                    <option value="Detail">${detailMeasurement}</option>
-                                                                                        `
+                                                                                        <option value="">Select a Measurement</option>
+                                                                                        <option value="Unit">${unitMeasurement}</option>
+                                                                                        <option value="Detail">${detailMeasurement}</option>
+                                                                                                            `
                 )
 
             })

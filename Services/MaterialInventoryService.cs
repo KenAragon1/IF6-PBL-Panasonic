@@ -3,6 +3,7 @@ using panasonic.ViewModels.MaterialInventoryViewModel;
 using panasonic.Models;
 using panasonic.Exceptions;
 using panasonic.Errors;
+using panasonic.Helpers;
 
 namespace panasonic.Services;
 
@@ -10,10 +11,11 @@ public interface IMaterialInventoryService
 {
     Task<SendViewModel> CreateSendViewModelAsync(List<SendForm>? sendForms = null);
     Task<ReturnViewModel> ReturnViewModelAsync(ReturnViewModel? returnViewModel = null);
+    Task<UseViewModel> UseViewModelAsync(UseViewModel? useViewModel = null);
     Task SendMaterialAsync(SendViewModel sendViewModel);
     Task PickupMaterial(int lineDestination, List<MaterialInventoryForm> inventoryForms);
-    Task ReturnMaterialAsync(List<MaterialInventoryForm> materialInventoryForms);
-    Task UseMaterial(List<MaterialInventoryForm> materialInventoryForms);
+    Task ReturnMaterialAsync(ReturnViewModel returnViewModel);
+    Task UseMaterialAsync(UseViewModel useViewModel);
 }
 
 public class MaterialInventoryService : IMaterialInventoryService
@@ -21,12 +23,15 @@ public class MaterialInventoryService : IMaterialInventoryService
     private readonly IMaterialInventoryRepository _materialInventoryRepository;
     private readonly IMaterialRequestRepository _materialRequestRepository;
     private readonly IProductionLineRepository _productionLineRepository;
+    private readonly IUserClaimHelper _userClaimHelper;
 
-    public MaterialInventoryService(IMaterialInventoryRepository materialInventoryRepository, IMaterialRequestRepository materialRequestRepository, IProductionLineRepository productionLineRepository)
+    public MaterialInventoryService(IMaterialInventoryRepository materialInventoryRepository, IMaterialRequestRepository materialRequestRepository, IProductionLineRepository productionLineRepository, IUserClaimHelper userClaimHelper)
     {
         _materialInventoryRepository = materialInventoryRepository;
         _materialRequestRepository = materialRequestRepository;
         _productionLineRepository = productionLineRepository;
+        _userClaimHelper = userClaimHelper;
+
     }
 
     public async Task<SendViewModel> CreateSendViewModelAsync(List<SendForm>? sendForms = null)
@@ -54,14 +59,35 @@ public class MaterialInventoryService : IMaterialInventoryService
         }
 
         return viewModel;
+    }
+    public async Task<UseViewModel> UseViewModelAsync(UseViewModel? useViewModel = null)
+    {
+        var viewModel = new UseViewModel
+        {
+            MaterialInventories = await _materialInventoryRepository.GetAllByConditionAsync(mi => mi.Location == MaterialInventoryLocations.ProductionLine && mi.Quantity > 0),
+            ProductionLines = await _productionLineRepository.GetAllAsync()
+        };
 
+        if (useViewModel != null)
+        {
+            viewModel.ProductionLineId = useViewModel.ProductionLineId;
+            if (useViewModel.Forms != null) viewModel.Forms = useViewModel.Forms;
+        }
 
+        return viewModel;
     }
 
 
     public async Task PickupMaterial(int lineDestination, List<MaterialInventoryForm> inventoryForms)
     {
-        var newMaterialTransaction = new List<MaterialTransaction>();
+        int.TryParse(_userClaimHelper.GetUserClaim("UserId"), out int userId);
+
+        var newMaterialTransaction = new MaterialTransaction
+        {
+            Type = TransactionTypes.Pickup,
+            ProductionLineId = lineDestination,
+            UserId = userId
+        };
         var newMaterialInventoryInProductionLine = new List<MaterialInventory>();
 
         foreach (var (form, index) in inventoryForms.Select((value, i) => (value, i)))
@@ -70,7 +96,11 @@ public class MaterialInventoryService : IMaterialInventoryService
 
             if (materialInPreperationRoom == null) throw new ExceptionWithModelError($"Forms[{index}].MaterialInventoryId", $"Material Inventory with ID {form.MaterialInventoryId} not found.");
 
-            newMaterialTransaction.Add(new MaterialTransaction { MaterialId = materialInPreperationRoom.MaterialId, Quantity = form.Quantity, Type = TransactionTypes.Pickup, ProductionLineId = lineDestination });
+            newMaterialTransaction.MaterialTransactionDetails.Add(new MaterialTransactionDetail
+            {
+                MaterialId = materialInPreperationRoom.MaterialId,
+                Quantity = form.Quantity
+            });
 
             materialInPreperationRoom.Quantity -= form.Quantity;
 
@@ -99,7 +129,8 @@ public class MaterialInventoryService : IMaterialInventoryService
 
     public async Task SendMaterialAsync(SendViewModel sendViewModel)
     {
-        var ListOfNewMaterialTransactions = new List<MaterialTransaction>();
+        int.TryParse(_userClaimHelper.GetUserClaim("UserId"), out int userId);
+        var newMaterialTransactions = new MaterialTransaction { Type = TransactionTypes.Send, UserId = userId };
         var ListOfNewMaterialInventoriesInPreperationRoom = new List<MaterialInventory>();
 
 
@@ -117,22 +148,18 @@ public class MaterialInventoryService : IMaterialInventoryService
                 _ => form.QuantitySend,
             };
 
-            var newMaterialTransaction = new MaterialTransaction
+            var newMaterialTransactionDetail = new MaterialTransactionDetail
             {
                 MaterialId = materialRequest.MaterialId,
                 Quantity = materialQuantity,
-                Type = TransactionTypes.Send,
-                ProductionLineId = materialRequest.ProductionLineId
             };
 
-            ListOfNewMaterialTransactions.Add(newMaterialTransaction);
+            newMaterialTransactions.MaterialTransactionDetails.Add(newMaterialTransactionDetail);
 
 
 
             // Modify or add new material inventory in preperation room
-            var materialInventoryInPreperationRoom = await _materialInventoryRepository.GetAsync(location: MaterialInventoryLocations.PreperationRoom, materialId: newMaterialTransaction.MaterialId);
-
-
+            var materialInventoryInPreperationRoom = await _materialInventoryRepository.GetAsync(location: MaterialInventoryLocations.PreperationRoom, materialId: materialRequest.MaterialId);
 
             if (materialInventoryInPreperationRoom != null)
             {
@@ -143,26 +170,28 @@ public class MaterialInventoryService : IMaterialInventoryService
                 var newMaterialInventoryInPreperationRoom = new MaterialInventory
                 {
                     Location = MaterialInventoryLocations.PreperationRoom,
-                    MaterialId = newMaterialTransaction.MaterialId,
+                    MaterialId = materialRequest.MaterialId,
                     Quantity = materialQuantity
                 };
                 ListOfNewMaterialInventoriesInPreperationRoom.Add(newMaterialInventoryInPreperationRoom);
             }
 
             // Edit Fullfilled quantity in material request
-            materialRequest.FullfilledQuantity += newMaterialTransaction.Quantity;
+            materialRequest.FullfilledQuantity += form.QuantitySend;
 
         }
 
-        await _materialInventoryRepository.SaveChangesAsync(ListOfNewMaterialTransactions, ListOfNewMaterialInventoriesInPreperationRoom);
+        await _materialInventoryRepository.SaveChangesAsync(newMaterialTransactions, ListOfNewMaterialInventoriesInPreperationRoom);
     }
 
-    public async Task ReturnMaterialAsync(List<MaterialInventoryForm> materialInventoryForms)
+    public async Task ReturnMaterialAsync(ReturnViewModel returnViewModel)
     {
-        var ListOfNewMaterialTransactions = new List<MaterialTransaction>();
+        int.TryParse(_userClaimHelper.GetUserClaim("UserId"), out int userId);
+
+        var newMaterialTransactions = new MaterialTransaction { Type = TransactionTypes.Return, ProductionLineId = returnViewModel.ProductionLineId, UserId = userId };
         var ListOfNewMaterialInventoriesInPreperationRoom = new List<MaterialInventory>();
 
-        foreach (var (form, index) in materialInventoryForms.Select((value, index) => (value, index)))
+        foreach (var (form, index) in returnViewModel.Forms.Select((value, index) => (value, index)))
         {
             var materialInProductionLine = await _materialInventoryRepository.GetAsync(form.MaterialInventoryId);
 
@@ -170,15 +199,13 @@ public class MaterialInventoryService : IMaterialInventoryService
 
             if (materialInProductionLine.Location != MaterialInventoryLocations.ProductionLine) throw new OperationNotAllowed("Can't return material inventory that's already in preperation room");
 
-            var newMaterialTransaction = new MaterialTransaction
+            var newMaterialTransactionDetail = new MaterialTransactionDetail
             {
                 MaterialId = materialInProductionLine.MaterialId,
                 Quantity = form.Quantity,
-                Type = TransactionTypes.Return,
-                ProductionLineId = materialInProductionLine.ProductionLineId
             };
 
-            ListOfNewMaterialTransactions.Add(newMaterialTransaction);
+            newMaterialTransactions.MaterialTransactionDetails.Add(newMaterialTransactionDetail);
 
             if (materialInProductionLine.Quantity < form.Quantity) throw new ExceptionWithModelError($"Forms[{index}].Quantity", "Cannot return material more than what's available");
 
@@ -204,15 +231,17 @@ public class MaterialInventoryService : IMaterialInventoryService
 
 
         }
-        await _materialInventoryRepository.SaveChangesAsync(ListOfNewMaterialTransactions, ListOfNewMaterialInventoriesInPreperationRoom);
+        await _materialInventoryRepository.SaveChangesAsync(newMaterialTransactions, ListOfNewMaterialInventoriesInPreperationRoom);
 
     }
 
-    public async Task UseMaterial(List<MaterialInventoryForm> materialInventoryForms)
+    public async Task UseMaterialAsync(UseViewModel useViewModel)
     {
-        var ListOfNewMaterialTransactions = new List<MaterialTransaction>();
+        int.TryParse(_userClaimHelper.GetUserClaim("UserId"), out int userId);
 
-        foreach (var (form, index) in materialInventoryForms.Select((value, index) => (value, index)))
+        var newMaterialTransactions = new MaterialTransaction { Type = TransactionTypes.Production, ProductionLineId = useViewModel.ProductionLineId, UserId = userId };
+
+        foreach (var (form, index) in useViewModel.Forms.Select((value, index) => (value, index)))
         {
             var materialInventoryInProductionLine = await _materialInventoryRepository.GetAsync(form.MaterialInventoryId);
 
@@ -222,14 +251,13 @@ public class MaterialInventoryService : IMaterialInventoryService
 
             materialInventoryInProductionLine.Quantity -= form.Quantity;
 
-            ListOfNewMaterialTransactions.Add(new MaterialTransaction
+            newMaterialTransactions.MaterialTransactionDetails.Add(new MaterialTransactionDetail
             {
                 MaterialId = materialInventoryInProductionLine.MaterialId,
                 Quantity = form.Quantity,
-                Type = TransactionTypes.Production
             });
         }
 
-        await _materialInventoryRepository.SaveChangesAsync(ListOfNewMaterialTransactions);
+        await _materialInventoryRepository.SaveChangesAsync(newMaterialTransactions);
     }
 }

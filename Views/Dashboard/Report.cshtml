@@ -22,14 +22,11 @@
             <tbody>
                 @foreach (var report in Model.MaterialTransactions)
                 {
-                        <tr>
-                            <td>@report.Type</td>
-                            <td>@report.Material!.Number</td>
-                            <td>@report.Material.Name</td>
-                            <td>@report.Quantity</td>
-                            <td>@report.CreatedAt.ToString("d MMMMM yyyy, HH:mm")</td>
-                            <td><button class="btn btn-primary">Details</button></td>
-                        </tr>
+                    <tr>
+                        <td>@report.Type</td>
+                        <td>@report.CreatedAt.ToString("d MMMMM yyyy, HH:mm")</td>
+                        <td><button class="btn btn-primary">Details</button></td>
+                    </tr>
                 }
             </tbody>
         </table>

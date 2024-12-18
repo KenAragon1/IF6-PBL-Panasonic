@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using panasonic.ViewModels.DashboardViewModel;
+using panasonic.Models;
+using System.Transactions;
 
 namespace panasonic.Controllers;
 
@@ -14,14 +16,41 @@ public class DashboardController : BaseController
     {
         _dbContext = dbContext;
     }
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var materialCount = await _dbContext.Materials.Where(m => !m.IsDeleted).CountAsync();
+        var userCount = await _dbContext.Users.CountAsync();
+        var productionCount = await _dbContext.ProductionLines.CountAsync();
+
+        var mtd = await _dbContext.MaterialTransactionDetails
+        .Include(mtd => mtd.MaterialTransaction)
+        .Include(mtd => mtd.Material)
+        .GroupBy(mtd => mtd.MaterialTransaction!.Type)
+        .ToListAsync();
+
+        var usedMaterialForProduction = mtd.Where(m => m.Key == TransactionTypes.Production)
+        .SelectMany(g => g)
+        .GroupBy(m => m.Material!.Name)
+        .Select(m => new MaterialUsedForProduction { MaterialName = m.Key, QuantityUsed = m.Sum(m => m.Quantity) })
+        .ToList();
+
+        var count = mtd.Select(c => new TransactionCount { Type = c.Key, Count = c.Count() }).ToList();
+
+        var viewModel = new IndexViewModel
+        {
+            Materials = usedMaterialForProduction,
+            TransactionCounts = count,
+            MaterialCount = materialCount,
+            ProductionLineCount = productionCount,
+            UserCount = userCount
+        };
+
+        return View(viewModel);
     }
 
     public async Task<IActionResult> Report()
     {
-        var viewModel = new ReportViewModel { MaterialTransactions = await _dbContext.MaterialTransactions.Include(mt => mt.Material).OrderByDescending(mt => mt.CreatedAt).AsNoTracking().ToListAsync() };
+        var viewModel = new ReportViewModel { MaterialTransactions = await _dbContext.MaterialTransactions.Include(mt => mt.MaterialTransactionDetails).ThenInclude(m => m.Material).OrderByDescending(mt => mt.CreatedAt).AsNoTracking().ToListAsync() };
         return View(viewModel);
     }
 

@@ -12,7 +12,7 @@
 
 <div class="card ">
     <div class="card-body">
-        <table class="table table-bordered table-hover">
+        <table id="multi-filter-select" class="table table-bordered dataTable no-footer dtr-inline table-hover">
             <thead>
                 <tr>
                     <th scope="col">No</th>
@@ -35,10 +35,15 @@
                         <td>@material.DetailQuantity @material.DetailMeasurement</td>
 
                         <td>
-                            <a class="btn btn-success" asp-controller="Material" asp-action="Edit"
-                                asp-route-id="@material.Id">Edit</a>
-                            <button class="btn btn-danger" data-toggle="modal"
-                                data-target="#confirm-delete-modal-@material.Id">Delete</button>
+                            <a class="btn btn-outline-success" asp-controller="Material" asp-action="Edit"
+                                asp-route-id="@material.Id">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                Edit</a>
+                            <button class="btn btn-outline-danger" data-toggle="modal"
+                                data-target="#confirm-delete-modal-@material.Id">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
                             <div class="modal fade" id="confirm-delete-modal-@material.Id">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -85,3 +90,32 @@
     </div>
 
 </div>
+
+
+@section Scripts {
+    <script>
+        $('#multi-filter-select').DataTable({
+            "pageLength": 5,
+            initComplete: function () {
+                this.api().columns().every(function () {
+                    var column = this;
+                    var select = $('')
+                        .appendTo($(column.footer()).empty())
+                        .on('change', function () {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function (d, j) {
+                        select.append('' + d + '')
+                    });
+                });
+            }
+        });
+    </script>
+}

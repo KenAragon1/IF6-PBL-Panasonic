@@ -48,4 +48,11 @@ public class ProductionLineRepository : IProductionLineRepository
         await _dbContext.SaveChangesAsync();
     }
 
+    public async Task DeleteAsync(int id)
+    {
+        var line = await _dbContext.ProductionLines.FirstOrDefaultAsync(pl => pl.Id == id);
+
+        if (line == null) throw new Exception();
+    }
+
 }
