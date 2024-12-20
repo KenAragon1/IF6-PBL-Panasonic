@@ -4,6 +4,7 @@ using panasonic.Models;
 using panasonic.Exceptions;
 using panasonic.Errors;
 using panasonic.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace panasonic.Services;
 
@@ -20,13 +21,15 @@ public interface IMaterialInventoryService
 
 public class MaterialInventoryService : IMaterialInventoryService
 {
+    private readonly ApplicationDbContext _dbContext;
     private readonly IMaterialInventoryRepository _materialInventoryRepository;
     private readonly IMaterialRequestRepository _materialRequestRepository;
     private readonly IProductionLineRepository _productionLineRepository;
     private readonly IUserClaimHelper _userClaimHelper;
 
-    public MaterialInventoryService(IMaterialInventoryRepository materialInventoryRepository, IMaterialRequestRepository materialRequestRepository, IProductionLineRepository productionLineRepository, IUserClaimHelper userClaimHelper)
+    public MaterialInventoryService(ApplicationDbContext dbContext, IMaterialInventoryRepository materialInventoryRepository, IMaterialRequestRepository materialRequestRepository, IProductionLineRepository productionLineRepository, IUserClaimHelper userClaimHelper)
     {
+        _dbContext = dbContext;
         _materialInventoryRepository = materialInventoryRepository;
         _materialRequestRepository = materialRequestRepository;
         _productionLineRepository = productionLineRepository;
@@ -96,11 +99,23 @@ public class MaterialInventoryService : IMaterialInventoryService
 
             if (materialInPreperationRoom == null) throw new ExceptionWithModelError($"Forms[{index}].MaterialInventoryId", $"Material Inventory with ID {form.MaterialInventoryId} not found.");
 
-            newMaterialTransaction.MaterialTransactionDetails.Add(new MaterialTransactionDetail
+            var materialTransactionDetail = newMaterialTransaction.MaterialTransactionDetails
+            .Where(mtd => mtd.MaterialId == materialInPreperationRoom.MaterialId)
+            .FirstOrDefault();
+
+            if (materialTransactionDetail != null)
             {
-                MaterialId = materialInPreperationRoom.MaterialId,
-                Quantity = form.Quantity
-            });
+                materialTransactionDetail.Quantity += form.Quantity;
+            }
+            else
+            {
+                newMaterialTransaction.MaterialTransactionDetails.Add(new MaterialTransactionDetail
+                {
+                    MaterialId = materialInPreperationRoom.MaterialId,
+                    Quantity = form.Quantity
+                });
+            }
+
 
             materialInPreperationRoom.Quantity -= form.Quantity;
 
@@ -148,6 +163,8 @@ public class MaterialInventoryService : IMaterialInventoryService
                 _ => form.QuantitySend,
             };
 
+            newMaterialTransactions.MaterialTransactionDetails.Where(mtd => mtd.MaterialId == materialRequest.MaterialId).FirstOrDefault();
+
             var newMaterialTransactionDetail = new MaterialTransactionDetail
             {
                 MaterialId = materialRequest.MaterialId,
@@ -156,10 +173,12 @@ public class MaterialInventoryService : IMaterialInventoryService
 
             newMaterialTransactions.MaterialTransactionDetails.Add(newMaterialTransactionDetail);
 
-
-
             // Modify or add new material inventory in preperation room
-            var materialInventoryInPreperationRoom = await _materialInventoryRepository.GetAsync(location: MaterialInventoryLocations.PreperationRoom, materialId: materialRequest.MaterialId);
+            var materialInventoryInPreperationRoom = await _materialInventoryRepository
+            .GetAsync(location: MaterialInventoryLocations.PreperationRoom, materialId: materialRequest.MaterialId)
+            ?? _dbContext.ChangeTracker.Entries<MaterialInventory>()
+            .FirstOrDefault(e => e.Entity.Location == MaterialInventoryLocations.PreperationRoom && e.Entity.MaterialId == materialRequest.MaterialId)?
+            .Entity;
 
             if (materialInventoryInPreperationRoom != null)
             {

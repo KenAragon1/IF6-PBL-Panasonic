@@ -10,7 +10,7 @@
 
 <div class="card">
     <div class="card-body">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered dataTable no-footer dtr-inline" id="multi-filter-select">
             <thead>
                 <tr>
                     <th>Line</th>
@@ -34,3 +34,20 @@
         </table>
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        $('#multi-filter-select').DataTable({
+            " pageLength": 5, initComplete: function () {
+                this.api().columns().every(function () {
+                    var column = this; var
+                        select = $('').appendTo($(column.footer()).empty()).on('change', function () {
+                            var
+                                val = $.fn.dataTable.util.escapeRegex($(this).val()); column.search(val ? '^' + val + '$' : '', true,
+                                    false).draw();
+                        }); column.data().unique().sort().each(function (d, j) { select.append('' + d + '') });
+                });
+            }
+        }); </script>
+}

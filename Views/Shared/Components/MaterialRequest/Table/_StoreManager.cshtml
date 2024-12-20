@@ -49,7 +49,7 @@
                     }
                     </td>
                     <td>
-                    @if (request.Status != MaterialRequestStatus.Approved)
+                    @if (request.Status == MaterialRequestStatus.Verified)
                     {
         <button class="btn btn-success" data-toggle="modal"
                             data-target="#accept-confirmation-@request.Id">Accept</button>
@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn btn-danger">Reject</button>
+                                <button class="btn btn-danger js-btn-reject" data-request-id="@request.Id">Reject</button>
 
                     }
                     </td>

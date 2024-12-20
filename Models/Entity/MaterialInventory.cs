@@ -14,8 +14,7 @@ public class MaterialInventory
     public Material? Material { get; set; }
     public int? ProductionLineId { get; set; }
     public ProductionLine? ProductionLine { get; set; }
-    public int? StagingProductionLineId { get; set; }
-    public ProductionLine? StagingProductionLine { get; set; }
+
 
 }
 

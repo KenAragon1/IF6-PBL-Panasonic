@@ -29,11 +29,13 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<User>().Property(u => u.Role).HasDefaultValue(UserRoles.Guest).HasConversion<string>();
         modelBuilder.Entity<User>().ToTable(tb => tb.HasCheckConstraint("CK_User_UserRole", "Role IN ('ShiftLeader', 'AsistantLeader', 'StoreManager', 'Admin', 'MaterialHandler', 'Guest')"));
         modelBuilder.Entity<User>().Property(u => u.CreatedAt).HasDefaultValueSql("GETDATE()");
+        modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
 
         UserSeeder.Seed(modelBuilder);
 
         // Material
         modelBuilder.Entity<Material>().HasIndex(m => m.Number).IsUnique();
+        modelBuilder.Entity<Material>().HasQueryFilter(m => !m.IsDeleted);
 
         // Production Line
         modelBuilder.Entity<ProductionLine>().HasIndex(pl => pl.Remark).IsUnique();

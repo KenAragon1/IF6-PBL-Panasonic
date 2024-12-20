@@ -26,18 +26,21 @@ public class MaterialRequestController : BaseController
     }
     public async Task<IActionResult> Index()
     {
-        var query = _materialRequestRepository.Query();
+        List<MaterialRequest> materialRequests = new List<MaterialRequest>();
         switch (User.FindFirst(ClaimTypes.Role)?.Value)
         {
             case "AsistantLeader":
-                query = query.Where(mr => mr.RequestedById == int.Parse(User.FindFirst("UserId")!.Value));
+                materialRequests = await _materialRequestRepository.GetAllByCondition(mr => mr.RequestedById == int.Parse(User.FindFirst("UserId")!.Value));
                 break;
             case "StoreManager":
-                query = query.Where(mr => mr.Status != MaterialRequestStatus.Pending);
+                materialRequests = await _materialRequestRepository.GetAllByCondition(mr => mr.Status == MaterialRequestStatus.Verified || mr.Status == MaterialRequestStatus.Approved || (mr.Status == MaterialRequestStatus.Rejected && mr.RejectedBy!.Role == UserRoles.StoreManager));
+                break;
+            case "ShiftLeader":
+                materialRequests = await _materialRequestRepository.GetAllAsync(); ;
                 break;
         }
 
-        return View(await query.Include(mr => mr.RequestedBy).Include(mr => mr.Material).Include(mr => mr.ProductionLine).Include(mr => mr.ApprovedBy).ToListAsync());
+        return View(materialRequests);
     }
 
     [Authorize(Roles = "AsistantLeader")]

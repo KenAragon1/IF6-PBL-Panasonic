@@ -15,6 +15,9 @@ public class User
     public required string Email { get; set; }
     public string HashedPassword { get; set; } = string.Empty;
     public bool IsVerified { get; set; } = false;
+    public bool IsDeleted { get; set; } = false;
     public UserRoles Role { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string? RecoveryToken { get; set; }
+    public DateTime? TokenExpiry { get; set; }
 }

@@ -37,7 +37,7 @@ public class MaterialRequest
 
     public void Reject(int rejectedById)
     {
-        Status = MaterialRequestStatus.Verified;
+        Status = MaterialRequestStatus.Rejected;
         RejectedById = rejectedById;
     }
 

@@ -13,11 +13,13 @@ public class AuthController : Controller
 {
     private readonly PasswordHasher<User> _passwordHasher;
     private readonly IUserRepository _userRepository;
+    private readonly ApplicationDbContext _dbContext;
 
-    public AuthController(IUserRepository userRepository)
+    public AuthController(IUserRepository userRepository, ApplicationDbContext dbContext)
     {
         _passwordHasher = new PasswordHasher<User>();
         _userRepository = userRepository;
+        _dbContext = dbContext;
     }
     public IActionResult Login()
     {
@@ -41,7 +43,7 @@ public class AuthController : Controller
 
         if (user.EmployeeID != LoginForm.EmployeeID || !IsPasswordCorrect(user, LoginForm.Password))
         {
-            ViewBag.Message = "Employee ID or Password Incorrect 123";
+            ViewBag.Message = "Employee ID or Password Incorrect";
             return View();
         }
 
@@ -102,4 +104,52 @@ public class AuthController : Controller
 
         return result == PasswordVerificationResult.Success;
     }
+
+    [HttpGet]
+    public ActionResult ForgotPassword()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<ActionResult> ForgotPassword(string email)
+    {
+        if (string.IsNullOrEmpty(email))
+        {
+            ModelState.AddModelError("", "Email is required.");
+            return View();
+        }
+
+        var user = _dbContext.Users.SingleOrDefault(u => u.Email == email);
+        if (user == null)
+        {
+            ModelState.AddModelError("", "Email not found.");
+            return View();
+        }
+
+        // Generate a token and expiry
+        user.RecoveryToken = Guid.NewGuid().ToString();
+        user.TokenExpiry = DateTime.UtcNow.AddHours(1);
+
+        _dbContext.SaveChanges();
+
+        // Send email
+        await SendRecoveryEmail(user.Email, user.RecoveryToken);
+
+        ViewBag.Message = "Recovery email sent.";
+
+        return View();
+    }
+
+    private async Task SendRecoveryEmail(string email, string token)
+    {
+        var resetUrl = Url.Action("ResetPassword", "Account", new { token }, HttpContext.Request.Scheme);
+        var subject = "Password Recovery";
+        var body = $"Click <a href='{resetUrl}'>here</a> to reset your password.";
+
+        // Replace with your email sending logic (e.g., SMTP)
+        await EmailService.SendAsync(email, subject, body);
+    }
+
 }

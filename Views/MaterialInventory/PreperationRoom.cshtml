@@ -36,7 +36,16 @@
                         <td>@(index++)</td>
                         <td>Material - @material.Material!.Number</td>
                         <td>@material.Material.Name</td>
-                        <td>@material.Quantity @material.Material.DetailMeasurement</td>
+                        <td>@material.Quantity @material.Material.DetailMeasurement
+                            @if (@material.Quantity == 0)
+                            {
+                                <span class="badge badge-danger ">
+                                    <i class="fas fa-exclamation fs-1"></i>
+                                </span>
+
+                            }
+
+                        </td>
                     </tr>
                 }
             </tbody>

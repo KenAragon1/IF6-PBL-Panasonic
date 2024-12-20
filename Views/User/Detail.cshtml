@@ -72,6 +72,9 @@
         </form>
     </div>
 </div>
+
+*@
+
 <div class="card">
     <div class="card-header">
         <div class="card-title">Delete User</div>
@@ -80,6 +83,7 @@
         <button class="btn btn-danger" data-toggle="modal" data-target="#delete-user-confirmation">Delete</button>
     </div>
 </div>
+
 
 <div class="modal fade" id="delete-user-confirmation">
     <div class="modal-dialog">
@@ -96,15 +100,15 @@
             </div>
         </div>
     </div>
-</div> *@
+</div>
 
 @section Scripts {
-            <script>
-                $(document).ready(function () {
-                    $('#edit-user-detail-form').on('input change', ':input', function () {
-                        console.log('hello owlrd')
-                        $('button[type="submit"]').prop('disabled', false);
-                    })
-                })
-            </script>
+    <script>
+        $(document).ready(function () {
+            $('#edit-user-detail-form').on('input change', ':input', function () {
+                console.log('hello owlrd')
+                $('button[type="submit"]').prop('disabled', false);
+            })
+        })
+    </script>
 }

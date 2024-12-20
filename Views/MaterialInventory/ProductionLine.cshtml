@@ -13,7 +13,8 @@
                 <select name="" id="" class="form-control"></select>
             </div>
         </div> *@
-        <table class="table table-striped table-hover">
+        <table class="table table-bordered dataTable no-footer dtr-inline"
+            id="multi-filter-select">
             <thead>
                 <tr>
                     <th>No</th>
@@ -25,16 +26,42 @@
             </thead>
             <tbody>
                 @foreach (var material in Model.MaterialInventories)
-                {
-                    <tr>
-                        <td>@(index++)</td>
-                        <td>Material - @material.Material!.Number</td>
-                        <td>@material.Material!.Name</td>
-                        <td>@material.Quantity</td>
-                        <td>Line - @material.ProductionLine?.Remark</td>
-                    </tr>
-                }
+        {
+                        <tr>
+                            <td>@(index++)</td>
+                            <td>Material - @material.Material!.Number</td>
+                            <td>@material.Material!.Name</td>
+                            <td>@material.Quantity @material.Material!.DetailMeasurement
+                                
+                                @if (@material.Quantity  == 0)
+                                {
+                                <span class="badge badge-danger ">
+                                <i class="fas fa-exclamation fs-1"></i>
+                                </span>
+
+                                }
+                            </td>
+                            <td>Line - @material.ProductionLine?.Remark</td>
+                        </tr>
+        }
             </tbody>
         </table>
     </div>
 </div>
+
+        @section Scripts
+{
+        <script>
+            $('#multi-filter-select').DataTable({
+                " pageLength": 5, initComplete: function () {
+                    this.api().columns().every(function () {
+                        var column = this; var
+                            select = $('').appendTo($(column.footer()).empty()).on('change', function () {
+                                var
+                                val = $.fn.dataTable.util.escapeRegex($(this).val()); column.search(val ? '^' + val + '$' : '', true,
+                                    false).draw();
+                            }); column.data().unique().sort().each(function (d, j) { select.append('' + d + '') });
+                    });
+                }
+            }); </script>
+        }

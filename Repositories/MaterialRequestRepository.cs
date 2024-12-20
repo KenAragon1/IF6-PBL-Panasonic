@@ -6,7 +6,7 @@ namespace panasonic.Repositories;
 
 public interface IMaterialRequestRepository
 {
-    Task<List<MaterialRequest>> GetAllAsync(string? status = null);
+    Task<List<MaterialRequest>> GetAllAsync();
     Task<List<MaterialRequest>> GetAllByCondition(Expression<Func<MaterialRequest, bool>> predicate);
     Task<MaterialRequest> GetAsync(int id);
     Task StoreAsync(MaterialRequest materialRequest);
@@ -28,20 +28,21 @@ public class MaterialRequestRepository : IMaterialRequestRepository
     {
         _dbContext = dbContext;
     }
-    public async Task<List<MaterialRequest>> GetAllAsync(string? status = null)
+    public async Task<List<MaterialRequest>> GetAllAsync()
     {
-        var query = _dbContext.MaterialRequests.Include(mr => mr.Material).Include(mr => mr.RequestedBy).AsQueryable();
-        if (!string.IsNullOrEmpty(status))
-        {
-            Enum.TryParse(status, out MaterialRequestStatus requestStatus);
-            query = query.Where(mr => mr.Status == requestStatus);
-        }
-        return await query.ToListAsync();
+        return await _dbContext.MaterialRequests.Include(mr => mr.Material).Include(mr => mr.RequestedBy)
+        .Include(mr => mr.VerifiedBy)
+        .Include(mr => mr.ApprovedBy)
+        .Include(mr => mr.RejectedBy)
+        .Include(mr => mr.ProductionLine)
+        .OrderByDescending(mr => mr.CreatedAt)
+        .ToListAsync();
     }
 
     public async Task<List<MaterialRequest>> GetAllByCondition(Expression<Func<MaterialRequest, bool>> predicate)
     {
-        return await _dbContext.MaterialRequests.Where(predicate).Include(mr => mr.Material).Include(mr => mr.RequestedBy).Include(mr => mr.ProductionLine).ToListAsync();
+        return await _dbContext.MaterialRequests.OrderByDescending(mr => mr.CreatedAt).Where(predicate).Include(mr => mr.Material).Include(mr => mr.RequestedBy)
+        .Include(mr => mr.VerifiedBy).Include(mr => mr.ApprovedBy).Include(mr => mr.RejectedBy).Include(mr => mr.ProductionLine).ToListAsync();
     }
 
     public async Task<MaterialRequest> GetAsync(int id)

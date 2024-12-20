@@ -24,25 +24,24 @@
             @switch (ViewBag.Role)
             {
                 case "ShiftLeader":
-                    {
-                        <partial name="~/Views/Shared/Components/MaterialRequest/Table/_ShiftLeader.cshtml" model="@Model" />
-                    }
+                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_ShiftLeader.cshtml" model="@Model" />
                     break;
+
                 case "AsistantLeader":
-                    {
-                        <partial name="~/Views/Shared/Components/MaterialRequest/Table/_AsistantLeader.cshtml" model="@Model" />
-                    }
+                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_AsistantLeader.cshtml" model="@Model" />
                     break;
                 case "StoreManager":
-                    {
-                        <partial name="~/Views/Shared/Components/MaterialRequest/Table/_StoreManager.cshtml" model="@Model" />
-                    }
+                    <partial name="~/Views/Shared/Components/MaterialRequest/Table/_StoreManager.cshtml" model="@Model" />
                     break;
             }
         </div>
 
     </div>
 </div>
+
+<form method="post" action="" id="reject-request-form" hidden>
+    @Html.AntiForgeryToken()
+</form>
 
 @section Scripts
 {
@@ -69,6 +68,36 @@
                     });
                 });
             }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            let rejectForm = $('#reject-request-form')
+
+
+            $(".js-btn-reject").on('click', function () {
+                let requestId = $(this).data("request-id");
+
+                swal({
+                    title: "Confirm Reject",
+                    icon: "warning",
+                    dangerMode: true,
+                    buttons: {
+                        cancel: "Cancel",
+                        confirm: {
+                            value: true,
+                            text: "Reject"
+                        }
+                    }
+                }).then(function (isReject) {
+                    if (isReject) {
+                        rejectForm.attr("action", `/MaterialRequest/${requestId}/Reject`);
+                        console.log(rejectForm.attr("action"));
+                        rejectForm.submit();
+
+                    }
+                });
+            });
         });
     </script>
 }
