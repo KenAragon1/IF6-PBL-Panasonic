@@ -1,136 +1,72 @@
 @model panasonic.ViewModels.MaterialInventoryViewModel.PickupViewModel;
 
 @{
-    ViewData["PanelTitle"] = "Pickup Material";
+    ViewData["PanelTitle"] = "Pickup Materials";
 }
 
 
-<form asp-controller="MaterialInventory" asp-action="Pickup" id="pickup-form">
+<div class="card">
+    <div class="card-body">
+        <div class="form-group row mb-3">
+            <label class="col-2 col-form-label">Material</label>
+            <div class="col-9">
+                <select name="" class="form-control" id="material-select" required>
+                    <option value="">Select a material</option>
+                    @foreach (var materialOption in Model.Materials)
+                    {
+                        <option value="@materialOption.Id">@materialOption.Name -
+                            @(materialOption.MaterialInventories?[0].Quantity ?? 0) @materialOption.DetailMeasurement
+                            Available</option>
+                    }
+                </select>
+            </div>
+            <div class="col-1">
+                <button class="btn btn-primary" type="button" id="insert-material-btn">Insert</button>
+            </div>
+        </div>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="form-group row">
-                <label for="" class="col-2 col-form-label">Production Line Destination</label>
+
+        <form asp-controller="MaterialInventory" asp-action="Pickup" id="pickup-form">
+            <div class="form-group row mb-3">
+                <label class="col-2 col-form-label">Line Destination</label>
                 <div class="col-10">
-                    <select asp-for="ProductionLineDestination" class="form-control" required>
-                        <option value="">Select Production Line Destination</option>
-                        @foreach (var option in Model.ProductionLineOptions)
+                    <select asp-for="ProductionLineDestination" class="form-control">
+                        <option value="">Select a Line destination</option>
+                        @foreach (var lineOption in Model.ProductionLineOptions)
                         {
-                            <option value="@option.Id">Production Line - @option.Remark</option>
+                            <option value="@lineOption.Id">Line - @lineOption.Remark</option>
                         }
                     </select>
                 </div>
             </div>
+
+            <table class="table table-hover table-bordered">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Available Quantity</th>
+                        <th>Pickup Quantity</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </form>
+        <div class="">
+            <button type="submit" class="btn btn-primary" form="pickup-form">Submit</button>
         </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="form-group row">
-                <label for="" class="col-2 col-form-label">Barcode Input</label>
-                <div class="col-10">
-                    <input type="text" name="" id="" class="form-control">
-                    <small class="form-text text-muted">This input is for Barcode scanner. If a valid Barcode scanned, a
-                        new
-                        pickup section will be added automatically</small>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @for (var i = 0; i < Model.Forms.Count(); i++)
-    {
-        <div class="card form-card">
-            <div class="card-body">
-                <div class="form-group row">
-                    <label for="" class="col-sm-2 col-form-label">Material</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" required asp-for="Forms[i].MaterialInventoryId">
-                            <option value="">Select Material</option>
-                            @foreach (var option in Model.MaterialInventoryOptions)
-                            {
-                                <option value="@option.Id">@option.Material.Name - @option.Quantity Remaining</option>
-                            }
-
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="" class="col-sm-2 col-form-label">Quantity to be picked up</label>
-                    <div class="col-sm-10">
-                        <input type="number" class="form-control" required asp-for="Forms[i].Quantity" min="1">
-                    </div>
-                </div>
-                <button type="button" class="btn btn-danger remove-row-btn">Remove</button>
-            </div>
-        </div>
-    }
-
-
-</form>
-
-<div class="card">
-    <div class="card-body">
-        <button class="btn btn-secondary" id="new-form-btn">New Material pickup</button>
-        <button class="btn btn-primary" type="submit" form="pickup-form">Submit</button>
     </div>
 </div>
 
-@section Scripts
-{
+
+
+@section Scripts {
     <script>
-        $(document).ready(function () {
-            let rowCount = @Model.Forms.Count;
-            $('#new-form-btn').on('click', function () {
+        window.materials = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Materials));
 
-                let newRow = `
-                                                <div class="card form-card">
-                                            <div class="card-body">
-                                                <div class="form-group row">
-                                                    <label for="" class="col-sm-2 col-form-label">Material</label>
-                                                    <div class="col-sm-10">
-                                                        <select class="form-control" required name="Forms[${rowCount}].MaterialInventoryId">
-                                                            <option value="">Select Material</option>
-        @foreach (var option in Model.MaterialInventoryOptions)
-        {
-                                                                                                <option value="@option.Id">@option.Material.Name - @option.Quantity Remaining</option>
-        }
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <label for="" class="col-sm-2 col-form-label">Quantity to be picked up</label>
-                                                    <div class="col-sm-10">
-                                                        <input type="number" class="form-control" required name="Forms[${rowCount}].Quantity" required>
-                                                    </div>
-                                                </div>
-                                                <button type="button" class="btn btn-danger remove-row-btn">Remove</button>
-                                            </div>
-                                        </div>
-                                                                                                                    `
-
-                $('#pickup-form').append(newRow)
-
-                rowCount++;
-
-
-            })
-
-            $(document).on('click', '.remove-row-btn', function () {
-                $(this).closest('div.card').remove();
-
-                $('div.form-card').each(function (index) {
-                    $(this).find('select, input').each(function () {
-                        const nameAttr = $(this).attr('name');
-                        if (nameAttr) {
-                            const newName = nameAttr.replace(/\[\d+\]/, `[${index}]`);
-                            $(this).attr('name', newName)
-                        }
-                    })
-                })
-
-                rowCount = $('div.card').length - 1;
-            })
+        $("#pickup-form").on("keydown", function (e) {
+            if (e.key === "Enter") e.preventDefault();
         })
     </script>
+    <script type="text/javascript" src="~/js/pickupMaterialForm.js"></script>
 }

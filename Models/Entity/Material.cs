@@ -9,5 +9,6 @@ public class Material
     public int DetailQuantity { get; set; }
     public string DetailMeasurement { get; set; } = string.Empty;
     public bool IsDeleted { get; set; } = false;
+    public List<MaterialInventory>? MaterialInventories { get; set; }
 
 }

@@ -5,11 +5,14 @@ using panasonic.Exceptions;
 using panasonic.Errors;
 using panasonic.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using panasonic.Dtos;
 
 namespace panasonic.Services;
 
 public interface IMaterialInventoryService
 {
+    Task<PickupViewModel> PickupViewModel();
     Task<SendViewModel> CreateSendViewModelAsync(List<SendForm>? sendForms = null);
     Task<ReturnViewModel> ReturnViewModelAsync(ReturnViewModel? returnViewModel = null);
     Task<UseViewModel> UseViewModelAsync(UseViewModel? useViewModel = null);
@@ -26,15 +29,27 @@ public class MaterialInventoryService : IMaterialInventoryService
     private readonly IMaterialRequestRepository _materialRequestRepository;
     private readonly IProductionLineRepository _productionLineRepository;
     private readonly IUserClaimHelper _userClaimHelper;
+    private readonly IMaterialRepository _materialRepository;
 
-    public MaterialInventoryService(ApplicationDbContext dbContext, IMaterialInventoryRepository materialInventoryRepository, IMaterialRequestRepository materialRequestRepository, IProductionLineRepository productionLineRepository, IUserClaimHelper userClaimHelper)
+    public MaterialInventoryService(ApplicationDbContext dbContext, IMaterialRepository materialRepository, IMaterialInventoryRepository materialInventoryRepository, IMaterialRequestRepository materialRequestRepository, IProductionLineRepository productionLineRepository, IUserClaimHelper userClaimHelper)
     {
         _dbContext = dbContext;
         _materialInventoryRepository = materialInventoryRepository;
         _materialRequestRepository = materialRequestRepository;
         _productionLineRepository = productionLineRepository;
         _userClaimHelper = userClaimHelper;
+        _materialRepository = materialRepository;
+    }
 
+    public async Task<PickupViewModel> PickupViewModel()
+    {
+        var viewModel = new PickupViewModel
+        {
+            ProductionLineOptions = await _productionLineRepository.GetAllAsync(),
+            Materials = await _materialRepository.GetAllWithInventoryByCondition(mi => mi.Location == MaterialInventoryLocations.PreperationRoom)
+        };
+
+        return viewModel;
     }
 
     public async Task<SendViewModel> CreateSendViewModelAsync(List<SendForm>? sendForms = null)

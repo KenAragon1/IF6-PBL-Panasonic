@@ -119,12 +119,8 @@ public class MaterialInventoryController : BaseController
 
     public async Task<IActionResult> Pickup()
     {
+        var viewModel = await _materialInventoryService.PickupViewModel();
 
-        var viewModel = new PickupViewModel
-        {
-            ProductionLineOptions = await _productionLineRepository.GetAllAsync(),
-            MaterialInventoryOptions = await _materialInventoryRepository.GetAllAsync(location: MaterialInventoryLocations.PreperationRoom, withMaterial: true)
-        };
         return View(viewModel);
     }
 
@@ -137,11 +133,7 @@ public class MaterialInventoryController : BaseController
         {
             if (!ModelState.IsValid)
             {
-                var viewModel = new PickupViewModel
-                {
-                    ProductionLineOptions = await _productionLineRepository.GetAllAsync(),
-                    MaterialInventoryOptions = await _materialInventoryRepository.GetAllAsync(location: MaterialInventoryLocations.PreperationRoom, withMaterial: true)
-                };
+                var viewModel = await _materialInventoryService.PickupViewModel();
                 return View(viewModel);
 
             }
