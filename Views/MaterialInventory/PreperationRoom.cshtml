@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.MaterialInventoryViewModel.PreperationRoomViewModel;
+@model panasonic.ViewModels.MaterialInventoryViewModels.PreperationRoomViewModel;
 
 @{
     ViewData["PanelTitle"] = "Materials In PreperationRoom";
@@ -30,21 +30,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var material in Model.MaterialInventories)
+                @foreach (var material in Model.Inventories)
                 {
                     <tr>
                         <td>@(index++)</td>
-                        <td>Material - @material.Material!.Number</td>
-                        <td>@material.Material.Name</td>
-                        <td>@material.Quantity @material.Material.DetailMeasurement
-                            @if (@material.Quantity == 0)
+                        <td>Material - @material.MaterialNumber</td>
+                        <td>@material.MaterialName</td>
+                        <td>@material.InventoryAvailableQuantity @material.MaterialDetailMeasurement
+                            @if (@material.InventoryAvailableQuantity == 0)
                             {
                                 <span class="badge badge-danger ">
                                     <i class="fas fa-exclamation fs-1"></i>
                                 </span>
-
                             }
-
                         </td>
                     </tr>
                 }

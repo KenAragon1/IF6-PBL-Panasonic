@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.MaterialInventoryViewModel.PickupViewModel;
+@model panasonic.ViewModels.MaterialInventoryViewModels.PickupInventoryViewModel;
 
 @{
     ViewData["PanelTitle"] = "Pickup Materials";
@@ -9,13 +9,16 @@
     <div class="card-body">
         <div class="form-group row mb-3">
             <label class="col-2 col-form-label">Material</label>
-            <div class="col-9">
-                <select name="" class="form-control" id="material-select" required>
+            <div class="col-9 select2-input">
+                <select class="form-control" id="material-select" name="material-select">
                     <option value="">Select a material</option>
                     @foreach (var materialOption in Model.Materials)
                     {
-                        <option value="@materialOption.Id">@materialOption.Name -
-                            @(materialOption.MaterialInventories?[0].Quantity ?? 0) @materialOption.DetailMeasurement
+
+                        <option value="@materialOption.Id"> @materialOption.Barcode - @materialOption.Name -
+                            @(Model.Inventories.Where(i => i.MaterialId == materialOption.Id).Select(i =>
+                                i.Quantity).FirstOrDefault())
+                            @materialOption.DetailMeasurement
                             Available</option>
                     }
                 </select>
@@ -30,15 +33,18 @@
             <div class="form-group row mb-3">
                 <label class="col-2 col-form-label">Line Destination</label>
                 <div class="col-10">
-                    <select asp-for="ProductionLineDestination" class="form-control">
+                    <select required asp-for="ProductionLineId" class="form-control">
                         <option value="">Select a Line destination</option>
-                        @foreach (var lineOption in Model.ProductionLineOptions)
+                        @foreach (var lineOption in Model.ProductionLines)
                         {
                             <option value="@lineOption.Id">Line - @lineOption.Remark</option>
                         }
                     </select>
+                    <span asp-validation-for="ProductionLineId" class="form-text text-danger"></span>
                 </div>
             </div>
+
+            <span asp-validation-for="InventoryForms" class="text text-danger"></span>
 
             <table class="table table-hover table-bordered">
                 <thead>
@@ -49,11 +55,34 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="table-body"></tbody>
+                <tbody id="table-body">
+                    @foreach (var (form, index) in Model.InventoryForms.Select((value, index) => (value, index)))
+                    {
+                        var inventory = Model.Inventories.Where(i => i.Id == form.InventoryId).First();
+                        <tr class="material-row">
+                            <td>
+                                <span>@(inventory.Material!.Name)</span>
+                                <input type="hidden" readonly asp-for="InventoryForms[index].InventoryId" />
+                            </td>
+                            <td>@(inventory?.Quantity)
+
+                            </td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="number" asp-for="InventoryForms[index].Quantity"
+                                        class="form-control pickup-quantity-input" data-id="@inventory?.Id" min="1"
+                                        max="@(inventory?.Quantity)" />
+
+                                </div>
+                            </td>
+                            <td><button class="btn btn-danger delete-row-btn" data-id="@(inventory?.Id)">x</button></td>
+                        </tr>
+                    }
+                </tbody>
             </table>
         </form>
         <div class="">
-            <button type="submit" class="btn btn-primary" form="pickup-form">Submit</button>
+            <button type="submit" class="btn btn-primary" form="pickup-form">Submits</button>
         </div>
     </div>
 </div>
@@ -63,10 +92,15 @@
 @section Scripts {
     <script>
         window.materials = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Materials));
-
-        $("#pickup-form").on("keydown", function (e) {
-            if (e.key === "Enter") e.preventDefault();
-        })
+        window.inventories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Inventories));
     </script>
     <script type="text/javascript" src="~/js/pickupMaterialForm.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#material-select").select2({
+                theme: "bootstrap"
+            });
+
+        })
+    </script>
 }

@@ -8,7 +8,7 @@ public class Material
     public string UnitMeasurement { get; set; } = string.Empty;
     public int DetailQuantity { get; set; }
     public string DetailMeasurement { get; set; } = string.Empty;
+    public string Barcode { get; set; } = string.Empty;
     public bool IsDeleted { get; set; } = false;
-    public List<MaterialInventory>? MaterialInventories { get; set; }
 
 }

@@ -1,18 +1,18 @@
+using panasonic.Dtos.MaterialDtos;
 using panasonic.Errors;
 using panasonic.Exceptions;
 using panasonic.Models;
 using panasonic.Repositories;
-using panasonic.ViewModels.MaterialViewModel;
+using panasonic.ViewModels.MaterialViewModels;
 
 namespace panasonic.Services;
 
 public interface IMaterialService
 {
-    MaterialViewModel MaterialViewModel(Material? material);
     Task<List<Material>> GetAllAsync();
     Task<Material> GetByIdAsync(int id);
-    Task CreateAsync(MaterialViewModel materialViewModel);
-    Task UpdateAsync(MaterialViewModel materialViewModel);
+    Task CreateAsync(CreateMaterialViewModel createMaterialViewModel);
+    Task UpdateAsync(int materialId, EditMaterialViewModel editMaterialViewModel);
     Task DeleteAsync(int id);
 
 
@@ -25,7 +25,6 @@ public class MaterialService : IMaterialService
     public MaterialService(IMaterialRepository materialRepository)
     {
         _materialRepository = materialRepository;
-
     }
 
     public async Task<List<Material>> GetAllAsync()
@@ -41,17 +40,18 @@ public class MaterialService : IMaterialService
 
         return material;
     }
-    public async Task CreateAsync(MaterialViewModel materialViewModel)
+    public async Task CreateAsync(CreateMaterialViewModel createMaterialViewModel)
     {
         try
         {
             var material = new Material
             {
-                Name = materialViewModel.Name,
-                UnitMeasurement = materialViewModel.UnitMeasurement,
-                Number = materialViewModel.Number!.Value,
-                DetailMeasurement = materialViewModel.DetailMeasurement,
-                DetailQuantity = materialViewModel.DetailQuantity!.Value
+                Name = createMaterialViewModel.MaterialName,
+                UnitMeasurement = createMaterialViewModel.UnitMeasurement,
+                Number = createMaterialViewModel.MaterialNumber,
+                DetailMeasurement = createMaterialViewModel.DetailMeasurement,
+                DetailQuantity = createMaterialViewModel.DetailQuantity,
+                Barcode = createMaterialViewModel.Barcode
             };
 
             await _materialRepository.StoreAsync(material);
@@ -60,7 +60,7 @@ public class MaterialService : IMaterialService
         {
             if (e.Type == ExceptionTypes.UniqueColumn)
             {
-                throw new ExceptionWithModelError(nameof(materialViewModel.Number), "This material number has already taken");
+                throw new ExceptionWithModelError(nameof(createMaterialViewModel.MaterialNumber), "This material number has already taken");
             }
         }
         catch (System.Exception)
@@ -85,32 +85,21 @@ public class MaterialService : IMaterialService
         }
     }
 
-    public MaterialViewModel MaterialViewModel(Material? material)
-    {
-        var viewModel = new MaterialViewModel();
-        if (material != null)
-        {
-            viewModel.Id = material.Id;
-            viewModel.Name = material.Name;
-            viewModel.Number = material.Number;
-            viewModel.DetailMeasurement = material.DetailMeasurement;
-            viewModel.DetailQuantity = material.DetailQuantity;
-            viewModel.UnitMeasurement = material.UnitMeasurement;
-        }
-        return viewModel;
-    }
 
-    public async Task UpdateAsync(MaterialViewModel materialViewModel)
+
+    public async Task UpdateAsync(int materialId, EditMaterialViewModel editMaterialViewModel)
     {
-        var material = await _materialRepository.GetByIdAsync(materialViewModel.Id);
+        var material = await _materialRepository.GetByIdAsync(materialId);
+
 
         if (material == null) throw new ItemNotFoundException("This material does not exist");
 
-        material.Name = materialViewModel.Name;
-        material.Number = materialViewModel.Number!.Value;
-        material.UnitMeasurement = materialViewModel.UnitMeasurement;
+        material.Name = editMaterialViewModel.MaterialName;
+        material.Number = editMaterialViewModel.MaterialNumber;
+        material.UnitMeasurement = editMaterialViewModel.UnitMeasurement;
         material.DetailMeasurement = material.DetailMeasurement;
-        material.DetailQuantity = materialViewModel.DetailQuantity!.Value;
+        material.DetailQuantity = editMaterialViewModel.DetailQuantity;
+        material.Barcode = editMaterialViewModel.Barcode;
 
         await _materialRepository.UpdateAsync(material);
     }

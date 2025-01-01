@@ -6,8 +6,7 @@ namespace panasonic.Repositories;
 
 public interface IMaterialInventoryRepository
 {
-    Task<List<MaterialInventory>> GetAllAsync(MaterialInventoryLocations? location = null, bool withMaterial = false, bool withProductionLine = false);
-    Task<List<MaterialInventory>> GetAllByConditionAsync(Expression<Func<MaterialInventory, bool>> predicate);
+    Task<List<MaterialInventory>> GetAllAsync(Expression<Func<MaterialInventory, bool>>? predicate = null);
     Task<MaterialInventory?> GetAsync(int? id = null, int? materialId = null, MaterialInventoryLocations? location = null, int? productionLineId = null);
     Task<MaterialInventory?> GetByConditionAsync(Expression<Func<MaterialInventory, bool>> predicate);
     Task StoreAsync(MaterialInventory materialInventory);
@@ -26,21 +25,16 @@ public class MaterialInventoryRepository : IMaterialInventoryRepository
     {
         _dbContext = dbContext;
     }
-    public async Task<List<MaterialInventory>> GetAllAsync(MaterialInventoryLocations? location = null, bool withMaterial = false, bool withProductionLine = false)
+    public async Task<List<MaterialInventory>> GetAllAsync(Expression<Func<MaterialInventory, bool>>? predicate = null)
     {
-        var query = _dbContext.MaterialInventories.Include(mi => mi.Material).AsQueryable();
+        var query = _dbContext.MaterialInventories.Include(mi => mi.Material).Include(mi => mi.ProductionLine).AsQueryable();
 
-        if (location != null) query = query.Where(mi => mi.Location == location);
-        if (withMaterial) query = query.Include(mi => mi.Material);
-        if (withProductionLine) query = query.Include(mi => mi.ProductionLine);
+        if (predicate != null) query = query.Where(predicate);
 
         return await query.ToListAsync();
     }
 
-    public async Task<List<MaterialInventory>> GetAllByConditionAsync(Expression<Func<MaterialInventory, bool>> predicate)
-    {
-        return await _dbContext.MaterialInventories.Where(predicate).Include(mi => mi.Material).ToListAsync();
-    }
+
 
 
 
@@ -113,6 +107,7 @@ public class MaterialInventoryRepository : IMaterialInventoryRepository
             throw;
         }
     }
+
 
 
 }

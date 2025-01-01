@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.ProductionLineViewModel.IndexViewModel;
+@model List<panasonic.Models.ProductionLine>;
 
 @{
     ViewData["PanelTitle"] = "Manage Production Line";
@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var line in @Model.ProductionLines)
+                @foreach (var line in @Model)
                 {
                     <tr>
                         <td>Line - @line.Remark</td>

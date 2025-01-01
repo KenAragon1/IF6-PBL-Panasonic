@@ -20,6 +20,7 @@
                     <th scope="col">Number</th>
                     <th scope="col">Unit</th>
                     <th scope="col">Detail Measurement</th>
+                    <th scope="col">Barcode</th>
                     <th scope="col"></th>
                 </tr>
             </thead>
@@ -33,6 +34,7 @@
                         <td>@material.Number</td>
                         <td>@material.UnitMeasurement</td>
                         <td>@material.DetailQuantity @material.DetailMeasurement</td>
+                        <td>@material.Barcode</td>
 
                         <td>
                             <a class="btn btn-outline-success" asp-controller="Material" asp-action="Edit"

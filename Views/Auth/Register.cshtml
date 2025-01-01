@@ -15,30 +15,33 @@
 <form class="mb-2" method="post" asp-action="Register">
 
     <div class="mb-2">
-        <input type="text" id="employeedd" class="form-control" asp-for="EmployeeID" placeholder="Employee ID">
-        <span class="text-danger" asp-validation-for="EmployeeID"></span>
+        <input type="text" id="employeedd" class="form-control" asp-for="UserRegisterDto.EmployeeID"
+            placeholder="Employee ID">
+        <span class="text-danger" asp-validation-for="UserRegisterDto.EmployeeID"></span>
     </div>
 
     <div class="mb-2">
-        <input type="email" class="form-control" asp-for="Email" id="email" placeholder="Email">
-        <span class="text-danger" asp-validation-for="Email"></span>
+        <input type="email" class="form-control" asp-for="UserRegisterDto.Email" id="email" placeholder="Email">
+        <span class="text-danger" asp-validation-for="UserRegisterDto.Email"></span>
     </div>
 
     <div class="mb-2">
-        <input type="text" id="fullname" class="form-control" asp-for="Fullname" placeholder="Full Name">
-        <span class="text-danger" asp-validation-for="Fullname"></span>
+        <input type="text" id="fullname" class="form-control" asp-for="UserRegisterDto.Fullname"
+            placeholder="Full Name">
+        <span class="text-danger" asp-validation-for="UserRegisterDto.Fullname"></span>
     </div>
 
     <div class="mb-2">
-        <input type="password" id="password" class="form-control" placeholder="Password" asp-for="Password">
-        <span class="text-danger" asp-validation-for="Password"></span>
+        <input type="password" id="password" class="form-control" placeholder="Password"
+            asp-for="UserRegisterDto.Password">
+        <span class="text-danger" asp-validation-for="UserRegisterDto.Password"></span>
 
     </div>
 
     <div class="mb-2">
         <input type="password" id="confirmpassword" class="form-control" placeholder="Confirm Password"
-            asp-for="ConfirmPassword">
-        <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+            asp-for="UserRegisterDto.ConfirmPassword">
+        <span class="text-danger" asp-validation-for="UserRegisterDto.ConfirmPassword"></span>
 
     </div>
 

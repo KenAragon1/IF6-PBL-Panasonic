@@ -1,7 +1,8 @@
 let materials = window.materials;
+let inventories = window.inventories;
 let rowCount = window.rowCount || 0;
 
-let pickedMaterial = [];
+let pickedInventories = [];
 
 $(document).ready(function () {
   let insertMaterialBtn = $("#insert-material-btn");
@@ -10,11 +11,16 @@ $(document).ready(function () {
   insertMaterialBtn.on("click", function (e) {
     let materialId = Number($("#material-select").val());
 
-    let material = findMaterial(materialId);
+    if (!materialId)
+      return swal({
+        title: "No Material Selected",
+        text: "Please select a material",
+        icon: "error",
+      });
 
-    console.log(material);
+    let inventory = findInventory(materialId);
 
-    if (material == null || material.availableQuantity === 0) {
+    if (!inventory || inventory.Quantity === 0) {
       return swal({
         title: "Not enough material",
         text: "Request this material to get more",
@@ -22,7 +28,7 @@ $(document).ready(function () {
       });
     }
 
-    handlePickedMaterial(material);
+    handlePickedInventory(inventory);
 
     $("#material-select").val("");
 
@@ -32,18 +38,21 @@ $(document).ready(function () {
   //   handle pickup quantity input
   $(document).on("change paste keyup", ".pickup-quantity-input", function () {
     var value = $(this).val();
-    var materialId = $(this).data("id");
 
-    var material = pickedMaterial.find((m) => m.id == materialId);
+    console.log();
 
-    material.pickupQuantity = Number(value);
+    var inventoryId = $(this).data("id");
+
+    var inventory = pickedInventories.find((i) => i.Id == inventoryId);
+
+    inventory.pickupQuantity = Number(value);
   });
 
   //   handle delete row button
   $(document).on("click", ".delete-row-btn", function () {
-    var materialId = $(this).data("id");
+    var inventoryId = $(this).data("id");
 
-    pickedMaterial = pickedMaterial.filter((m) => m.id != materialId);
+    pickedInventories = pickedInventories.filter((i) => i.Id != inventoryId);
 
     $(this).closest("tr").remove();
 
@@ -61,28 +70,35 @@ $(document).ready(function () {
 
     rowCount--;
   });
+
+  $("#submit-btn").on("click", function () {
+    if (pickedInventories.length === 0)
+      return swal({
+        title: "No Material Selected",
+        text: "Please select a material",
+        icon: "error",
+      });
+
+    $("#pickup-form").submit();
+  });
 });
 
-function findMaterial(materialId) {
-  let material = materials.filter((m) => m.Id === materialId)[0];
-  return {
-    id: material.MaterialInventories[0]?.Id || 0,
-    name: material.Name,
-    measurement: material.DetailMeasurement,
-    availableQuantity: material.MaterialInventories[0]?.Quantity || 0,
-    pickupQuantity: 0,
-  };
+function findInventory(materialId) {
+  let inventory = inventories.filter((i) => i.MaterialId === materialId)[0];
+  console.log(inventory);
+  return inventory;
 }
 
-function handlePickedMaterial(material) {
-  let alreadyPickedMaterial = pickedMaterial.find((m) => m.id == material.id);
+function handlePickedInventory(inventory) {
+  let alreadyPickedInventory = pickedInventories.find(
+    (i) => i.Id == inventory.Id
+  );
 
-  if (alreadyPickedMaterial) {
-    alreadyPickedMaterial.pickupQuantity += 1;
+  if (alreadyPickedInventory) {
+    alreadyPickedInventory.pickupQuantity += 1;
   } else {
-    pickedMaterial.push({
-      ...material,
-
+    pickedInventories.push({
+      ...inventory,
       pickupQuantity: 1,
     });
   }
@@ -92,26 +108,27 @@ function updateTable() {
   let rowHtml;
   rowCount = 0;
 
-  pickedMaterial.forEach((m) => {
+  pickedInventories.forEach((i) => {
+    console.log(i);
     rowHtml += `
             <tr class="material-row">
               <td>
-                <span>${m.name}</span>
-                <input type="hidden" readonly name="Forms[${rowCount}].MaterialInventoryId" value="${
-      m.id
+                <span>${i.Material.Name}</span>
+                <input type="hidden" readonly name="InventoryForms[${rowCount}].InventoryId" value="${
+      i.Id
     }" />
               </td>
-              <td>${m.availableQuantity + " " + m.measurement} </td>
+              <td>${i.Quantity + " " + i.Material.DetailMeasurement} </td>
               <td>
                 <div class="form-group">
-                <input type="number" name="Forms[${rowCount}].Quantity" class="form-control pickup-quantity-input" value="${
-      m.pickupQuantity
-    }" data-id="${m.id}" min="1" max="${m.availableQuantity}"/>
+                <input type="number" name="InventoryForms[${rowCount}].Quantity" class="form-control pickup-quantity-input" value="${
+      i.pickupQuantity
+    }" data-id="${i.Id}" min="1" max="${i.Quantity}"/>
                 
                 </div>
               </td>
               <td><button class="btn btn-danger delete-row-btn" data-id="${
-                m.id
+                i.Id
               }" >x</button></td>
             </tr>
           `;

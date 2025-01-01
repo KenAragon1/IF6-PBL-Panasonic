@@ -6,10 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>@ViewData["Title"] - panasonic</title>
   @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
+  @* <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> *@
   <link rel="stylesheet" href="~/lib/atlantis/css/bootstrap.min.css">
   <link rel="stylesheet" href="~/lib/atlantis/css/atlantis.min.css">
   @* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
   @* <link rel="stylesheet" href="~/panasonic.styles.css" asp-append-version="true" /> *@
+  @* <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> *@
 </head>
 
 <body class="bg-light">
@@ -37,7 +39,7 @@
           @RenderBody()
         </div>
       </div>
-      <footer class="footer">
+      <footer class="footer ">
         <div class="container-fluid">
           <nav class="pull-left">
             <ul class="nav">
@@ -69,7 +71,6 @@
 
   <script src="~/lib/jquery/dist/jquery.min.js"></script>
   @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
-  <script src="~/js/site.js" asp-append-version="true"></script>
 
   <!--   Core JS Files   -->
   <script src="~/lib/atlantis/js/core/jquery.3.2.1.min.js"></script>
@@ -108,10 +109,17 @@
 
   <!-- Atlantis JS -->
   <script src="~/lib/atlantis/js/atlantis.min.js"></script>
+  <script src="~/lib/atlantis/js/prism.js"></script>
+  <script src="~/lib/atlantis/js/prism-normalize-whitespace.min.js"></script>
+
+  <!-- select 2  -->
+  <script src="~/lib/atlantis/js/plugin/select2/select2.full.min.js"></script>
 
 
   <!-- Fonts and icons-->
   <script src="~/lib/atlantis/js/plugin/webfont/webfont.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
   <script>
     WebFont.load({
       google: { "families": ["Lato:300,400,700,900"] },
@@ -141,6 +149,18 @@
 
 
   @await RenderSectionAsync("Scripts", required: false)
+
+  <script>
+    $(document).ready(function () {
+      // Target the form
+      $('form').on('keydown', function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault(); // Prevent the default action
+        }
+      });
+    });
+  </script>
 </body>
+
 
 </html>

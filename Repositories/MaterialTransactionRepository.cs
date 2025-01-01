@@ -20,11 +20,24 @@ public class MaterialTransactionRepository : IMaterialTransactionRepository
 
     public async Task<List<MaterialTransaction>> GetAllAsync()
     {
-        return await _dbContext.MaterialTransactions.Include(mt => mt.MaterialTransactionDetails).ThenInclude(mtd => mtd.Material).Include(mt => mt.User).Include(mt => mt.ProductionLine).OrderByDescending(mt => mt.CreatedAt).ToListAsync();
+        return await _dbContext.MaterialTransactions
+        .Include(mt => mt.MaterialTransactionDetails)
+        .ThenInclude(mtd => mtd.Material)
+        .Include(mt => mt.User)
+        .Include(mt => mt.ProductionLine)
+        .IgnoreQueryFilters()
+        .OrderByDescending(mt => mt.CreatedAt)
+        .ToListAsync();
     }
 
     public async Task<MaterialTransaction?> GetByIdAsync(int id)
     {
-        return await _dbContext.MaterialTransactions.Include(mt => mt.MaterialTransactionDetails).ThenInclude(mtd => mtd.Material).Include(mt => mt.User).Include(mt => mt.ProductionLine).FirstOrDefaultAsync(mt => mt.Id == id);
+        return await _dbContext.MaterialTransactions.
+        Include(mt => mt.MaterialTransactionDetails).
+        ThenInclude(mtd => mtd.Material).
+        Include(mt => mt.User).
+        Include(mt => mt.ProductionLine)
+        .IgnoreQueryFilters().
+        FirstOrDefaultAsync(mt => mt.Id == id);
     }
 }

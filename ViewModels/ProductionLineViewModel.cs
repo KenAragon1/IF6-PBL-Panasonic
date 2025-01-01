@@ -1,35 +1,12 @@
-using System.ComponentModel.DataAnnotations;
-using panasonic.Models;
 
-namespace panasonic.ViewModels.ProductionLineViewModel;
+using panasonic.Dtos.ProductionLineDtos;
 
-public class IndexViewModel
+namespace panasonic.ViewModels.ProductionLineViewModels;
+
+public class ProductionLineViewModel
 {
-    public required List<ProductionLine> ProductionLines;
+    public ProductionLineDto ProductionLineDto { get; set; } = new ProductionLineDto();
 }
 
-public class ManageViewModel
-{
-    public required List<Material> materials;
 
-}
 
-public class CreateViewModel
-{
-    [Required]
-    public int Remark { get; set; }
-
-    [Required]
-    public string Description { get; set; } = string.Empty;
-}
-
-public class EditViewModel
-{
-    [Required]
-    public int Remark { get; set; }
-
-    [Required]
-    public string Description { get; set; } = string.Empty;
-
-    public ProductionLine ProductionLine { get; set; } = new ProductionLine();
-}

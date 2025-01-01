@@ -8,7 +8,6 @@ namespace panasonic.Repositories;
 public interface IMaterialRepository
 {
     Task<List<Material>> GetAllAsync();
-    Task<List<Material>> GetAllWithInventoryByCondition(Expression<Func<MaterialInventory, bool>> predicate);
     Task<Material?> GetByIdAsync(int id);
     Task StoreAsync(Material material);
     Task UpdateAsync(Material material);
@@ -66,19 +65,7 @@ public class MaterialRepository : IMaterialRepository
         await UpdateAsync(material);
     }
 
-    public async Task<List<Material>> GetAllWithInventoryByCondition(Expression<Func<MaterialInventory, bool>> predicate)
-    {
-        return await _dbContext.Materials.Select((m => new Material
-        {
-            Id = m.Id,
-            Name = m.Name,
-            Number = m.Number,
-            DetailMeasurement = m.DetailMeasurement,
-            MaterialInventories = m.MaterialInventories.AsQueryable().Where(predicate).Include(mi => mi.ProductionLine).ToList()
-        })).ToListAsync();
 
-
-    }
 
     private async Task<bool> IsNumberTaken(int number)
     {

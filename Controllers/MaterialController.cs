@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using panasonic.Dtos.MaterialDtos;
 using panasonic.Errors;
 using panasonic.Exceptions;
 using panasonic.Services;
-using panasonic.ViewModels.MaterialViewModel;
+using panasonic.ViewModels.MaterialViewModels;
 
 namespace panasonic.Controllers;
 
@@ -81,15 +82,22 @@ public class MaterialController : BaseController
 
     }
 
-
-
     public async Task<IActionResult> Edit(int Id)
     {
         try
         {
             var material = await _materialService.GetByIdAsync(Id);
 
-            var viewModel = _materialService.MaterialViewModel(material);
+            var viewModel = new EditMaterialViewModel
+            {
+                MaterialId = material.Id,
+                MaterialNumber = material.Number,
+                MaterialName = material.Name,
+                UnitMeasurement = material.UnitMeasurement,
+                DetailMeasurement = material.DetailMeasurement,
+                DetailQuantity = material.DetailQuantity,
+                Barcode = material.Barcode
+            };
 
             return View(viewModel);
         }
@@ -115,10 +123,11 @@ public class MaterialController : BaseController
         {
             if (!ModelState.IsValid)
             {
+                editMaterialViewModel.MaterialId = Id;
                 return View(editMaterialViewModel);
             }
 
-            await _materialService.UpdateAsync(editMaterialViewModel);
+            await _materialService.UpdateAsync(Id, editMaterialViewModel);
 
             TempData["SuccessMessage"] = "Update Material Success";
 
@@ -128,11 +137,13 @@ public class MaterialController : BaseController
         catch (ItemNotFoundException e)
         {
             TempData["ErrorMessage"] = e.Message;
+            editMaterialViewModel.MaterialId = Id;
             return View(editMaterialViewModel);
         }
         catch (System.Exception)
         {
             TempData["ErrorMessage"] = "Something went wrong";
+            editMaterialViewModel.MaterialId = Id;
             return View(editMaterialViewModel);
         }
 

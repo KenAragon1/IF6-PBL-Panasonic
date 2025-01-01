@@ -26,6 +26,8 @@ builder.Services.AddScoped<IUserClaimHelper, UserClaimHelper>();
 builder.Services.AddScoped<IFileHelper, FileHelper>();
 
 
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 // user
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 

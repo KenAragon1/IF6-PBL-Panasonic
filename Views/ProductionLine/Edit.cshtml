@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.ProductionLineViewModel.EditViewModel;
+@model panasonic.ViewModels.ProductionLineViewModels.ProductionLineViewModel;
 
 @{
     ViewData["PanelTitle"] = "Edit Production Line";
@@ -7,17 +7,18 @@
 
 <div class="card">
     <div class="card-body">
-        <form asp-action="Edit" asp-route-id="@Model.ProductionLine.Id" method="post">
+        <form asp-action="Edit" asp-route-id="@Model.ProductionLineDto.Id" method="post">
             @Html.AntiForgeryToken()
             <div class="form-group">
                 <label for="">Line Remark</label>
-                <input class="form-control" type="number" asp-for="Remark" value="@Model.ProductionLine.Remark">
-                <span asp-validation-for="Remark" class="text-danger form-text"></span>
+                <input class="form-control" type="number" asp-for="ProductionLineDto.Remark"
+                    value="ProductionLine.Remark">
+                <span asp-validation-for="ProductionLineDto.Remark" class="text-danger form-text"></span>
             </div>
             <div class="form-group">
-                <label for="">Description</label>
-                @Html.TextAreaFor(model => model.ProductionLine.Description, new { @class = "form-control" })
-                <span asp-validation-for="Description" class="text-danger form-text"></span>
+                <label for="">ProductionLine.Description</label>
+                <textarea asp-for="ProductionLineDto.Description" class="form-control"></textarea>
+                <span asp-validation-for="ProductionLineDto.Description" class="text-danger form-text"></span>
             </div>
             <button class="btn btn-primary">Submit</button>
         </form>

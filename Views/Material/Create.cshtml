@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.MaterialViewModel.CreateMaterialViewModel;
+@model panasonic.ViewModels.MaterialViewModels.CreateMaterialViewModel;
 
 @{
     ViewData["PanelTitle"] = "Create New Material";
@@ -13,8 +13,8 @@
                 <div class="form-group row">
                     <label class="col-form-label col-sm-3">Material Name</label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" asp-for="Name">
-                        <span asp-validation-for="Name" class="text-danger form-text"></span>
+                        <input type="text" class="form-control" asp-for="MaterialName" required>
+                        <span asp-validation-for="MaterialName" class="text-danger form-text"></span>
                     </div>
                 </div>
             </div>
@@ -22,8 +22,8 @@
                 <div class="form-group row">
                     <label class="col-form-label col-sm-3">Material Number</label>
                     <div class="col-sm-9">
-                        <input type="number" class="form-control" asp-for="Number">
-                        <span asp-validation-for="Number" class="text-danger"></span>
+                        <input type="number" class="form-control" asp-for="MaterialNumber" required>
+                        <span asp-validation-for="MaterialNumber" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                 <div class="form-group row">
                     <label class="col-form-label col-sm-3">Unit Measurement</label>
                     <div class="col-sm-9">
-                        <input type="text" asp-for="UnitMeasurement" class="form-control" />
+                        <input type="text" asp-for="UnitMeasurement" class="form-control" required />
                         <span asp-validation-for="UnitMeasurement" class="text-danger"></span>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                 <div class="form-group row">
                     <label class="col-form-label col-sm-3">Detail Measurement</label>
                     <div class="col-sm-9">
-                        <input type="text" asp-for="DetailMeasurement" class="form-control" />
+                        <input type="text" asp-for="DetailMeasurement" class="form-control" required />
                         <span asp-validation-for="DetailMeasurement" class="text-danger"></span>
                     </div>
                 </div>
@@ -49,8 +49,17 @@
                 <div class="form-group row">
                     <label class="col-form-label col-sm-3">Detail Quantity</label>
                     <div class="col-sm-9">
-                        <input type="text" asp-for="DetailQuantity" class="form-control" />
+                        <input type="number" asp-for="DetailQuantity" class="form-control" required />
                         <span asp-validation-for="DetailQuantity" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-2">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Barcode</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="Barcode" class="form-control" required />
+                        <span asp-validation-for="Barcode" class="text-danger"></span>
                     </div>
                 </div>
             </div>

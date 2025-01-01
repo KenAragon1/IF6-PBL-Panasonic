@@ -10,7 +10,7 @@ public enum MaterialInventoryLocations
 public class MaterialInventory
 {
     public int Id { get; set; }
-    public required int Quantity { get; set; }
+    public required int Quantity { get; set; } = 0;
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public required MaterialInventoryLocations Location { get; set; }
@@ -18,7 +18,5 @@ public class MaterialInventory
     public Material? Material { get; set; }
     public int? ProductionLineId { get; set; }
     public ProductionLine? ProductionLine { get; set; }
-
-
 }
 

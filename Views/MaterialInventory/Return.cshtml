@@ -1,27 +1,45 @@
-@model panasonic.ViewModels.MaterialInventoryViewModel.ReturnViewModel;
+@model panasonic.ViewModels.MaterialInventoryViewModels.ReturnInventoryViewModel;
 
 @{
-    ViewData["PanelTitle"] = "Return Material To Preperation Room";
+    ViewData["PanelTitle"] = "Return Materials";
 }
-<form id="return-form" asp-controller="MaterialInventory" asp-action="Return">
 
-    <div class="card">
-        <div class="card-body">
-            <div class="form-group row">
-                <label for="" class="col-form-label col-sm-2">Production Line</label>
-                <div class="col-sm-10">
-                    <select class="form-control " id="line-select" asp-for="ProductionLineId">
-                        <option value="">Select Production Line</option>
+
+<div class="card">
+    <div class="card-body">
+
+
+
+        <form asp-controller="MaterialInventory" asp-action="Return" id="pickup-form">
+            <div class="form-group row mb-3">
+                <label class="col-2 col-form-label">Production Line</label>
+                <div class="col-10">
+                    <select required asp-for="ProductionLineId" class="form-control" id="line-select">
+                        <option value="">Select a Production line</option>
                         @foreach (var lineOption in Model.ProductionLines)
                         {
                             <option value="@lineOption.Id">Line - @lineOption.Remark</option>
                         }
                     </select>
-                    <small class="text-muted form-text">Changing the Production Line will reset the forms</small>
+                    <span asp-validation-for="ProductionLineId" class="form-text text-danger"></span>
                 </div>
             </div>
 
-            <table class="table">
+            <div class="form-group row mb-3">
+                <label class="col-2 col-form-label">Material</label>
+                <div class="col-9 select2-input">
+                    <select class="form-control" id="material-select" disabled>
+                        <option value="">Select a material</option>
+                    </select>
+                </div>
+                <div class="col-1">
+                    <button class="btn btn-primary" type="button" id="insert-material-btn">Insert</button>
+                </div>
+            </div>
+
+            <span asp-validation-for="InventoryForms" class="text text-danger"></span>
+
+            <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
                         <th>Material</th>
@@ -30,149 +48,52 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="form-body">
-                    @for (var i = 0; i < Model.Forms.Count(); i++)
+                <tbody id="table-body">
+                    @foreach (var (form, index) in Model.InventoryForms.Select((value, index) => (value, index)))
                     {
-                        <tr class="js-form-row">
+                        var inventory = Model.Inventories.Where(i => i.Id == form.InventoryId).First();
+                        <tr class="material-row">
+                            <td>
+                                <span>@(inventory.Material!.Name)</span>
+                                <input type="hidden" readonly asp-for="InventoryForms[index].InventoryId" />
+                            </td>
+                            <td>@(inventory?.Quantity)
+
+                            </td>
                             <td>
                                 <div class="form-group">
-                                    <select asp-for="Forms[i].MaterialInventoryId" class="form-control">
-                                        <option value="">select material</option>
-                                        @foreach (var materialOption in Model.MaterialInventories.Where(mo =>
-                                       mo.ProductionLineId == Model.ProductionLineId))
-                                        {
-                                            <option value="@materialOption.Id">@materialOption.Material!.Name</option>
-                                        }
-                                    </select>
-                                    <span asp-validation-for="Forms[i].MaterialInventoryId" class="text-danger"></span>
+                                    <input type="number" asp-for="InventoryForms[index].Quantity"
+                                        class="form-control pickup-quantity-input" data-id="@inventory?.Id" min="1"
+                                        max="@(inventory?.Quantity)" />
 
                                 </div>
                             </td>
-                            <td class="available-quantity-row">@(Model.MaterialInventories.Where(mi => mi.Id ==
-                            Model.Forms[i].MaterialInventoryId).Select(mi => $"{mi.Quantity} {mi.Material!.DetailMeasurement}").FirstOrDefault())</td>
-                            <td>
-                                <div class="py-2">
-                                    <input type="number" asp-for="Forms[i].Quantity" class="form-control col-sm-2">
-                                    <span asp-validation-for="Forms[i].Quantity" class="text-danger"></span>
-                                </div>
-                            </td>
-                            <td>
-                                <button class="btn btn-danger remove-row-btn" type="button">X</button>
-                            </td>
+                            <td><button class="btn btn-danger delete-row-btn" data-id="@(inventory?.Id)">x</button></td>
                         </tr>
-
                     }
                 </tbody>
             </table>
-
-            <div class="">
-                <button class="btn btn-secondary" id="new-form-btn" type="button">New Material Return</button>
-                <button class="btn btn-primary" type="submit" form="return-form">Submit</button>
-            </div>
+        </form>
+        <div class="">
+            <button type="submit" class="btn btn-primary" form="pickup-form">Submits</button>
         </div>
     </div>
-
-</form>
+</div>
 
 
 
 @section Scripts {
     <script>
-        let rowCount = @Model.Forms.Count ;
-
+        window.materials = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Materials));
+        window.inventories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Inventories));
+    </script>
+    <script type="text/javascript" src="~/js/returnInventoryForm.js"></script>
+    <script>
         $(document).ready(function () {
-            let materialInventories = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MaterialInventories));
-
-            let materialOptionsHtml = materialInventories.filter((material) => material.ProductionLineId == $('#line-select').val());
-
-            console.log(materialInventories);
-
-            $('#line-select').on('change', function () {
-                var selectedoption = $(this).find('option:selected');
-
-                var materialOptions = materialInventories.filter((material) => material.ProductionLineId == selectedoption.val());
-
-                console.log(materialOptions);
-
-                materialOptionsHtml = " <option value=''>Select Material</option> "
-                materialOptions.forEach(function (option) {
-                    materialOptionsHtml += ` <option value="${option.Id}" data-available-quantity="${option.Quantity}" data-detail-measurement="${option.Material.DetailMeasurement}">${option.Material.Name}</option> `
-                });
-
-                rowCount = 0;
-                $('#form-body').html(generateFormHtml(materialOptionsHtml));
-
-            })
-
-            $(document).on("change", ".material-select", function () {
-                console.log('test')
-
-                var availableQuantity = $(this)
-                    .find(":selected")
-                    .data("available-quantity") || 0;
-                var detailMeasurement = $(this)
-                    .find(":selected")
-                    .data("detail-measurement") || "";
-
-                $(this)
-                    .closest(".js-form-row")
-                    .find(".available-quantity-row")
-                    .text(`${availableQuantity} ${detailMeasurement}`);
-
-                console.log($(this).closest(".js-form-row"))
+            $("#material-select").select2({
+                theme: "bootstrap"
             });
 
-
-            $('#new-form-btn').on('click', function () {
-                $('#form-body').append(generateFormHtml(materialOptionsHtml));
-            });
-
-            $(document).on('click', '.remove-row-btn', function () {
-                console.log('hello world');
-                $(this).closest('.js-form-row').remove();
-
-                $('.js-form-row').each(function (index) {
-                    $(this).find('select, input').each(function () {
-                        const nameAttr = $(this).attr('name');
-                        if (nameAttr) {
-                            const newName = nameAttr.replace(/\[\d+\]/, `[${index}]`);
-                            $(this).attr('name', newName)
-                        }
-                    })
-                })
-
-                rowCount = $('js-form-row').length - 1;
-            })
-
-        });
-
-
-        function generateFormHtml(materialOptionsHtml) {
-            console.log(materialOptionsHtml);
-            let html = `<tr tr class= "js-form-row" >
-                                            <td>                                                                                                        
-                                            <div class="form-group">
-                                <select name="Forms[${rowCount}].MaterialInventoryId" class="form-control material-select">
-                                ${materialOptionsHtml}
-                                </select>
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Forms[${rowCount}].MaterialInventoryId" data-valmsg-replace="true"></span>
-                                </div>
-                                </td>
-                                <td class="available-quantity-row">0</td>
-                                <td>
-                                <div class="py-2">
-                                <input type="number" name="Forms[${rowCount}].Quantity" id="" class="form-control col-sm-2" value="0">
-                                <span class="text-danger field-validation-valid" data-valmsg-for="Forms[${rowCount}].Quantity" data-valmsg-replace="true"></span>
-                                </div>
-                                </td>
-                                <td>
-                                <button class="btn btn-danger remove-row-btn" type="button">X</button>
-                                </td>
-                                </tr >
-                                `
-            rowCount++;
-            return html
-
-        }
+        })
     </script>
 }

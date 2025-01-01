@@ -15,19 +15,26 @@
     }
 
 
-    @if (ViewBag.Message != null)
+    @if (ViewData.ModelState.ContainsKey(string.Empty) &&
+    ViewData.ModelState[string.Empty].Errors.Count > 0)
     {
-        <div class="alert alert-danger shadow-none">
-            @ViewBag.Message
+        <div class="text-danger">
+            @foreach (var error in ViewData.ModelState[string.Empty].Errors)
+            {
+                <p>@error.ErrorMessage</p>
+            }
         </div>
     }
+
     <div class="mb-2">
-        <input type="number" id="employeeId" class="form-control" asp-for="EmployeeID" placeholder="Employee Id">
-        <span asp-validation-for="EmployeeID" class="text-danger"></span>
+        <input type="number" id="employeeId" class="form-control" asp-for="UserLoginDto.EmployeeID" required
+            placeholder="Employee Id">
+        <span asp-validation-for="UserLoginDto.EmployeeID" class="text-danger form-text"></span>
     </div>
     <div class="mb-2">
-        <input type="password" id="password" class="form-control" asp-for="Password" placeholder="Password">
-        <span asp-validation-for="Password" class="text-danger"></span>
+        <input type="password" id="password" class="form-control" asp-for="UserLoginDto.Password" required
+            placeholder="Password">
+        <span asp-validation-for="UserLoginDto.Password" class="text-danger form-text"></span>
     </div>
     <button type="submit" class="btn btn-primary w-100">Log In</button>
 </form>

@@ -1,4 +1,4 @@
-@model panasonic.ViewModels.MaterialViewModel.MaterialViewModel;
+@model panasonic.ViewModels.MaterialViewModels.EditMaterialViewModel;
 
 @{
     ViewData["PanelTitle"] = "Edit Material";
@@ -8,42 +8,61 @@
 
 <div class="card">
     <div class="card-body">
-        <form asp-controller="Material" asp-action="Edit" asp-route-id="@Model.Id" method="post"
+        <form asp-controller="Material" asp-action="Edit" asp-route-id="@Model.MaterialId" method="post"
             enctype="multipart/form-data">
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Material Name</label>
-                    <input type="text" class="form-control" asp-for="Name">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Material Name</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" asp-for="MaterialName">
+                    </div>
                 </div>
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <span asp-validation-for="MaterialName" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Material Number</label>
-                    <input type="number" class="form-control" asp-for="Number">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Material Number</label>
+                    <div class="col-sm-9">
+                        <input type="number" class="form-control" asp-for="MaterialNumber">
+                    </div>
                 </div>
-                <span asp-validation-for="Number" class="text-danger"></span>
+                <span asp-validation-for="MaterialNumber" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Unit Measurement</label>
-                    <input type="text" asp-for="UnitMeasurement" class="form-control" />
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Unit Measurement</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="UnitMeasurement" class="form-control" />
+                    </div>
                 </div>
                 <span asp-validation-for="UnitMeasurement" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Detail Measurement</label>
-                    <input type="text" asp-for="DetailMeasurement" class="form-control" />
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Detail Measurement</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="DetailMeasurement" class="form-control" />
+                    </div>
                 </div>
                 <span asp-validation-for="DetailMeasurement" class="text-danger"></span>
             </div>
             <div class="mb-2">
-                <div class="form-group">
-                    <label>Detail Quantity</label>
-                    <input type="text" asp-for="DetailQuantity" class="form-control" />
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Detail Quantity</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="DetailQuantity" class="form-control" />
+                    </div>
                 </div>
                 <span asp-validation-for="DetailQuantity" class="text-danger"></span>
+            </div>
+            <div class="mb-2">
+                <div class="form-group row">
+                    <label class="col-form-label col-sm-3">Barcode</label>
+                    <div class="col-sm-9">
+                        <input type="text" asp-for="Barcode" class="form-control" required />
+                        <span asp-validation-for="Barcode" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
 
@@ -52,25 +71,3 @@
         </form>
     </div>
 </div>
-
-@section Scripts {
-        <script>
-            $(document).ready(function () {
-                $("#js-image-input").on("change", function (e) {
-                    const imageInput = e.target;
-                    const preview = $("#js-image-preview");
-
-                    if (imageInput.files && imageInput.files[0]) {
-                        const reader = new FileReader();
-
-                        reader.onload = function (e) {
-                            preview.attr("src", e.target.result);
-                            preview.show();
-                        };
-
-                        reader.readAsDataURL(imageInput.files[0]);
-                    }
-                })
-            })
-        </script>
-}

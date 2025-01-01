@@ -4,18 +4,6 @@ using panasonic.Models;
 namespace panasonic.ViewModels.MaterialInventoryViewModel;
 
 
-public class MaterialTableData
-{
-    public required List<MaterialInventory> MaterialInventories { get; set; }
-}
-
-
-public class PreperationRoomViewModel : MaterialTableData
-{
-
-}
-
-
 public class SendViewModel
 {
     public List<MaterialRequest> MaterialRequests { get; set; } = [];
@@ -42,7 +30,8 @@ public class PickupViewModel
     public int ProductionLineDestination { get; set; }
 
     [Required]
-    public List<MaterialInventoryForm> Forms { get; set; } = new List<MaterialInventoryForm> { new MaterialInventoryForm() };
+    [MinLength(1, ErrorMessage = "Pick atleast 1 or more materials")]
+    public List<MaterialInventoryForm> Forms { get; set; } = new List<MaterialInventoryForm>();
 
     public List<ProductionLine>? ProductionLineOptions { get; set; }
     public List<Material> Materials { get; set; } = new List<Material>();

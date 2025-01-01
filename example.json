@@ -1,0 +1,14 @@
+{
+  "Materials": [
+    {
+      "MaterialId": 1,
+      "MaterialName": "Contoh",
+      "Inventories": [
+        {
+          "InventoryId": 1,
+          "Quantity": 10
+        }
+      ]
+    }
+  ]
+}

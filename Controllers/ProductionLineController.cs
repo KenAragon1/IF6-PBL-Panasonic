@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using panasonic.Data.Queries;
+using panasonic.Dtos.ProductionLineDtos;
 using panasonic.Models;
 using panasonic.Repositories;
-using panasonic.ViewModels.ProductionLineViewModel;
+using panasonic.ViewModels.ProductionLineViewModels;
 
 namespace panasonic.Controllers;
 
@@ -12,25 +11,17 @@ namespace panasonic.Controllers;
 public class ProductionLineController : BaseController
 {
     private readonly IProductionLineRepository _productionLineRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IMaterialRepository _materialRepository;
 
-    public ProductionLineController(IProductionLineRepository areaRepository, IUserRepository userRepository, IMaterialRepository materialRepository)
+    public ProductionLineController(IProductionLineRepository areaRepository)
     {
         _productionLineRepository = areaRepository;
-        _userRepository = userRepository;
-        _materialRepository = materialRepository;
     }
 
     public async Task<IActionResult> Index()
     {
+        var ProductionLines = await _productionLineRepository.GetAllAsync();
 
-        var viewModel = new IndexViewModel
-        {
-            ProductionLines = await _productionLineRepository.GetAllAsync()
-        };
-
-        return View(viewModel);
+        return View(ProductionLines);
     }
 
 
@@ -42,14 +33,15 @@ public class ProductionLineController : BaseController
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateViewModel createViewModel)
+    public async Task<IActionResult> Create(ProductionLineDto productionLineDto)
     {
         if (!ModelState.IsValid)
         {
-            return View(createViewModel);
+            var viewModel = new ProductionLineViewModel { ProductionLineDto = productionLineDto };
+            return View(viewModel);
         }
 
-        var area = new ProductionLine { Remark = createViewModel.Remark, Description = createViewModel.Description };
+        var area = new ProductionLine { Remark = productionLineDto.Remark, Description = productionLineDto.Description };
 
         await _productionLineRepository.Create(area);
 
@@ -60,53 +52,37 @@ public class ProductionLineController : BaseController
 
     public async Task<IActionResult> Edit(int Id)
     {
-        var viewModel = new EditViewModel { ProductionLine = await _productionLineRepository.GetAsync(Id) };
+        var productionLine = await _productionLineRepository.GetAsync(Id);
+        var lineDto = new ProductionLineDto
+        {
+            Id = productionLine.Id,
+            Description = productionLine.Description,
+            Remark = productionLine.Remark
+        };
+        var viewModel = new ProductionLineViewModel { ProductionLineDto = lineDto };
         return View(viewModel);
     }
 
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(EditViewModel editViewModel, int Id)
+    public async Task<IActionResult> Edit(int Id, ProductionLineDto productionLineDto)
     {
         if (!ModelState.IsValid)
         {
-            var viewModel = new EditViewModel { ProductionLine = await _productionLineRepository.GetAsync(Id), Remark = editViewModel.Remark, Description = editViewModel.Description };
+            productionLineDto.Id = Id;
+            var viewModel = new ProductionLineViewModel { ProductionLineDto = productionLineDto };
             return View(viewModel);
         }
 
         var line = await _productionLineRepository.GetAsync(Id);
-        line.Remark = editViewModel.Remark;
-        line.Description = editViewModel.Description;
+        line.Remark = productionLineDto.Remark;
+        line.Description = productionLineDto.Description;
         await _productionLineRepository.UpdateAsync(line);
 
         TempData["SuccessMessage"] = "Edit Production Line Success";
 
         return RedirectToAction("Index");
     }
-
-
-
-    [Authorize(Roles = "Admin")]
-    [HttpPost]
-    public IActionResult AddUser()
-    {
-        return View();
-    }
-
-    [Route("/ProductionLine/{areaId}/MaterialRequest")]
-    public IActionResult MaterialRequest(int areaId)
-    {
-        return View();
-    }
-
-
-
-
-
-
-
-
-
 
 }

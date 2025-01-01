@@ -29,6 +29,10 @@ namespace panasonic.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Barcode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("DetailMeasurement")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -314,7 +318,7 @@ namespace panasonic.Migrations
                             Email = "admin@email.com",
                             EmployeeID = 301010,
                             Fullname = "Admin",
-                            HashedPassword = "AQAAAAIAAYagAAAAEJqTFzahQdx0zoclOvB+sPpRBV4ZvjClIjYriqCrdmR82aIjZ5r7xwbtv5F+6/t5Sg==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEHpohhG05RCc0tIq3eABWX4D2Y5I5l2g583icsZSBFCnjylTVA2CLwqTVl8CJy+K+Q==",
                             IsDeleted = false,
                             IsVerified = true,
                             Role = "Admin"
@@ -326,7 +330,7 @@ namespace panasonic.Migrations
                             Email = "asistantleader@email.com",
                             EmployeeID = 301011,
                             Fullname = "Asistant Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAED6NoLZWW2akwcKkc4FSRsNPbIzdd8SmTfF6dsrn/+UGcqIcWwMjBB1dRUsZ4lcd8w==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEAZ59CYSrjhHgaQ8ZXjXd+euMvP6w2xnuwBAhi/DAF14yLmPXHGC1SfXh5HPUwxbLw==",
                             IsDeleted = false,
                             IsVerified = true,
                             Role = "AsistantLeader"
@@ -338,7 +342,7 @@ namespace panasonic.Migrations
                             Email = "shiftleader@email.com",
                             EmployeeID = 301012,
                             Fullname = "Shift Leader",
-                            HashedPassword = "AQAAAAIAAYagAAAAEGOU1pptuZczwmJpqlj5+9jqUnkJXf9aCo4C7gwhQhwiJY8G8xZZpEejMnXwiVHa1A==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEBLmL9ADK+4Dz7F6Gr2rm8OHxaE8394lcFyK3bYRAC2bw3HUQH0csNn6lszVSZCnYg==",
                             IsDeleted = false,
                             IsVerified = true,
                             Role = "ShiftLeader"
@@ -350,7 +354,7 @@ namespace panasonic.Migrations
                             Email = "storemanager@email.com",
                             EmployeeID = 301013,
                             Fullname = "Store Manager",
-                            HashedPassword = "AQAAAAIAAYagAAAAEGND7jCj7xy7p9XoW08CoeJZoLlxtP8sivTN2CqWWbtTUfSUls42GktU8VPvWMRpaA==",
+                            HashedPassword = "AQAAAAIAAYagAAAAEH+bIwc41HjXlokKPNGm9cSSzolF9aZYKgBDnrwz5OIQHYYE86j+E0cHkua2nSt/hg==",
                             IsDeleted = false,
                             IsVerified = true,
                             Role = "StoreManager"
@@ -360,7 +364,7 @@ namespace panasonic.Migrations
             modelBuilder.Entity("panasonic.Models.MaterialInventory", b =>
                 {
                     b.HasOne("panasonic.Models.Material", "Material")
-                        .WithMany()
+                        .WithMany("MaterialInventories")
                         .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -453,6 +457,11 @@ namespace panasonic.Migrations
                     b.Navigation("Material");
 
                     b.Navigation("MaterialTransaction");
+                });
+
+            modelBuilder.Entity("panasonic.Models.Material", b =>
+                {
+                    b.Navigation("MaterialInventories");
                 });
 
             modelBuilder.Entity("panasonic.Models.MaterialTransaction", b =>
