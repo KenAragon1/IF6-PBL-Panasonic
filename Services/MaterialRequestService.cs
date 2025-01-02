@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using panasonic.Exceptions;
 using panasonic.Helpers;
 using panasonic.Models;
 using panasonic.Repositories;
 using panasonic.ViewModels.MaterialRequestViewModel;
-using System.Security.Claims;
 
 
 namespace panasonic.Services;

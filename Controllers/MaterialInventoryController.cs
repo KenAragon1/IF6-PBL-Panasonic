@@ -14,13 +14,16 @@ public class MaterialInventoryController : BaseController
 {
     private readonly IMaterialInventoryService _materialInventoryService;
     private readonly IProductionLineRepository _productionLineRepository;
-    private readonly IMaterialService _materialService;
 
-    public MaterialInventoryController(IMaterialService materialService, IMaterialInventoryService materialInventoryService, IProductionLineRepository productionLineRepository)
+    private readonly IMaterialService _materialService;
+    private readonly IMaterialRequestRepository _materialRequestRepository;
+
+    public MaterialInventoryController(IMaterialService materialService, IMaterialInventoryService materialInventoryService, IProductionLineRepository productionLineRepository, IMaterialRequestRepository materialRequestRepository)
     {
         _materialInventoryService = materialInventoryService;
         _productionLineRepository = productionLineRepository;
         _materialService = materialService;
+        _materialRequestRepository = materialRequestRepository;
     }
 
     public async Task<IActionResult> PreperationRoom()
@@ -65,7 +68,10 @@ public class MaterialInventoryController : BaseController
 
     public async Task<IActionResult> Send()
     {
-        var viewModel = new SendViewModel { };
+        var viewModel = new SendViewModel
+        {
+            MaterialRequests = await _materialRequestRepository.GetAllByCondition(mr => mr.Status == MaterialRequestStatus.Approved && mr.FullfilledQuantity < mr.RequestedQuantity)
+        };
         return View(viewModel);
     }
 
