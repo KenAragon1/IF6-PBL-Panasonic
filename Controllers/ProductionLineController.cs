@@ -85,4 +85,15 @@ public class ProductionLineController : BaseController
         return RedirectToAction("Index");
     }
 
+    [HttpPost]
+    public async Task<IActionResult> Delete(int Id)
+    {
+
+        await _productionLineRepository.DeleteAsync(Id);
+
+        TempData["SuccessMessage"] = "Delete Production Line Success";
+
+        return RedirectToAction("Index");
+    }
+
 }

@@ -26,7 +26,27 @@
                         <td>@line.Description</td>
                         <td>
                             <a asp-controller="ProductionLine" asp-action="Edit" asp-route-id="@line.Id"
-                                class="btn btn-success">Edit</a>
+                                class="btn btn-outline-success">Edit</a>
+                            <button class="btn btn-outline-danger" data-toggle="modal"
+                                data-target="#confirm-delete-modal-@line.Id">
+                                <i class="fas fa-trash"></i>
+                                Delete
+                            </button>
+                            <div class="modal fade" id="confirm-delete-modal-@line.Id">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">Confirm Delete</div>
+                                        <div class="modal-body">Are you sure want to delete line @line.Remark</div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-light" data-dismiss="modal">cancel</button>
+                                            <form asp-controller="ProductionLine" asp-action="Delete"
+                                                asp-route-id="@line.Id">
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -34,6 +54,8 @@
         </table>
     </div>
 </div>
+
+<form action="" method="post" hidden></form>
 
 @section Scripts
 {
@@ -49,5 +71,10 @@
                         }); column.data().unique().sort().each(function (d, j) { select.append('' + d + '') });
                 });
             }
-        }); </script>
+        });
+
+
+
+
+    </script>
 }

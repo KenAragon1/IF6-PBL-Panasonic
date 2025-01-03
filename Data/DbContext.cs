@@ -39,6 +39,7 @@ public class ApplicationDbContext : DbContext
 
         // Production Line
         modelBuilder.Entity<ProductionLine>().HasIndex(pl => pl.Remark).IsUnique();
+        modelBuilder.Entity<ProductionLine>().HasQueryFilter(pl => !pl.IsDeleted);
 
         // MaterialRequest
         modelBuilder.Entity<MaterialRequest>().Property(mr => mr.CreatedAt).HasDefaultValueSql("GETDATE()");

@@ -207,12 +207,21 @@
 
 @section Scripts {
     <script>
+        console.log(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AnalitycsDatas)));
+
+        let labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AnalitycsDatas.Where(d => d.Type == "Send").OrderBy(d => d.Date).Select(d => d.Date).ToList()));;
+        let sendData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AnalitycsDatas.Where(d => d.Type == "Send").OrderBy(d => d.Date).Select(d => d.Count).ToList()));
+        let productionData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AnalitycsDatas.Where(d => d.Type == "Production").OrderBy(d => d.Date).Select(d => d.Count).ToList()));
+        let returnData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AnalitycsDatas.Where(d => d.Type == "Return").OrderBy(d => d.Date).Select(d => d.Count).ToList()));
+        let pickupData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AnalitycsDatas.Where(d => d.Type == "Pickup").OrderBy(d => d.Date).Select(d => d.Count).ToList()));
+
         var lineChart = document.getElementById('lineChart').getContext('2d');
+
 
         var myLineChart = new Chart(lineChart, {
             type: 'line',
             data: {
-                labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                labels: labels,
                 datasets: [{
                     label: "Production",
                     borderColor: "#1d7af3",
@@ -225,12 +234,12 @@
                     backgroundColor: 'transparent',
                     fill: true,
                     borderWidth: 2,
-                    data: [542, 480, 430, 550, 530, 453, 380, 434, 568, 610, 700, 900]
+                    data: productionData
                 }, {
                     label: "Send",
-                    borderColor: "#1d7af3",
-                    pointBorderColor: "#FFF",
-                    pointBackgroundColor: "#1d7af3",
+                    borderColor: "#198754",
+                    pointBorderColor: "#198754",
+                    pointBackgroundColor: "#198754",
                     pointBorderWidth: 2,
                     pointHoverRadius: 4,
                     pointHoverBorderWidth: 1,
@@ -238,9 +247,38 @@
                     backgroundColor: 'transparent',
                     fill: true,
                     borderWidth: 2,
-                    data: [556, 614, 981, 951, 971, 546, 837, 837, 892, 579, 872, 3000]
+                    data: sendData
+                },
+                {
+                    label: "Return",
+                    borderColor: "#dc3545",
+                    pointBorderColor: "#dc3545",
+                    pointBackgroundColor: "#dc3545",
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 4,
+                    pointHoverBorderWidth: 1,
+                    pointRadius: 4,
+                    backgroundColor: 'transparent',
+                    fill: true,
+                    borderWidth: 2,
+                    data: returnData
+                },
+                {
+                    label: "Pickup",
+                    borderColor: "#ffc107",
+                    pointBorderColor: "#ffc107",
+                    pointBackgroundColor: "#ffc107",
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 4,
+                    pointHoverBorderWidth: 1,
+                    pointRadius: 4,
+                    backgroundColor: 'transparent',
+                    fill: true,
+                    borderWidth: 2,
+                    data: pickupData
+                },
 
-                }]
+                ]
             },
             options: {
                 responsive: true,
@@ -266,5 +304,7 @@
                 }
             }
         });
+
+
     </script>
 }

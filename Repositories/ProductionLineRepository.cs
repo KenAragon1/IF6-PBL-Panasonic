@@ -9,6 +9,7 @@ public interface IProductionLineRepository
     Task<ProductionLine> GetAsync(int lineId);
     Task Create(ProductionLine area);
     Task UpdateAsync(ProductionLine line);
+    Task DeleteAsync(int id);
 }
 
 public class ProductionLineRepository : IProductionLineRepository
@@ -53,6 +54,10 @@ public class ProductionLineRepository : IProductionLineRepository
         var line = await _dbContext.ProductionLines.FirstOrDefaultAsync(pl => pl.Id == id);
 
         if (line == null) throw new Exception();
+
+        line.IsDeleted = true;
+
+        await _dbContext.SaveChangesAsync();
     }
 
 }

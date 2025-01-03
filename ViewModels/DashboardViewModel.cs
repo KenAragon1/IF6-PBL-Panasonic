@@ -9,6 +9,7 @@ public class IndexViewModel
     public int ProductionLineCount { get; set; }
     public int UserCount { get; set; }
     public List<TransactionCount> TransactionCounts { get; set; } = new List<TransactionCount>();
+    public List<AnalitycsData> AnalitycsDatas { get; set; } = [];
 
 }
 
@@ -27,4 +28,11 @@ public class TransactionCount
 public class ReportViewModel
 {
     public required List<MaterialTransaction> MaterialTransactions { get; set; }
+}
+
+public class AnalitycsData
+{
+    public string Type { get; set; } = string.Empty;
+    public string Date { get; set; } = string.Empty;
+    public int Count { get; set; }
 }
